@@ -1,0 +1,357 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Backgammon Tutorial: When to double/take in race conditions</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+</head>
+<body>
+    <h1>
+        Backgammon Tutorial:</h1>
+    <h2>
+        When to double/take in race conditions</h2>
+    <div id="board">
+        <div id="13" class="pip top-pip red-pip">
+        </div>
+        <div id="14" class="pip top-pip black-pip">
+        </div>
+        <div id="15" class="pip top-pip red-pip">
+        </div>
+        <div id="16" class="pip top-pip black-pip">
+        </div>
+        <div id="17" class="pip top-pip red-pip">
+        </div>
+        <div id="18" class="pip top-pip black-pip">
+        </div>
+        <div id="black-bar" class="bar">
+        </div>
+        <div id="19" class="pip top-pip red-pip">
+        </div>
+        <div id="20" class="pip top-pip black-pip">
+        </div>
+        <div id="21" class="pip top-pip red-pip">
+        </div>
+        <div id="22" class="pip top-pip black-pip">
+        </div>
+        <div id="23" class="pip top-pip red-pip">
+        </div>
+        <div id="24" class="pip top-pip black-pip">
+        </div>
+        <div id="black-home" class="pip">
+        </div>
+        <br class="clear" />
+        <div id="12" class="pip bottom-pip black-pip">
+        </div>
+        <div id="11" class="pip bottom-pip red-pip">
+        </div>
+        <div id="10" class="pip bottom-pip black-pip">
+        </div>
+        <div id="9" class="pip bottom-pip red-pip">
+        </div>
+        <div id="8" class="pip bottom-pip black-pip">
+        </div>
+        <div id="7" class="pip bottom-pip red-pip">
+        </div>
+        <div id="red-bar" class="bar">
+        </div>
+        <div id="6" class="pip bottom-pip black-pip">
+        </div>
+        <div id="5" class="pip bottom-pip red-pip">
+        </div>
+        <div id="4" class="pip bottom-pip black-pip">
+        </div>
+        <div id="3" class="pip bottom-pip red-pip">
+        </div>
+        <div id="2" class="pip bottom-pip black-pip">
+        </div>
+        <div id="1" class="pip bottom-pip red-pip">
+        </div>
+        <div id="red-home" class="pip">
+        </div>
+    </div>
+    <br class="clear" />
+    <div id="question">
+        <h2>
+            Question:</h2>
+        <div>
+            What should Red do if Black doubles?<br class="clear" />
+            <button onclick="reveal()">
+                drop</button>
+            <button onclick="reveal()">
+                take</button>
+        </div>
+        <div>
+            What if it is Red's turn to play?<br class="clear" />
+            <button onclick="reveal()">
+                play on</button>
+            <button onclick="reveal()">
+                double, but not redouble</button>
+            <button onclick="reveal()">
+                double or redouble</button>
+        </div>
+    </div>
+    <div id="answer" style="display: none">
+        <h2>
+            Answer:</h2>
+        <div>
+            Black: <span id="black-pip-count" />pips
+        </div>
+        <div>
+            Red: <span id="red-pip-count" />pips
+        </div>
+        <div>
+            Correct play: <span id="correct-play" />
+        </div>
+        <button onclick="reset()">
+            New board</button>
+    </div>
+    <style type="text/css">
+        BODY
+        {
+            font-family: Arial;
+        }
+        #board
+        {
+            background-image: url('');
+            width: 100%;
+        }
+        DIV.counter
+        {
+            float: left;
+            width: 20px;
+            height: 20px;
+            -moz-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+        }
+        DIV.red
+        {
+            background: red;
+            text-align: center;
+            color: Black;
+            font-weight: bold;
+        }
+        DIV.black
+        {
+            background: black;
+            text-align: center;
+            color: Red;
+            font-weight: bold;
+        }
+        DIV.bar
+        {
+            float: left;
+            width: 20px;
+            height: 100px;
+            background: brown;
+        }
+        DIV.pip
+        {
+            float: left;
+            width: 20px;
+            height: 100px;
+        }
+        DIV.bottom-pip
+        {
+            /*
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 100px solid;
+            */
+        }
+        DIV.top-pip
+        {
+            /*
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 100px solid;
+            */
+        }
+        DIV.red-pip
+        {
+            background: #F99;
+            border-top-color: #F99;
+            border-bottom-color: #F99;
+        }
+        DIV.black-pip
+        {
+            background: #999;
+            border-top-color: #999;
+            border-bottom-color: #999;
+        }
+        BR.clear
+        {
+            clear: both;
+        }
+    </style>
+    <script type="text/javascript">
+        Plays = {
+            PLAY: "Red should just play on",
+            DROP: "Red should drop if doubled",
+            TAKE: "Red should take if doubled",
+            DOUBLE: "Red should double, but not redouble",
+            REDOUBLE: "Red should double or redouble"
+        };
+        var _layout = new Array(25);
+        var _players = ["red", "black"];
+        function init() {
+            for (var i = 0; i < 25; i++) {
+                _layout[i] = [0, 0];
+            }
+        }
+        function getRandomPipNumber(max) {
+            if (max <= 6) {
+                // in home board - can include zeroes
+                return Math.floor(Math.random() * (max + 1));
+            }
+            else {
+                // only allow 1 -> max.
+                return Math.floor(Math.random() * max) + 1;
+            }
+        }
+        function setRandomPipForPlayerNumber(playerNumber, maxPip) {
+            var r = getRandomPipNumber(maxPip);
+            _layout[r][playerNumber]++;
+        }
+        function clearBoard() {
+            $("DIV#red-home").children().remove();
+            $("DIV#black-home").children().remove();
+            for (var i = 1; i < 25; i++) {
+                $("DIV#" + i).children().remove();
+            }
+        }
+        function drawBoard(layout) {
+            clearBoard();
+            for (var player = 0; player < 2; player++) {
+
+                var playerName = _players[player];
+                for (var pip = 0; pip < 25; pip++) {
+                    var totalCounters = layout[pip][player];
+                    if (totalCounters > 0) {
+                        if (pip == 0) {
+                            if (player == 0) {
+                                for (var i = 0; i < 4; i++) {
+                                    // blank counter as placeholder
+                                    $("DIV#" + playerName + "-home").append($("<DIV>").addClass("counter"));
+                                }
+                            }
+                            // home
+                            $("DIV#" + playerName + "-home").append($("<DIV>").text(totalCounters).addClass("counter " + playerName));
+                        }
+                        else {
+
+                            var pipDivNumber;
+                            if (player == 0) {
+                                pipDivNumber = pip;
+                            } else {
+                                pipDivNumber = 25 - pip;
+                            }
+
+                            var pipDiv = $("DIV#" + pipDivNumber);
+
+                            for (var i = 0; i < 5; i++) {
+                                if (pipDivNumber < 13) {
+                                    if (i >= 5 - totalCounters) {
+                                        if (totalCounters > 5 && i == 5 - 1) {
+                                            pipDiv.append($("<DIV>").text(totalCounters).addClass("counter " + playerName));
+                                        } else {
+                                            pipDiv.append($("<DIV>").addClass("counter " + playerName));
+                                        }
+                                    } else {
+                                        // blank counter as placeholder
+                                        pipDiv.append($("<DIV>").addClass("counter"));
+                                    }
+                                }
+                                else {
+                                    if (i < totalCounters) {
+                                        if (totalCounters > 5 && i == 0) {
+                                            pipDiv.append($("<DIV>").text(totalCounters).addClass("counter " + playerName));
+                                        } else {
+                                            pipDiv.append($("<DIV>").addClass("counter " + playerName));
+                                        }
+                                    } else {
+                                        // blank counter as placeholder
+                                        pipDiv.append($("<DIV>").addClass("counter"));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        function countPips(layout, piece) {
+            var sum = 0;
+            for (var i = 1; i < layout.length; i++) {
+                sum += i * layout[i][piece];
+            }
+            return sum;
+        }
+        function doLayout() {
+            // find point from which race is on:
+            var racePivot = 4 + Math.floor(Math.random() * 18);
+            for (var i = 0; i < 15; i++) {
+                setRandomPipForPlayerNumber(0, racePivot);
+                setRandomPipForPlayerNumber(1, 24 - racePivot);
+            }
+            drawBoard(_layout);
+
+            var redPipCount = countPips(_layout, 0);
+            var blackPipCount = countPips(_layout, 1);
+
+            var correctPlay;
+            if (redPipCount < blackPipCount) {
+                var diff = blackPipCount / redPipCount;
+
+                if (diff > 1.09) {
+                    correctPlay = Plays.REDOUBLE;
+                }
+                else if (diff > 1.08) {
+                    correctPlay = Plays.DOUBLE;
+                }
+                else {
+                    correctPlay = Plays.TAKE;
+                }
+            }
+            else {
+                var diff = redPipCount / blackPipCount;
+                if (diff > 1.12) {
+                    correctPlay = Plays.DROP;
+                }
+                else {
+                    correctPlay = Plays.TAKE;
+                }
+            }
+
+            $("#red-pip-count").text(redPipCount);
+            $("#black-pip-count").text(blackPipCount);
+            $("#correct-play").text(correctPlay);
+        }
+
+        function reset() {
+            $("#answer").hide();
+            init();
+            doLayout();
+        }
+
+        function reveal() {
+            $("#answer").show();
+        }
+
+        reset();
+    </script>
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-17476465-3']);
+        _gaq.push(['_trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+    </script>
+</body>
+</html>
