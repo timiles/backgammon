@@ -5,37 +5,37 @@ var Backgammon = {
     Board: function(boardElementId) {
 
         var $board = $('#' + boardElementId);
-        $board.addClass('board');
-        $board.append($('<div id="13" class="pip top-pip red-pip">'));
-        $board.append($('<div id="14" class="pip top-pip black-pip">'));
-        $board.append($('<div id="15" class="pip top-pip red-pip">'));
-        $board.append($('<div id="16" class="pip top-pip black-pip">'));
-        $board.append($('<div id="17" class="pip top-pip red-pip">'));
-        $board.append($('<div id="18" class="pip top-pip black-pip">'));
-        $board.append($('<div id="black-bar" class="pip bar">'));
-        $board.append($('<div id="19" class="pip top-pip red-pip">'));
-        $board.append($('<div id="20" class="pip top-pip black-pip">'));
-        $board.append($('<div id="21" class="pip top-pip red-pip">'));
-        $board.append($('<div id="22" class="pip top-pip black-pip">'));
-        $board.append($('<div id="23" class="pip top-pip red-pip">'));
-        $board.append($('<div id="24" class="pip top-pip black-pip">'));
-        $board.append($('<div id="black-home" class="pip home">'));
-        $board.append($('<br class="clear">'));
-        $board.append($('<div id="12" class="pip bottom-pip black-pip">'));
-        $board.append($('<div id="11" class="pip bottom-pip red-pip">'));
-        $board.append($('<div id="10" class="pip bottom-pip black-pip">'));
-        $board.append($('<div id="9" class="pip bottom-pip red-pip">'));
-        $board.append($('<div id="8" class="pip bottom-pip black-pip">'));
-        $board.append($('<div id="7" class="pip bottom-pip red-pip">'));
-        $board.append($('<div id="red-bar" class="pip bar">'));
-        $board.append($('<div id="6" class="pip bottom-pip black-pip">'));
-        $board.append($('<div id="5" class="pip bottom-pip red-pip">'));
-        $board.append($('<div id="4" class="pip bottom-pip black-pip">'));
-        $board.append($('<div id="3" class="pip bottom-pip red-pip">'));
-        $board.append($('<div id="2" class="pip bottom-pip black-pip">'));
-        $board.append($('<div id="1" class="pip bottom-pip red-pip">'));
-        $board.append($('<div id="red-home" class="pip home">'));
-        $board.append($('<br class="clear">'));
+        $board.addClass('board')
+            .append($('<div id="13" class="pip top-pip red-pip">'))
+            .append($('<div id="14" class="pip top-pip black-pip">'))
+            .append($('<div id="15" class="pip top-pip red-pip">'))
+            .append($('<div id="16" class="pip top-pip black-pip">'))
+            .append($('<div id="17" class="pip top-pip red-pip">'))
+            .append($('<div id="18" class="pip top-pip black-pip">'))
+            .append($('<div id="black-bar" class="pip bar">'))
+            .append($('<div id="19" class="pip top-pip red-pip">'))
+            .append($('<div id="20" class="pip top-pip black-pip">'))
+            .append($('<div id="21" class="pip top-pip red-pip">'))
+            .append($('<div id="22" class="pip top-pip black-pip">'))
+            .append($('<div id="23" class="pip top-pip red-pip">'))
+            .append($('<div id="24" class="pip top-pip black-pip">'))
+            .append($('<div id="black-home" class="pip home">'))
+            .append($('<br class="clear">'))
+            .append($('<div id="12" class="pip bottom-pip black-pip">'))
+            .append($('<div id="11" class="pip bottom-pip red-pip">'))
+            .append($('<div id="10" class="pip bottom-pip black-pip">'))
+            .append($('<div id="9" class="pip bottom-pip red-pip">'))
+            .append($('<div id="8" class="pip bottom-pip black-pip">'))
+            .append($('<div id="7" class="pip bottom-pip red-pip">'))
+            .append($('<div id="red-bar" class="pip bar">'))
+            .append($('<div id="6" class="pip bottom-pip black-pip">'))
+            .append($('<div id="5" class="pip bottom-pip red-pip">'))
+            .append($('<div id="4" class="pip bottom-pip black-pip">'))
+            .append($('<div id="3" class="pip bottom-pip red-pip">'))
+            .append($('<div id="2" class="pip bottom-pip black-pip">'))
+            .append($('<div id="1" class="pip bottom-pip red-pip">'))
+            .append($('<div id="red-home" class="pip home">'))
+            .append($('<br class="clear">'));
 
         // layout: 0 is home
         var layout = new Array(25);
