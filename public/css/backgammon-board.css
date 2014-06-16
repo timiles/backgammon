@@ -1,0 +1,77 @@
+BODY
+{
+    font-family: Arial;
+}
+#board
+{
+    background-image: url('');
+    width: 100%;
+}
+DIV.counter
+{
+    float: left;
+    width: 20px;
+    height: 20px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+DIV.red
+{
+    background: red;
+    text-align: center;
+    color: Black;
+    font-weight: bold;
+}
+DIV.black
+{
+    background: black;
+    text-align: center;
+    color: Red;
+    font-weight: bold;
+}
+DIV.bar
+{
+    float: left;
+    width: 20px;
+    height: 100px;
+    background: brown;
+}
+DIV.pip
+{
+    float: left;
+    width: 20px;
+    height: 100px;
+}
+DIV.bottom-pip
+{
+    /*
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 100px solid;
+    */
+}
+DIV.top-pip
+{
+    /*
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 100px solid;
+    */
+}
+DIV.red-pip
+{
+    background: #F99;
+    border-top-color: #F99;
+    border-bottom-color: #F99;
+}
+DIV.black-pip
+{
+    background: #999;
+    border-top-color: #999;
+    border-bottom-color: #999;
+}
+BR.clear
+{
+    clear: both;
+}
