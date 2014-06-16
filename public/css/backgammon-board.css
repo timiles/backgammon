@@ -38,6 +38,12 @@ DIV.bar
 {
     background: brown;
 }
+DIV.home
+{
+    border: none;
+    border-left: 4px solid brown;
+    padding-left: 0px;
+}
 DIV.bottom-pip
 {
     -moz-transform:rotate(180deg);
