@@ -80,43 +80,85 @@ var Backgammon = {
             this.addCounterToPip(12, Backgammon.Players.Black);
         }
 
-        this.addCounterToPip = function(pip, player) {
+        this.addCounterToPip = function(pipNumber, player) {
             // todo: check for legal moves
                 
             var playerNames = ["red", "black"];
             var playerName = playerNames[player];
-            layout[pip][player]++;
+            layout[pipNumber][player]++;
 
-            var totalCounters = layout[pip][player];
+            var totalCounters = layout[pipNumber][player];
 
-            if (pip == 0) {
+            if (pipNumber == 0) {
                 // special case for home pips:
                 $('div#' + playerName + '-home').append($('<div class="counter">').addClass(playerName).text(totalCounters));
             }
             else {
-                var $pipDiv = $('div#' + pip);
+                var $pipDiv = $('div#' + pipNumber);
                 if (totalCounters > 5) {
-                    $pipDiv.append($('<div class="counter">').addClass(playerName).text(totalCounters));
+                    $('.counter-total', $pipDiv).text(totalCounters);
+                } else if (totalCounters == 5) {
+                    $pipDiv.append($('<div class="counter counter-total">').addClass(playerName));
                 } else {
                     $pipDiv.append($('<div class="counter">').addClass(playerName));
                 }
             }
         }
+        this.removeCounterFromPip = function(pipNumber, player) {
+            // todo: check for legal moves
+
+            var playerNames = ["red", "black"];
+            var playerName = playerNames[player];
+            
+            layout[pipNumber][player]--;
+            var totalCounters = layout[pipNumber][player];
+            var $pipDiv = $('div#' + pipNumber);
+            
+            if (totalCounters > 5) {
+                $('.counter-total', $pipDiv).text(totalCounters);
+            } else if (totalCounters == 5) {
+                // remove number on the counter total
+                $('.counter-total', $pipDiv).text('');
+            } else {
+                $('.counter', $pipDiv).first().remove();
+            }
+        }
 
         this.testMoveCounter = function(pipNumber, moves) {
-            var pip = this.getPip(pipNumber);
+            var startPip = this.getPip(pipNumber);
             // case: there is no counter to move: fail
-            if (pip[0] == 0 && pip[1] == 0) {
+            if (startPip[0] == 0 && startPip[1] == 0) {
                 return false;
             }
-            var me = pip[0] > 0 ? 0 : 1;
+            var me = startPip[0] > 0 ? 0 : 1;
             var opp = (me == 0) ? 1 : 0;
             var dir = (me == 0) ? -1 : 1;
             // case: there is a counter, but opponent blocks the end pip
-            if (this.getPip(pipNumber + (moves*dir))[opp] >= 2) {
+            var endPip = this.getPip(pipNumber + (moves*dir));
+            if (endPip[opp] >= 2) {
                 return false;
             }
             // todo: more checks, eg player can bear off etc
+            return true;
+        }
+
+        this.moveCounter = function(pipNumber, moves) {
+            // check it's legal first
+            if (!this.testMoveCounter(pipNumber, moves)) {
+                return false;
+            }
+
+            var startPip = this.getPip(pipNumber);
+
+            var me = startPip[0] > 0 ? 0 : 1;
+            var opp = (me == 0) ? 1 : 0;
+            var dir = (me == 0) ? -1 : 1;
+
+            var endPipNumber = pipNumber + (moves*dir);
+
+            this.removeCounterFromPip(pipNumber, me);
+            this.addCounterToPip(endPipNumber, me);
+
             return true;
         }
 
