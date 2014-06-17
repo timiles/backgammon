@@ -65,4 +65,18 @@ describe('Backgammon', function () {
 
     });
 
+
+    it('should put Black on the bar when Red hits it', function () {
+
+        // move Black to 22
+        board.moveCounter(17, 5);
+        // move Red to 22
+        board.moveCounter(24, 2);
+        expect(board.getPip(22)[Backgammon.Players.Black]).toBe(0);
+        expect(board.getPip(22)[Backgammon.Players.Red]).toBe(1);
+
+        expect(board.getPip(25)[Backgammon.Players.Black]).toBe(1);
+
+    });
+
 });

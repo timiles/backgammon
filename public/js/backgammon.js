@@ -4,11 +4,12 @@ var Backgammon = {
     Players: { Red : 0, Black: 1 },
     Board: function(boardElementId) {
 
-        // layout: 0 is home
+        // 0 is home, 25 is bar
+        var HOME = 0, BAR = 25;
+        var playerNames = ["red", "black"];
         var layout;
 
         this.init = function() {
-            layout = new Array(25);
 
             var $board = $('#' + boardElementId);
             $board.empty();
@@ -44,7 +45,8 @@ var Backgammon = {
                 .append($('<div id="red-home" class="pip home">'))
                 .append($('<br class="clear">'));
 
-            for (var i = 0; i < 25; i++) {
+            layout = new Array(26);
+            for (var i = 0; i < 26; i++) {
                 layout[i] = [0, 0];
             }
 
@@ -80,40 +82,44 @@ var Backgammon = {
             this.addCounterToPip(12, Backgammon.Players.Black);
         }
 
+        function getPipDiv(pipNumber, player) {
+            var playerName = playerNames[player];
+            switch (pipNumber) {
+                case HOME : {
+                    return $('div#' + playerName + '-home');
+                }
+                case BAR: {
+                    return $('div#' + playerName + '-bar');
+                }
+                default: {
+                    return $('div#' + pipNumber);
+                }
+            }
+        }
         this.addCounterToPip = function(pipNumber, player) {
             // todo: check for legal moves
                 
-            var playerNames = ["red", "black"];
             var playerName = playerNames[player];
             layout[pipNumber][player]++;
 
             var totalCounters = layout[pipNumber][player];
 
-            if (pipNumber == 0) {
-                // special case for home pips:
-                $('div#' + playerName + '-home').append($('<div class="counter">').addClass(playerName).text(totalCounters));
-            }
-            else {
-                var $pipDiv = $('div#' + pipNumber);
-                if (totalCounters > 5) {
-                    $('.counter-total', $pipDiv).text(totalCounters);
-                } else if (totalCounters == 5) {
-                    $pipDiv.append($('<div class="counter counter-total">').addClass(playerName));
-                } else {
-                    $pipDiv.append($('<div class="counter">').addClass(playerName));
-                }
+            var $pipDiv = getPipDiv(pipNumber, player);
+            if (totalCounters > 5) {
+                $('.counter-total', $pipDiv).text(totalCounters);
+            } else if (totalCounters == 5) {
+                $pipDiv.append($('<div class="counter counter-total">').addClass(playerName));
+            } else {
+                $pipDiv.append($('<div class="counter">').addClass(playerName));
             }
         }
         this.removeCounterFromPip = function(pipNumber, player) {
             // todo: check for legal moves
-
-            var playerNames = ["red", "black"];
-            var playerName = playerNames[player];
             
             layout[pipNumber][player]--;
             var totalCounters = layout[pipNumber][player];
-            var $pipDiv = $('div#' + pipNumber);
             
+            var $pipDiv = getPipDiv(pipNumber, player);
             if (totalCounters > 5) {
                 $('.counter-total', $pipDiv).text(totalCounters);
             } else if (totalCounters == 5) {
@@ -155,6 +161,12 @@ var Backgammon = {
             var dir = (me == 0) ? -1 : 1;
 
             var endPipNumber = pipNumber + (moves*dir);
+
+            var endPip = this.getPip(endPipNumber);
+            if (endPip[opp] == 1) {
+                this.removeCounterFromPip(endPipNumber, opp);
+                this.addCounterToPip(BAR, opp);
+            }
 
             this.removeCounterFromPip(pipNumber, me);
             this.addCounterToPip(endPipNumber, me);
