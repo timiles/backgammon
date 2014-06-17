@@ -152,29 +152,28 @@ var Backgammon = {
             }
         }
 
-        this.testMoveCounter = function(pipNumber, moves) {
+        this.testMoveCounter = function(player, pipNumber, moves) {
             var startPip = this.getPip(pipNumber);
 
             // case: there is no counter to move: fail
-            if (startPip[0] == 0 && startPip[1] == 0) {
+            if (startPip[player] == 0) {
                 console.info('no counter at ' + pipNumber);
                 return false;
             }
 
-            var me = startPip[0] > 0 ? 0 : 1;
-            var opp = (me == 0) ? 1 : 0;
-            var dir = (me == 0) ? -1 : 1;
+            var opponent = (player == 0) ? 1 : 0;
+            var direction = (player == 0) ? -1 : 1;
 
             // case: there is a counter on the bar, and this is not it
-            if ((pipNumber != Backgammon.CONSTANTS.BAR) && (this.getPip(Backgammon.CONSTANTS.BAR)[me] > 0)) {
+            if ((pipNumber != Backgammon.CONSTANTS.BAR) && (this.getPip(Backgammon.CONSTANTS.BAR)[player] > 0)) {
                 console.info('must move counter off bar first');
                 return false;
             }
 
             // case: there is a counter, but opponent blocks the end pip
-            var endPipNumber = (pipNumber + (moves*dir)) % 25; // mod26 is a hack for black coming off the bar. will probably refactor out later.
+            var endPipNumber = (pipNumber + (moves*direction)) % 25; // mod26 is a hack for black coming off the bar. will probably refactor out later.
             var endPip = this.getPip(endPipNumber);
-            if (endPip[opp] >= 2) {
+            if (endPip[opponent] >= 2) {
                 console.info('pip is blocked');
                 return false;
             }
@@ -182,28 +181,27 @@ var Backgammon = {
             return true;
         }
 
-        this.moveCounter = function(pipNumber, moves) {
+        this.moveCounter = function(player, pipNumber, moves) {
             // check it's legal first
-            if (!this.testMoveCounter(pipNumber, moves)) {
+            if (!this.testMoveCounter(player, pipNumber, moves)) {
                 return false;
             }
 
             var startPip = this.getPip(pipNumber);
 
-            var me = startPip[0] > 0 ? 0 : 1;
-            var opp = (me == 0) ? 1 : 0;
-            var dir = (me == 0) ? -1 : 1;
+            var opponent = (player == 0) ? 1 : 0;
+            var direction = (player == 0) ? -1 : 1;
 
-            var endPipNumber = (pipNumber + (moves*dir)) % 25; // mod26 is a hack for black coming off the bar. will probably refactor out later.
+            var endPipNumber = (pipNumber + (moves*direction)) % 25; // mod26 is a hack for black coming off the bar. will probably refactor out later.
 
             var endPip = this.getPip(endPipNumber);
-            if (endPip[opp] == 1) {
-                this.removeCounterFromPip(endPipNumber, opp);
-                this.addCounterToPip(Backgammon.CONSTANTS.BAR, opp);
+            if (endPip[opponent] == 1) {
+                this.removeCounterFromPip(endPipNumber, opponent);
+                this.addCounterToPip(Backgammon.CONSTANTS.BAR, opponent);
             }
 
-            this.removeCounterFromPip(pipNumber, me);
-            this.addCounterToPip(endPipNumber, me);
+            this.removeCounterFromPip(pipNumber, player);
+            this.addCounterToPip(endPipNumber, player);
 
             return true;
         }
