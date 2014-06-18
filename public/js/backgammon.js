@@ -193,6 +193,7 @@ var Backgammon = {
                         return false;
                     }
                 }
+                // already checked bar above
                 return true;
             }
 

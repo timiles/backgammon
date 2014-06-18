@@ -147,9 +147,15 @@ describe('Backgammon', function () {
         expect(board.move(Backgammon.CONSTANTS.BLACK, 19, 6)).toBe(true);
         expect(board.move(Backgammon.CONSTANTS.BLACK, 19, 6)).toBe(true);
         expect(board.move(Backgammon.CONSTANTS.BLACK, 19, 6)).toBe(true);
+        expect(board.move(Backgammon.CONSTANTS.BLACK, 19, 6)).toBe(true);
         expect(board.move(Backgammon.CONSTANTS.BLACK, 23, 6)).toBe(true);
         expect(board.move(Backgammon.CONSTANTS.BLACK, 23, 6)).toBe(true);
         expect(board.move(Backgammon.CONSTANTS.BLACK, 23, 6)).toBe(true);
+
+        // now Red hits Black onto the bar
+        expect(board.move(Backgammon.CONSTANTS.RED, 24, 5)).toBe(true);
+
+        expect(board.move(Backgammon.CONSTANTS.BLACK, 23, 6)).toBe(false);
 
     });
 
