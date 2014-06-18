@@ -42,7 +42,8 @@ DIV.home
 {
     border: none;
     border-left: 4px solid brown;
-    padding-left: 0px;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 DIV.bottom-pip
 {

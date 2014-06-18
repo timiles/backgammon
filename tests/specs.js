@@ -113,4 +113,44 @@ describe('Backgammon', function () {
 
     });
 
+
+    it('should not allow to bear off until all in home board', function () {
+
+        expect(board.testMoveCounter(Backgammon.CONSTANTS.BLACK, 19, 6)).toBe(false);
+        
+        // move pieces into home board
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 1, 6);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 1, 6);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 7, 5);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 7, 5);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 12, 6);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 12, 6);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 12, 6);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 12, 6);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 12, 6);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 12, 6);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 12, 6);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 17, 6);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 17, 6);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 17, 6);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 18, 5);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 18, 5);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 18, 5);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 18, 5);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 18, 5);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 18, 5);
+        board.moveCounter(Backgammon.CONSTANTS.BLACK, 18, 5);
+
+        // now should be home dry
+        expect(board.testMoveCounter(Backgammon.CONSTANTS.BLACK, 19, 6)).toBe(true);
+        
+        expect(board.moveCounter(Backgammon.CONSTANTS.BLACK, 19, 6)).toBe(true);
+        expect(board.moveCounter(Backgammon.CONSTANTS.BLACK, 19, 6)).toBe(true);
+        expect(board.moveCounter(Backgammon.CONSTANTS.BLACK, 19, 6)).toBe(true);
+        expect(board.moveCounter(Backgammon.CONSTANTS.BLACK, 23, 6)).toBe(true);
+        expect(board.moveCounter(Backgammon.CONSTANTS.BLACK, 23, 6)).toBe(true);
+        expect(board.moveCounter(Backgammon.CONSTANTS.BLACK, 23, 6)).toBe(true);
+
+    });
+
 });

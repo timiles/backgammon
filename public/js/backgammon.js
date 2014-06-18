@@ -152,6 +152,18 @@ var Backgammon = {
             }
         }
 
+        function getDestinationPipNumber(player, pipNumber, moves) {
+            if (pipNumber == Backgammon.CONSTANTS.BAR && player == Backgammon.CONSTANTS.BLACK) {
+                 // when coming off bar
+                 return moves;
+            }
+
+            var direction = (player == 0) ? -1 : 1;
+            var dest = pipNumber + (moves*direction);
+            if (dest > 24 || dest < 0) return 0; // when bearing off to home
+            return dest;
+        }
+
         this.testMoveCounter = function(player, pipNumber, moves) {
             var startPip = this.getPip(pipNumber);
 
@@ -161,19 +173,35 @@ var Backgammon = {
                 return false;
             }
 
-            var opponent = (player == 0) ? 1 : 0;
-            var direction = (player == 0) ? -1 : 1;
-
             // case: there is a counter on the bar, and this is not it
             if ((pipNumber != Backgammon.CONSTANTS.BAR) && (this.getPip(Backgammon.CONSTANTS.BAR)[player] > 0)) {
                 console.info('must move counter off bar first');
                 return false;
             }
 
+            var destPipNumber = getDestinationPipNumber(player, pipNumber, moves);
+            if (destPipNumber == 0) {
+                // check all pieces are in home board
+                // REVIEW: this code is fiddly, should be extracted away somewhere
+                var p1 = 1, p2 = 18;
+                if (player == 0) {
+                    p1 += 6;
+                    p2 += 6;
+                }
+                for (var p = p1; p <= p2; p++) {
+                    if (_boardData.getCounters(p, player) > 0) {
+                        return false;
+                    }
+                }
+                console.log('return ing true');
+                return true;
+            }
+
+            var opponent = (player == 0) ? 1 : 0;
+            var destPip = this.getPip(destPipNumber);
+
             // case: there is a counter, but opponent blocks the end pip
-            var endPipNumber = (pipNumber + (moves*direction)) % 25; // mod26 is a hack for black coming off the bar. will probably refactor out later.
-            var endPip = this.getPip(endPipNumber);
-            if (endPip[opponent] >= 2) {
+            if (destPip[opponent] >= 2) {
                 console.info('pip is blocked');
                 return false;
             }
@@ -190,18 +218,17 @@ var Backgammon = {
             var startPip = this.getPip(pipNumber);
 
             var opponent = (player == 0) ? 1 : 0;
-            var direction = (player == 0) ? -1 : 1;
 
-            var endPipNumber = (pipNumber + (moves*direction)) % 25; // mod26 is a hack for black coming off the bar. will probably refactor out later.
+            var destPipNumber = getDestinationPipNumber(player, pipNumber, moves);
 
-            var endPip = this.getPip(endPipNumber);
-            if (endPip[opponent] == 1) {
-                this.removeCounterFromPip(endPipNumber, opponent);
+            var destPip = this.getPip(destPipNumber);
+            if (destPip[opponent] == 1) {
+                this.removeCounterFromPip(destPipNumber, opponent);
                 this.addCounterToPip(Backgammon.CONSTANTS.BAR, opponent);
             }
 
             this.removeCounterFromPip(pipNumber, player);
-            this.addCounterToPip(endPipNumber, player);
+            this.addCounterToPip(destPipNumber, player);
 
             return true;
         }
