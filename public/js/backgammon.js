@@ -75,36 +75,36 @@ var Backgammon = {
                 .append($('<div id="red-home" class="pip home">'))
                 .append($('<br class="clear">'));
 
-            this.addCounterToPip(24, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(24, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(1, Backgammon.CONSTANTS.BLACK);
-            this.addCounterToPip(1, Backgammon.CONSTANTS.BLACK);
-            this.addCounterToPip(6, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(6, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(6, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(6, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(6, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
-            this.addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
-            this.addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
-            this.addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
-            this.addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
-            this.addCounterToPip(8, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(8, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(8, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(17, Backgammon.CONSTANTS.BLACK);
-            this.addCounterToPip(17, Backgammon.CONSTANTS.BLACK);
-            this.addCounterToPip(17, Backgammon.CONSTANTS.BLACK);
-            this.addCounterToPip(13, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(13, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(13, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(13, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(13, Backgammon.CONSTANTS.RED);
-            this.addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
-            this.addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
-            this.addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
-            this.addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
-            this.addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(24, Backgammon.CONSTANTS.RED);
+            addCounterToPip(24, Backgammon.CONSTANTS.RED);
+            addCounterToPip(1, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(1, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(6, Backgammon.CONSTANTS.RED);
+            addCounterToPip(6, Backgammon.CONSTANTS.RED);
+            addCounterToPip(6, Backgammon.CONSTANTS.RED);
+            addCounterToPip(6, Backgammon.CONSTANTS.RED);
+            addCounterToPip(6, Backgammon.CONSTANTS.RED);
+            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(8, Backgammon.CONSTANTS.RED);
+            addCounterToPip(8, Backgammon.CONSTANTS.RED);
+            addCounterToPip(8, Backgammon.CONSTANTS.RED);
+            addCounterToPip(17, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(17, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(17, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(13, Backgammon.CONSTANTS.RED);
+            addCounterToPip(13, Backgammon.CONSTANTS.RED);
+            addCounterToPip(13, Backgammon.CONSTANTS.RED);
+            addCounterToPip(13, Backgammon.CONSTANTS.RED);
+            addCounterToPip(13, Backgammon.CONSTANTS.RED);
+            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
         }
 
         function getPipDiv(pipNumber, player) {
@@ -121,7 +121,7 @@ var Backgammon = {
                 }
             }
         }
-        this.addCounterToPip = function(pipNumber, player) {
+        function addCounterToPip(pipNumber, player) {
             // todo: check for legal moves
                 
             var playerName = _playerNames[player];
@@ -136,7 +136,7 @@ var Backgammon = {
                 $pipDiv.append($('<div class="counter">').addClass(playerName));
             }
         }
-        this.removeCounterFromPip = function(pipNumber, player) {
+        function removeCounterFromPip(pipNumber, player) {
             // todo: check for legal moves
             
             var totalCounters = _boardData.decrement(pipNumber, player);
@@ -164,7 +164,7 @@ var Backgammon = {
             return dest;
         }
 
-        this.testMoveCounter = function(player, pipNumber, moves) {
+        this.isMoveLegal = function(player, pipNumber, moves) {
             var startPip = this.getPip(pipNumber);
 
             // case: there is no counter to move: fail
@@ -193,7 +193,6 @@ var Backgammon = {
                         return false;
                     }
                 }
-                console.log('return ing true');
                 return true;
             }
 
@@ -209,9 +208,9 @@ var Backgammon = {
             return true;
         }
 
-        this.moveCounter = function(player, pipNumber, moves) {
+        this.move = function(player, pipNumber, moves) {
             // check it's legal first
-            if (!this.testMoveCounter(player, pipNumber, moves)) {
+            if (!this.isMoveLegal(player, pipNumber, moves)) {
                 return false;
             }
 
@@ -223,12 +222,12 @@ var Backgammon = {
 
             var destPip = this.getPip(destPipNumber);
             if (destPip[opponent] == 1) {
-                this.removeCounterFromPip(destPipNumber, opponent);
-                this.addCounterToPip(Backgammon.CONSTANTS.BAR, opponent);
+                removeCounterFromPip(destPipNumber, opponent);
+                addCounterToPip(Backgammon.CONSTANTS.BAR, opponent);
             }
 
-            this.removeCounterFromPip(pipNumber, player);
-            this.addCounterToPip(destPipNumber, player);
+            removeCounterFromPip(pipNumber, player);
+            addCounterToPip(destPipNumber, player);
 
             return true;
         }
