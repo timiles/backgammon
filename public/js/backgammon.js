@@ -9,6 +9,15 @@ var Backgammon = {
         BLACK: 1
     }),
     
+    Dice: function() {
+        this.rollOne = function() {
+            return Math.floor(Math.random() * 6) + 1;
+        }
+        this.rollTwo = function() {
+            return [this.rollOne(), this.rollOne()];
+        }
+    },
+
     BoardData: function() {
         var _data = new Array(26);
         for (var i = 0; i < 26; i++) {
@@ -33,15 +42,12 @@ var Backgammon = {
         }
     },
 
-    Board: function(boardElementId) {
+    BoardGui: function(boardElementId) {
 
         var _playerNames = ["red", "black"];
-        var _boardData;
+        var $board = $('#' + boardElementId);
 
-        this.init = function() {
-            _boardData = new Backgammon.BoardData();
-
-            var $board = $('#' + boardElementId);
+        function init() {
             $board.empty();
             $board.addClass('board')
                 .append($('<div id="13" class="pip top-pip red-pip">'))
@@ -74,38 +80,8 @@ var Backgammon = {
                 .append($('<div id="1" class="pip bottom-pip red-pip">'))
                 .append($('<div id="red-home" class="pip home">'))
                 .append($('<br class="clear">'));
-
-            addCounterToPip(24, Backgammon.CONSTANTS.RED);
-            addCounterToPip(24, Backgammon.CONSTANTS.RED);
-            addCounterToPip(1, Backgammon.CONSTANTS.BLACK);
-            addCounterToPip(1, Backgammon.CONSTANTS.BLACK);
-            addCounterToPip(6, Backgammon.CONSTANTS.RED);
-            addCounterToPip(6, Backgammon.CONSTANTS.RED);
-            addCounterToPip(6, Backgammon.CONSTANTS.RED);
-            addCounterToPip(6, Backgammon.CONSTANTS.RED);
-            addCounterToPip(6, Backgammon.CONSTANTS.RED);
-            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
-            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
-            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
-            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
-            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
-            addCounterToPip(8, Backgammon.CONSTANTS.RED);
-            addCounterToPip(8, Backgammon.CONSTANTS.RED);
-            addCounterToPip(8, Backgammon.CONSTANTS.RED);
-            addCounterToPip(17, Backgammon.CONSTANTS.BLACK);
-            addCounterToPip(17, Backgammon.CONSTANTS.BLACK);
-            addCounterToPip(17, Backgammon.CONSTANTS.BLACK);
-            addCounterToPip(13, Backgammon.CONSTANTS.RED);
-            addCounterToPip(13, Backgammon.CONSTANTS.RED);
-            addCounterToPip(13, Backgammon.CONSTANTS.RED);
-            addCounterToPip(13, Backgammon.CONSTANTS.RED);
-            addCounterToPip(13, Backgammon.CONSTANTS.RED);
-            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
-            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
-            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
-            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
-            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
         }
+        init();
 
         function getPipDiv(pipNumber, player) {
             var playerName = _playerNames[player];
@@ -121,13 +97,19 @@ var Backgammon = {
                 }
             }
         }
-        function addCounterToPip(pipNumber, player) {
-            // todo: check for legal moves
-                
-            var playerName = _playerNames[player];
-            var totalCounters = _boardData.increment(pipNumber, player);
 
+        function getCounters($pipDiv) {
+            var totalCounters = parseInt($('.counter-total', $pipDiv).text());
+            if (isNaN(totalCounters)) {
+                 totalCounters = $('.counter', $pipDiv).length;
+            }
+            return totalCounters;
+        }
+
+        this.addCounter = function(pipNumber, player) {
+            var playerName = _playerNames[player];
             var $pipDiv = getPipDiv(pipNumber, player);
+            var totalCounters = getCounters($pipDiv) + 1;
             if (totalCounters > 5) {
                 $('.counter-total', $pipDiv).text(totalCounters);
             } else if (totalCounters == 5) {
@@ -136,12 +118,10 @@ var Backgammon = {
                 $pipDiv.append($('<div class="counter">').addClass(playerName));
             }
         }
-        function removeCounterFromPip(pipNumber, player) {
-            // todo: check for legal moves
-            
-            var totalCounters = _boardData.decrement(pipNumber, player);
-            
+        this.removeCounter = function(pipNumber, player) {
+
             var $pipDiv = getPipDiv(pipNumber, player);
+            var totalCounters = getCounters($pipDiv) - 1;
             if (totalCounters > 5) {
                 $('.counter-total', $pipDiv).text(totalCounters);
             } else if (totalCounters == 5) {
@@ -150,6 +130,62 @@ var Backgammon = {
             } else {
                 $('.counter', $pipDiv).first().remove();
             }
+        }
+    },
+
+    Board: function(boardElementId) {
+
+        var _boardData, _boardGui;
+        var _boardElementId = boardElementId;
+
+        function init() {
+            _boardData = new Backgammon.BoardData();
+            _boardGui = new Backgammon.BoardGui(_boardElementId);
+
+            addCounterToPip(24, Backgammon.CONSTANTS.RED);
+            addCounterToPip(24, Backgammon.CONSTANTS.RED);
+            addCounterToPip(1, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(1, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(6, Backgammon.CONSTANTS.RED);
+            addCounterToPip(6, Backgammon.CONSTANTS.RED);
+            addCounterToPip(6, Backgammon.CONSTANTS.RED);
+            addCounterToPip(6, Backgammon.CONSTANTS.RED);
+            addCounterToPip(6, Backgammon.CONSTANTS.RED);
+            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(19, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(8, Backgammon.CONSTANTS.RED);
+            addCounterToPip(8, Backgammon.CONSTANTS.RED);
+            addCounterToPip(8, Backgammon.CONSTANTS.RED);
+            addCounterToPip(17, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(17, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(17, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(13, Backgammon.CONSTANTS.RED);
+            addCounterToPip(13, Backgammon.CONSTANTS.RED);
+            addCounterToPip(13, Backgammon.CONSTANTS.RED);
+            addCounterToPip(13, Backgammon.CONSTANTS.RED);
+            addCounterToPip(13, Backgammon.CONSTANTS.RED);
+            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
+            addCounterToPip(12, Backgammon.CONSTANTS.BLACK);
+        }
+        init();
+
+        function addCounterToPip(pipNumber, player) {
+            // todo: check for legal moves
+                
+            _boardData.increment(pipNumber, player);
+            _boardGui.addCounter(pipNumber, player);
+        }
+        function removeCounterFromPip(pipNumber, player) {
+            // todo: check for legal moves
+            
+            _boardData.decrement(pipNumber, player);
+            _boardGui.removeCounter(pipNumber, player);
         }
 
         function getDestinationPipNumber(player, pipNumber, moves) {
@@ -236,8 +272,5 @@ var Backgammon = {
         this.getPip = function(pipNumber) {
             return [_boardData.getCounters(pipNumber, 0), _boardData.getCounters(pipNumber, 1)];
         }
-
-
-        this.init();
     }
 };
