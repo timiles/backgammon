@@ -46,18 +46,18 @@ class Board {
     private static createPip(pipNumber: Number, side: string, player: Player) {
         var pip = document.createElement('div');
         pip.id = pipNumber.toString();
-        pip.className = `pip ${side}-pip ${Player[player].toLocaleString().toLowerCase()}-pip`;
+        pip.className = `pip ${side}-pip ${Player[player]}-pip`;
         return pip;
     }
     private static createBar(player: Player) {
         var bar = document.createElement('div');
-        bar.id = Player[player].toLocaleString().toLowerCase() + '-bar';
+        bar.id = Player[player] + '-bar';
         bar.className = 'pip bar';
         return bar;
     }
     private static createHome(player: Player) {
         var bar = document.createElement('div');
-        bar.id = Player[player].toLocaleString().toLowerCase() + '-home';
+        bar.id = Player[player] + '-home';
         bar.className = 'pip home';
         return bar;
     }
@@ -68,13 +68,12 @@ class Board {
     }
     
     getPipDiv(pipNumber: Number, player: Player) {
-        var playerName = Player[player].toLocaleString().toLowerCase();
         switch (pipNumber) {
             case 0 : {
-                return document.getElementById(playerName + '-home');
+                return document.getElementById(Player[player] + '-home');
             }
             case 25: {
-                return document.getElementById(playerName + '-bar');
+                return document.getElementById(Player[player] + '-bar');
             }
             default: {
                 return document.getElementById(pipNumber.toString());
@@ -83,15 +82,14 @@ class Board {
     }
 
     setPipCounters(pipNumber: Number, numberOfCounters: Number, player: Player) {
-        var playerName = Player[player].toLocaleString().toLowerCase();
         var $pipDiv = $(this.getPipDiv(pipNumber, player));
         for (var i = 0; i < numberOfCounters; i++) {
             if (i > 5) {
                 $('.counter-total', $pipDiv).text(numberOfCounters);
             } else if (i == 5) {
-                $pipDiv.append($('<div class="counter counter-total">').addClass(playerName));
+                $pipDiv.append($('<div class="counter counter-total">').addClass(Player[player]));
             } else {
-                $pipDiv.append($('<div class="counter">').addClass(playerName));
+                $pipDiv.append($('<div class="counter">').addClass(Player[player]));
             }
         }
     }
