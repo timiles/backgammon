@@ -1,3 +1,4 @@
+declare var $;
 enum Player { BLACK, RED }
 
 class Board {
@@ -64,5 +65,34 @@ class Board {
         var br = document.createElement('br');
         br.className = 'clear';
         return br;
+    }
+    
+    getPipDiv(pipNumber: Number, player: Player) {
+        var playerName = Player[player].toLocaleString().toLowerCase();
+        switch (pipNumber) {
+            case 0 : {
+                return document.getElementById(playerName + '-home');
+            }
+            case 25: {
+                return document.getElementById(playerName + '-bar');
+            }
+            default: {
+                return document.getElementById(pipNumber.toString());
+            }
+        }
+    }
+
+    setPipCounters(pipNumber: Number, numberOfCounters: Number, player: Player) {
+        var playerName = Player[player].toLocaleString().toLowerCase();
+        var $pipDiv = $(this.getPipDiv(pipNumber, player));
+        for (var i = 0; i < numberOfCounters; i++) {
+            if (i > 5) {
+                $('.counter-total', $pipDiv).text(numberOfCounters);
+            } else if (i == 5) {
+                $pipDiv.append($('<div class="counter counter-total">').addClass(playerName));
+            } else {
+                $pipDiv.append($('<div class="counter">').addClass(playerName));
+            }
+        }
     }
 }

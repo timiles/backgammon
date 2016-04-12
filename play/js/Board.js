@@ -62,5 +62,34 @@ var Board = (function () {
         br.className = 'clear';
         return br;
     };
+    Board.prototype.getPipDiv = function (pipNumber, player) {
+        var playerName = Player[player].toLocaleString().toLowerCase();
+        switch (pipNumber) {
+            case 0: {
+                return document.getElementById(playerName + '-home');
+            }
+            case 25: {
+                return document.getElementById(playerName + '-bar');
+            }
+            default: {
+                return document.getElementById(pipNumber.toString());
+            }
+        }
+    };
+    Board.prototype.setPipCounters = function (pipNumber, numberOfCounters, player) {
+        var playerName = Player[player].toLocaleString().toLowerCase();
+        var $pipDiv = $(this.getPipDiv(pipNumber, player));
+        for (var i = 0; i < numberOfCounters; i++) {
+            if (i > 5) {
+                $('.counter-total', $pipDiv).text(numberOfCounters);
+            }
+            else if (i == 5) {
+                $pipDiv.append($('<div class="counter counter-total">').addClass(playerName));
+            }
+            else {
+                $pipDiv.append($('<div class="counter">').addClass(playerName));
+            }
+        }
+    };
     return Board;
 })();
