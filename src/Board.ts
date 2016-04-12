@@ -83,7 +83,7 @@ class Board {
 
     setPipCounters(pipNumber: Number, numberOfCounters: Number, player: Player) {
         var $pipDiv = $(this.getPipDiv(pipNumber, player));
-        for (var i = 0; i < numberOfCounters; i++) {
+        for (var i = 1; i <= numberOfCounters; i++) {
             if (i > 5) {
                 $('.counter-total', $pipDiv).text(numberOfCounters);
             } else if (i == 5) {

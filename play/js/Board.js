@@ -77,7 +77,7 @@ var Board = (function () {
     };
     Board.prototype.setPipCounters = function (pipNumber, numberOfCounters, player) {
         var $pipDiv = $(this.getPipDiv(pipNumber, player));
-        for (var i = 0; i < numberOfCounters; i++) {
+        for (var i = 1; i <= numberOfCounters; i++) {
             if (i > 5) {
                 $('.counter-total', $pipDiv).text(numberOfCounters);
             }
