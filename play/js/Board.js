@@ -1,58 +1,58 @@
 var Board = (function () {
-    function Board(document, boardElementId) {
+    function Board(boardElementId) {
         this.boardDiv = document.getElementById(boardElementId);
         // TODO: check board element is empty
         this.boardDiv.className = 'board';
-        this.boardDiv.appendChild(Board.createPip(document, 13, 'top', 'red'));
-        this.boardDiv.appendChild(Board.createPip(document, 14, 'top', 'black'));
-        this.boardDiv.appendChild(Board.createPip(document, 15, 'top', 'red'));
-        this.boardDiv.appendChild(Board.createPip(document, 16, 'top', 'black'));
-        this.boardDiv.appendChild(Board.createPip(document, 17, 'top', 'red'));
-        this.boardDiv.appendChild(Board.createPip(document, 18, 'top', 'black'));
-        this.boardDiv.appendChild(Board.createBar(document, 'black'));
-        this.boardDiv.appendChild(Board.createPip(document, 19, 'top', 'red'));
-        this.boardDiv.appendChild(Board.createPip(document, 20, 'top', 'black'));
-        this.boardDiv.appendChild(Board.createPip(document, 21, 'top', 'red'));
-        this.boardDiv.appendChild(Board.createPip(document, 22, 'top', 'black'));
-        this.boardDiv.appendChild(Board.createPip(document, 23, 'top', 'red'));
-        this.boardDiv.appendChild(Board.createPip(document, 24, 'top', 'black'));
-        this.boardDiv.appendChild(Board.createHome(document, 'black'));
-        this.boardDiv.appendChild(Board.createClearBreak(document));
-        this.boardDiv.appendChild(Board.createPip(document, 12, 'bottom', 'black'));
-        this.boardDiv.appendChild(Board.createPip(document, 11, 'bottom', 'red'));
-        this.boardDiv.appendChild(Board.createPip(document, 10, 'bottom', 'black'));
-        this.boardDiv.appendChild(Board.createPip(document, 9, 'bottom', 'red'));
-        this.boardDiv.appendChild(Board.createPip(document, 8, 'bottom', 'black'));
-        this.boardDiv.appendChild(Board.createPip(document, 7, 'bottom', 'red'));
-        this.boardDiv.appendChild(Board.createBar(document, 'red'));
-        this.boardDiv.appendChild(Board.createPip(document, 6, 'bottom', 'black'));
-        this.boardDiv.appendChild(Board.createPip(document, 5, 'bottom', 'red'));
-        this.boardDiv.appendChild(Board.createPip(document, 4, 'bottom', 'black'));
-        this.boardDiv.appendChild(Board.createPip(document, 3, 'bottom', 'red'));
-        this.boardDiv.appendChild(Board.createPip(document, 2, 'bottom', 'black'));
-        this.boardDiv.appendChild(Board.createPip(document, 1, 'bottom', 'red'));
-        this.boardDiv.appendChild(Board.createHome(document, 'red'));
-        this.boardDiv.appendChild(Board.createClearBreak(document));
+        this.boardDiv.appendChild(Board.createPip(13, 'top', 'red'));
+        this.boardDiv.appendChild(Board.createPip(14, 'top', 'black'));
+        this.boardDiv.appendChild(Board.createPip(15, 'top', 'red'));
+        this.boardDiv.appendChild(Board.createPip(16, 'top', 'black'));
+        this.boardDiv.appendChild(Board.createPip(17, 'top', 'red'));
+        this.boardDiv.appendChild(Board.createPip(18, 'top', 'black'));
+        this.boardDiv.appendChild(Board.createBar('black'));
+        this.boardDiv.appendChild(Board.createPip(19, 'top', 'red'));
+        this.boardDiv.appendChild(Board.createPip(20, 'top', 'black'));
+        this.boardDiv.appendChild(Board.createPip(21, 'top', 'red'));
+        this.boardDiv.appendChild(Board.createPip(22, 'top', 'black'));
+        this.boardDiv.appendChild(Board.createPip(23, 'top', 'red'));
+        this.boardDiv.appendChild(Board.createPip(24, 'top', 'black'));
+        this.boardDiv.appendChild(Board.createHome('black'));
+        this.boardDiv.appendChild(Board.createClearBreak());
+        this.boardDiv.appendChild(Board.createPip(12, 'bottom', 'black'));
+        this.boardDiv.appendChild(Board.createPip(11, 'bottom', 'red'));
+        this.boardDiv.appendChild(Board.createPip(10, 'bottom', 'black'));
+        this.boardDiv.appendChild(Board.createPip(9, 'bottom', 'red'));
+        this.boardDiv.appendChild(Board.createPip(8, 'bottom', 'black'));
+        this.boardDiv.appendChild(Board.createPip(7, 'bottom', 'red'));
+        this.boardDiv.appendChild(Board.createBar('red'));
+        this.boardDiv.appendChild(Board.createPip(6, 'bottom', 'black'));
+        this.boardDiv.appendChild(Board.createPip(5, 'bottom', 'red'));
+        this.boardDiv.appendChild(Board.createPip(4, 'bottom', 'black'));
+        this.boardDiv.appendChild(Board.createPip(3, 'bottom', 'red'));
+        this.boardDiv.appendChild(Board.createPip(2, 'bottom', 'black'));
+        this.boardDiv.appendChild(Board.createPip(1, 'bottom', 'red'));
+        this.boardDiv.appendChild(Board.createHome('red'));
+        this.boardDiv.appendChild(Board.createClearBreak());
     }
-    Board.createPip = function (document, pipNumber, side, colour) {
+    Board.createPip = function (pipNumber, side, colour) {
         var pip = document.createElement('div');
         pip.id = pipNumber.toString();
         pip.className = "pip " + side + "-pip " + colour + "-pip";
         return pip;
     };
-    Board.createBar = function (document, colour) {
+    Board.createBar = function (colour) {
         var bar = document.createElement('div');
         bar.id = colour + '-bar';
         bar.className = 'pip bar';
         return bar;
     };
-    Board.createHome = function (document, colour) {
+    Board.createHome = function (colour) {
         var bar = document.createElement('div');
         bar.id = colour + '-home';
         bar.className = 'pip home';
         return bar;
     };
-    Board.createClearBreak = function (document) {
+    Board.createClearBreak = function () {
         var br = document.createElement('br');
         br.className = 'clear';
         return br;
