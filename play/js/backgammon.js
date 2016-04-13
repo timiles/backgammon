@@ -1,3 +1,37 @@
+var BoardData = (function () {
+    function BoardData() {
+        this.data = new Array(26);
+        for (var i = 0; i < 26; i++) {
+            this.data[i] = [0, 0];
+        }
+        this.increment(24, Player.RED, 2);
+        this.increment(1, Player.BLACK, 2);
+        this.increment(6, Player.RED, 5);
+        this.increment(19, Player.BLACK, 5);
+        this.increment(8, Player.RED, 3);
+        this.increment(17, Player.BLACK, 3);
+        this.increment(13, Player.RED, 5);
+        this.increment(12, Player.BLACK, 5);
+    }
+    BoardData.getPipIndex = function (pipNumber, player) {
+        // special pips:
+        if ((pipNumber == 0) || (pipNumber == 25)) {
+            return pipNumber;
+        }
+        // otherwise invert board if we are black
+        return player == Player.RED ? pipNumber : 25 - pipNumber;
+    };
+    BoardData.prototype.increment = function (pipNumber, player, count) {
+        return (this.data[BoardData.getPipIndex(pipNumber, player)][player] += (count || 1));
+    };
+    BoardData.prototype.decrement = function (pipNumber, player) {
+        return --this.data[BoardData.getPipIndex(pipNumber, player)][player];
+    };
+    BoardData.prototype.getCounters = function (pipNumber, player) {
+        return this.data[BoardData.getPipIndex(pipNumber, player)][player];
+    };
+    return BoardData;
+})();
 var Player;
 (function (Player) {
     Player[Player["BLACK"] = 0] = "BLACK";
@@ -96,4 +130,49 @@ var BoardUI = (function () {
         }
     };
     return BoardUI;
+})();
+/// <reference path="BoardData.ts"/>
+/// <reference path="BoardUI.ts"/>
+var Board = (function () {
+    function Board(boardUI) {
+        this.boardData = new BoardData();
+        this.boardUI = boardUI;
+        this.boardUI.draw(this.boardData);
+    }
+    return Board;
+})();
+var DiceUI = (function () {
+    function DiceUI(diceContainerElementId) {
+        this.diceContainerDiv = document.getElementById(diceContainerElementId);
+    }
+    DiceUI.prototype.setDiceRolls = function (roll1, roll2) {
+        this.diceContainerDiv.innerText = roll1 + ", " + roll2;
+    };
+    return DiceUI;
+})();
+/// <reference path="DiceUI.ts"/>
+var Dice = (function () {
+    function Dice(diceUI) {
+        this.diceUI = diceUI;
+    }
+    Dice.generateDie = function () {
+        return Math.floor(Math.random() * 6) + 1;
+    };
+    Dice.prototype.roll = function () {
+        this.roll1 = Dice.generateDie();
+        this.roll2 = Dice.generateDie();
+        this.diceUI.setDiceRolls(this.roll1, this.roll2);
+    };
+    return Dice;
+})();
+/// <reference path="Board.ts"/>
+/// <reference path="Dice.ts"/>
+var Game = (function () {
+    function Game(board, dice) {
+        this.board = board;
+        this.dice = dice;
+        // TODO: roll to see who starts. Assume BLACK.
+        this.dice.roll();
+    }
+    return Game;
 })();

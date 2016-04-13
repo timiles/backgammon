@@ -5,11 +5,7 @@
     <title>Backgammon</title>
     <link rel="stylesheet" type="text/css" href="css/ui.css" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-    <script src="js/Board.js"></script>
-    <script src="js/BoardData.js"></script>
-    <script src="js/BoardUI.js"></script>
-    <script src="js/Dice.js"></script>
-    <script src="js/DiceUI.js"></script>
+    <script src="js/backgammon.js"></script>
     <style>
         BODY
         {
@@ -26,11 +22,12 @@
 
     <script>
         var boardUI = new BoardUI('board');
-        new Board(boardUI);
+        var board = new Board(boardUI);
         
         var diceUI = new DiceUI('dice');
         var dice = new Dice(diceUI);
-        dice.roll();
+        
+        new Game(board, dice);
     </script>
 </body>
 </html>
