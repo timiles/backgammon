@@ -43,7 +43,7 @@ class BoardUI {
         this.boardDiv.appendChild(BoardUI.createClearBreak());
     }
     
-    private static createPip(pipNumber: Number, side: string, player: Player) {
+    private static createPip(pipNumber: number, side: string, player: Player) {
         var pip = document.createElement('div');
         pip.id = pipNumber.toString();
         pip.className = `pip ${side}-pip ${Player[player]}-pip`;
@@ -67,7 +67,7 @@ class BoardUI {
         return br;
     }
     
-    getPipDiv(pipNumber: Number, player: Player) {
+    getPipDiv(pipNumber: number, player: Player) {
         switch (pipNumber) {
             case 0 : {
                 return document.getElementById(Player[player] + '-home');
@@ -81,7 +81,7 @@ class BoardUI {
         }
     }
 
-    setPipCounters(pipNumber: Number, numberOfCounters: Number, player: Player) {
+    setPipCounters(pipNumber: number, numberOfCounters: number, player: Player) {
         var $pipDiv = $(this.getPipDiv(pipNumber, player));
         for (var i = 1; i <= numberOfCounters; i++) {
             if (i > 5) {
