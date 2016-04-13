@@ -1,3 +1,5 @@
+/// <reference path="BoardData.ts"/>
+/// <reference path="BoardUI.ts"/>
 var Board = (function () {
     function Board(boardUI) {
         this.boardData = new BoardData();
