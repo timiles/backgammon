@@ -5,6 +5,8 @@
     <title>Backgammon</title>
     <link rel="stylesheet" type="text/css" href="css/ui.css" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="js/Board.js"></script>
+    <script src="js/BoardData.js"></script>
     <script src="js/BoardUI.js"></script>
     <style>
         BODY
@@ -20,15 +22,8 @@
     <div id="board"></div>
 
     <script>
-        var board = new BoardUI('board');
-        board.setPipCounters(24, 2, Player.RED);
-        board.setPipCounters(1, 2, Player.BLACK);
-        board.setPipCounters(6, 5, Player.RED);
-        board.setPipCounters(19, 5, Player.BLACK);
-        board.setPipCounters(8, 3, Player.RED);
-        board.setPipCounters(17, 3, Player.BLACK);
-        board.setPipCounters(13, 5, Player.RED);
-        board.setPipCounters(12, 5, Player.BLACK);
+        var ui = new BoardUI('board');
+        new Board(ui);
     </script>
 </body>
 </html>

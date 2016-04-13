@@ -89,5 +89,11 @@ var BoardUI = (function () {
             }
         }
     };
+    BoardUI.prototype.draw = function (boardData) {
+        for (var i = 0; i < 26; i++) {
+            this.setPipCounters(i, boardData.getCounters(i, Player.BLACK), Player.BLACK);
+            this.setPipCounters(i, boardData.getCounters(i, Player.RED), Player.RED);
+        }
+    };
     return BoardUI;
 })();
