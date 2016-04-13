@@ -44,25 +44,25 @@ class BoardUI {
     }
     
     private static createPip(pipNumber: number, side: string, player: Player) {
-        var pip = document.createElement('div');
+        let pip = document.createElement('div');
         pip.id = pipNumber.toString();
         pip.className = `pip ${side}-pip ${Player[player]}-pip`;
         return pip;
     }
     private static createBar(player: Player) {
-        var bar = document.createElement('div');
+        let bar = document.createElement('div');
         bar.id = Player[player] + '-bar';
         bar.className = 'pip bar';
         return bar;
     }
     private static createHome(player: Player) {
-        var bar = document.createElement('div');
+        let bar = document.createElement('div');
         bar.id = Player[player] + '-home';
         bar.className = 'pip home';
         return bar;
     }
     private static createClearBreak() {
-        var br = document.createElement('br');
+        let br = document.createElement('br');
         br.className = 'clear';
         return br;
     }
@@ -82,8 +82,8 @@ class BoardUI {
     }
 
     setPipCounters(pipNumber: number, numberOfCounters: number, player: Player) {
-        var $pipDiv = $(this.getPipDiv(pipNumber, player));
-        for (var i = 1; i <= numberOfCounters; i++) {
+        let $pipDiv = $(this.getPipDiv(pipNumber, player));
+        for (let i = 1; i <= numberOfCounters; i++) {
             if (i > 5) {
                 $('.counter-total', $pipDiv).text(numberOfCounters);
             } else if (i == 5) {
@@ -95,7 +95,7 @@ class BoardUI {
     }
     
     draw(boardData: BoardData) {
-        for (var i = 0; i < 26; i++){
+        for (let i = 0; i < 26; i++){
             this.setPipCounters(i, boardData.getCounters(i, Player.BLACK), Player.BLACK);
             this.setPipCounters(i, boardData.getCounters(i, Player.RED), Player.RED);
         }

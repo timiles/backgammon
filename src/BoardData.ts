@@ -3,7 +3,7 @@ class BoardData {
     data: Array<Array<number>>;
     constructor() {
         this.data = new Array(26);    
-        for (var i = 0; i < 26; i++) {
+        for (let i = 0; i < 26; i++) {
             this.data[i] = [0, 0];
         }
         

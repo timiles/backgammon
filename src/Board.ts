@@ -7,6 +7,5 @@ class Board {
 
         this.boardUI = boardUI;
         this.boardUI.draw(this.boardData);
-    }   
-    
+    }
 }
