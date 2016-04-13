@@ -8,6 +8,8 @@
     <script src="js/Board.js"></script>
     <script src="js/BoardData.js"></script>
     <script src="js/BoardUI.js"></script>
+    <script src="js/Dice.js"></script>
+    <script src="js/DiceUI.js"></script>
     <style>
         BODY
         {
@@ -20,10 +22,15 @@
         Backgammon</h1>
 
     <div id="board"></div>
+    <div id="dice"></div>
 
     <script>
-        var ui = new BoardUI('board');
-        new Board(ui);
+        var boardUI = new BoardUI('board');
+        new Board(boardUI);
+        
+        var diceUI = new DiceUI('dice');
+        var dice = new Dice(diceUI);
+        dice.roll();
     </script>
 </body>
 </html>
