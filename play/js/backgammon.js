@@ -29,75 +29,41 @@ var PointUI = (function () {
     return PointUI;
 })();
 /// <reference path="PointUI.ts"/>
-var Point = (function () {
-    function Point(pointId) {
-        this.pointId = pointId;
-        this.checkers = [0, 0];
-        this.pointUI = new PointUI(pointId);
-    }
-    Point.prototype.increment = function (player, count) {
-        this.checkers[player] += count;
-        this.pointUI.setCheckers(player, this.checkers[player]);
-    };
-    return Point;
-})();
-/// <reference path="Point.ts"/>
-var BoardData = (function () {
-    function BoardData() {
-        this.data = new Array(26);
-        for (var i = 0; i < 26; i++) {
-            this.data[i] = new Point(i);
-        }
-        this.increment(24, Player.RED, 2);
-        this.increment(1, Player.BLACK, 2);
-        this.increment(6, Player.RED, 5);
-        this.increment(19, Player.BLACK, 5);
-        this.increment(8, Player.RED, 3);
-        this.increment(17, Player.BLACK, 3);
-        this.increment(13, Player.RED, 5);
-        this.increment(12, Player.BLACK, 5);
-    }
-    BoardData.prototype.increment = function (pointId, player, count) {
-        this.data[pointId].increment(player, count || 1);
-    };
-    return BoardData;
-})();
-/// <reference path="PointUI.ts"/>
 var BoardUI = (function () {
     function BoardUI(boardElementId) {
         this.boardDiv = document.getElementById(boardElementId);
         // TODO: check board element is empty
         this.boardDiv.className = 'board';
     }
-    BoardUI.prototype.initialise = function (boardData) {
-        this.boardDiv.appendChild(boardData.data[13].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[14].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[15].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[16].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[17].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[18].pointUI.pointDiv);
+    BoardUI.prototype.initialise = function (pointUIs) {
+        this.boardDiv.appendChild(pointUIs[13].pointDiv);
+        this.boardDiv.appendChild(pointUIs[14].pointDiv);
+        this.boardDiv.appendChild(pointUIs[15].pointDiv);
+        this.boardDiv.appendChild(pointUIs[16].pointDiv);
+        this.boardDiv.appendChild(pointUIs[17].pointDiv);
+        this.boardDiv.appendChild(pointUIs[18].pointDiv);
         this.boardDiv.appendChild(BoardUI.createBar(Player.BLACK));
-        this.boardDiv.appendChild(boardData.data[19].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[20].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[21].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[22].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[23].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[24].pointUI.pointDiv);
+        this.boardDiv.appendChild(pointUIs[19].pointDiv);
+        this.boardDiv.appendChild(pointUIs[20].pointDiv);
+        this.boardDiv.appendChild(pointUIs[21].pointDiv);
+        this.boardDiv.appendChild(pointUIs[22].pointDiv);
+        this.boardDiv.appendChild(pointUIs[23].pointDiv);
+        this.boardDiv.appendChild(pointUIs[24].pointDiv);
         this.boardDiv.appendChild(BoardUI.createHome(Player.BLACK));
         this.boardDiv.appendChild(BoardUI.createClearBreak());
-        this.boardDiv.appendChild(boardData.data[12].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[11].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[10].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[9].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[8].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[7].pointUI.pointDiv);
+        this.boardDiv.appendChild(pointUIs[12].pointDiv);
+        this.boardDiv.appendChild(pointUIs[11].pointDiv);
+        this.boardDiv.appendChild(pointUIs[10].pointDiv);
+        this.boardDiv.appendChild(pointUIs[9].pointDiv);
+        this.boardDiv.appendChild(pointUIs[8].pointDiv);
+        this.boardDiv.appendChild(pointUIs[7].pointDiv);
         this.boardDiv.appendChild(BoardUI.createBar(Player.RED));
-        this.boardDiv.appendChild(boardData.data[6].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[5].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[4].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[3].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[2].pointUI.pointDiv);
-        this.boardDiv.appendChild(boardData.data[1].pointUI.pointDiv);
+        this.boardDiv.appendChild(pointUIs[6].pointDiv);
+        this.boardDiv.appendChild(pointUIs[5].pointDiv);
+        this.boardDiv.appendChild(pointUIs[4].pointDiv);
+        this.boardDiv.appendChild(pointUIs[3].pointDiv);
+        this.boardDiv.appendChild(pointUIs[2].pointDiv);
+        this.boardDiv.appendChild(pointUIs[1].pointDiv);
         this.boardDiv.appendChild(BoardUI.createHome(Player.RED));
         this.boardDiv.appendChild(BoardUI.createClearBreak());
     };
@@ -120,14 +86,41 @@ var BoardUI = (function () {
     };
     return BoardUI;
 })();
-/// <reference path="BoardData.ts"/>
+/// <reference path="PointUI.ts"/>
+var Point = (function () {
+    function Point(pointId) {
+        this.pointId = pointId;
+        this.checkers = [0, 0];
+        this.pointUI = new PointUI(pointId);
+    }
+    Point.prototype.increment = function (player, count) {
+        this.checkers[player] += count;
+        this.pointUI.setCheckers(player, this.checkers[player]);
+    };
+    return Point;
+})();
 /// <reference path="BoardUI.ts"/>
+/// <reference path="Point.ts"/>
 var Board = (function () {
     function Board(boardUI) {
-        this.boardData = new BoardData();
         this.boardUI = boardUI;
-        this.boardUI.initialise(this.boardData);
+        this.points = new Array(26);
+        for (var i = 0; i < 26; i++) {
+            this.points[i] = new Point(i);
+        }
+        this.increment(24, Player.RED, 2);
+        this.increment(1, Player.BLACK, 2);
+        this.increment(6, Player.RED, 5);
+        this.increment(19, Player.BLACK, 5);
+        this.increment(8, Player.RED, 3);
+        this.increment(17, Player.BLACK, 3);
+        this.increment(13, Player.RED, 5);
+        this.increment(12, Player.BLACK, 5);
+        this.boardUI.initialise(this.points.map(function (p) { return p.pointUI; }));
     }
+    Board.prototype.increment = function (pointId, player, count) {
+        this.points[pointId].increment(player, count || 1);
+    };
     return Board;
 })();
 var DiceUI = (function () {
