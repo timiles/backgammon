@@ -23,11 +23,11 @@ class PointUI {
         let $pointDiv = $(this.pointDiv);
         for (let i = 1; i <= count; i++) {
             if (i > 5) {
-                $('.counter-total', $pointDiv).text(count);
+                $('.checker-total', $pointDiv).text(count);
             } else if (i == 5) {
-                $pointDiv.append($('<div class="counter counter-total">').addClass(Player[player]));
+                $pointDiv.append($('<div class="checker checker-total">').addClass(Player[player]));
             } else {
-                $pointDiv.append($('<div class="counter">').addClass(Player[player]));
+                $pointDiv.append($('<div class="checker">').addClass(Player[player]));
             }
         }
     }
