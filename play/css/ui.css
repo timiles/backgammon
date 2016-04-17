@@ -27,7 +27,7 @@ DIV.black
     color: Red;
     font-weight: bold;
 }
-DIV.pip
+DIV.point
 {
     float: left;
     width: 20px;
@@ -45,13 +45,13 @@ DIV.home
     padding-left: 2px;
     padding-right: 2px;
 }
-DIV.bottom-pip
+DIV.bottom-point
 {
     -moz-transform:rotate(180deg);
     -webkit-transform:rotate(180deg);
     -ms-transform:rotate(180deg);
 }
-DIV.top-pip
+DIV.top-point
 {
     /*
     border-left: 10px solid transparent;
@@ -59,13 +59,13 @@ DIV.top-pip
     border-top: 100px solid;
     */
 }
-DIV.red-pip
+DIV.red-point
 {
     background: #F99;
     border-top-color: #F99;
     border-bottom-color: #F99;
 }
-DIV.black-pip
+DIV.black-point
 {
     background: #999;
     border-top-color: #999;

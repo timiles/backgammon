@@ -32,58 +32,71 @@ var BoardData = (function () {
     };
     return BoardData;
 })();
+var Side;
+(function (Side) {
+    Side[Side["TOP"] = 0] = "TOP";
+    Side[Side["BOTTOM"] = 1] = "BOTTOM";
+})(Side || (Side = {}));
+var PointUI = (function () {
+    function PointUI(pointId, side) {
+        this.pointDiv = document.createElement('div');
+        this.pointDiv.id = 'point' + pointId.toString();
+        var colour = (pointId % 2 == 0) ? 'black' : 'red';
+        this.pointDiv.className = "point " + Side[side] + "-point " + colour + "-point";
+    }
+    return PointUI;
+})();
+/// <reference path="PointUI.ts"/>
 var BoardUI = (function () {
     function BoardUI(boardElementId) {
         this.boardDiv = document.getElementById(boardElementId);
         // TODO: check board element is empty
         this.boardDiv.className = 'board';
-        this.boardDiv.appendChild(BoardUI.createPip(13, 'top', Player.RED));
-        this.boardDiv.appendChild(BoardUI.createPip(14, 'top', Player.BLACK));
-        this.boardDiv.appendChild(BoardUI.createPip(15, 'top', Player.RED));
-        this.boardDiv.appendChild(BoardUI.createPip(16, 'top', Player.BLACK));
-        this.boardDiv.appendChild(BoardUI.createPip(17, 'top', Player.RED));
-        this.boardDiv.appendChild(BoardUI.createPip(18, 'top', Player.BLACK));
+        this.boardDiv.appendChild(BoardUI.createPip(13, Side.TOP));
+        this.boardDiv.appendChild(BoardUI.createPip(14, Side.TOP));
+        this.boardDiv.appendChild(BoardUI.createPip(15, Side.TOP));
+        this.boardDiv.appendChild(BoardUI.createPip(16, Side.TOP));
+        this.boardDiv.appendChild(BoardUI.createPip(17, Side.TOP));
+        this.boardDiv.appendChild(BoardUI.createPip(18, Side.TOP));
         this.boardDiv.appendChild(BoardUI.createBar(Player.BLACK));
-        this.boardDiv.appendChild(BoardUI.createPip(19, 'top', Player.RED));
-        this.boardDiv.appendChild(BoardUI.createPip(20, 'top', Player.BLACK));
-        this.boardDiv.appendChild(BoardUI.createPip(21, 'top', Player.RED));
-        this.boardDiv.appendChild(BoardUI.createPip(22, 'top', Player.BLACK));
-        this.boardDiv.appendChild(BoardUI.createPip(23, 'top', Player.RED));
-        this.boardDiv.appendChild(BoardUI.createPip(24, 'top', Player.BLACK));
+        this.boardDiv.appendChild(BoardUI.createPip(19, Side.TOP));
+        this.boardDiv.appendChild(BoardUI.createPip(20, Side.TOP));
+        this.boardDiv.appendChild(BoardUI.createPip(21, Side.TOP));
+        this.boardDiv.appendChild(BoardUI.createPip(22, Side.TOP));
+        this.boardDiv.appendChild(BoardUI.createPip(23, Side.TOP));
+        this.boardDiv.appendChild(BoardUI.createPip(24, Side.TOP));
         this.boardDiv.appendChild(BoardUI.createHome(Player.BLACK));
         this.boardDiv.appendChild(BoardUI.createClearBreak());
-        this.boardDiv.appendChild(BoardUI.createPip(12, 'bottom', Player.BLACK));
-        this.boardDiv.appendChild(BoardUI.createPip(11, 'bottom', Player.RED));
-        this.boardDiv.appendChild(BoardUI.createPip(10, 'bottom', Player.BLACK));
-        this.boardDiv.appendChild(BoardUI.createPip(9, 'bottom', Player.RED));
-        this.boardDiv.appendChild(BoardUI.createPip(8, 'bottom', Player.BLACK));
-        this.boardDiv.appendChild(BoardUI.createPip(7, 'bottom', Player.RED));
+        this.boardDiv.appendChild(BoardUI.createPip(12, Side.BOTTOM));
+        this.boardDiv.appendChild(BoardUI.createPip(11, Side.BOTTOM));
+        this.boardDiv.appendChild(BoardUI.createPip(10, Side.BOTTOM));
+        this.boardDiv.appendChild(BoardUI.createPip(9, Side.BOTTOM));
+        this.boardDiv.appendChild(BoardUI.createPip(8, Side.BOTTOM));
+        this.boardDiv.appendChild(BoardUI.createPip(7, Side.BOTTOM));
         this.boardDiv.appendChild(BoardUI.createBar(Player.RED));
-        this.boardDiv.appendChild(BoardUI.createPip(6, 'bottom', Player.BLACK));
-        this.boardDiv.appendChild(BoardUI.createPip(5, 'bottom', Player.RED));
-        this.boardDiv.appendChild(BoardUI.createPip(4, 'bottom', Player.BLACK));
-        this.boardDiv.appendChild(BoardUI.createPip(3, 'bottom', Player.RED));
-        this.boardDiv.appendChild(BoardUI.createPip(2, 'bottom', Player.BLACK));
-        this.boardDiv.appendChild(BoardUI.createPip(1, 'bottom', Player.RED));
+        this.boardDiv.appendChild(BoardUI.createPip(6, Side.BOTTOM));
+        this.boardDiv.appendChild(BoardUI.createPip(5, Side.BOTTOM));
+        this.boardDiv.appendChild(BoardUI.createPip(4, Side.BOTTOM));
+        this.boardDiv.appendChild(BoardUI.createPip(3, Side.BOTTOM));
+        this.boardDiv.appendChild(BoardUI.createPip(2, Side.BOTTOM));
+        this.boardDiv.appendChild(BoardUI.createPip(1, Side.BOTTOM));
         this.boardDiv.appendChild(BoardUI.createHome(Player.RED));
         this.boardDiv.appendChild(BoardUI.createClearBreak());
     }
-    BoardUI.createPip = function (pipNumber, side, player) {
-        var pip = document.createElement('div');
-        pip.id = pipNumber.toString();
-        pip.className = "pip " + side + "-pip " + Player[player] + "-pip";
-        return pip;
+    BoardUI.createPip = function (pipNumber, side) {
+        var point = new PointUI(pipNumber, side);
+        return point.pointDiv;
     };
     BoardUI.createBar = function (player) {
         var bar = document.createElement('div');
         bar.id = Player[player] + '-bar';
-        bar.className = 'pip bar';
+        bar.className = 'point bar';
         return bar;
     };
     BoardUI.createHome = function (player) {
         var bar = document.createElement('div');
         bar.id = Player[player] + '-home';
-        bar.className = 'pip home';
+        bar.className = 'point home';
         return bar;
     };
     BoardUI.createClearBreak = function () {
@@ -100,7 +113,7 @@ var BoardUI = (function () {
                 return document.getElementById(Player[player] + '-bar');
             }
             default: {
-                return document.getElementById(pipNumber.toString());
+                return document.getElementById('point' + pipNumber.toString());
             }
         }
     };
