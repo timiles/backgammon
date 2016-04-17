@@ -174,10 +174,10 @@ var Player;
     Player[Player["RED"] = 1] = "RED";
 })(Player || (Player = {}));
 var Game = (function () {
-    function Game(board, dice, statusLogger) {
-        this.board = board;
-        this.dice = dice;
-        this.statusLogger = statusLogger;
+    function Game(boardElementId, diceElementId, statusElementId) {
+        this.board = new Board(new BoardUI(boardElementId));
+        this.dice = new Dice(new DiceUI(diceElementId));
+        this.statusLogger = new StatusLogger(new StatusUI(statusElementId));
         // TODO: roll to see who starts. Assume BLACK.
         this.statusLogger.logInfo('BLACK to move');
         this.dice.roll();

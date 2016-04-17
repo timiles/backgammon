@@ -23,17 +23,8 @@
     <div id="board"></div>
     <div id="dice"></div>
 
-    <script>
-        var boardUI = new BoardUI('board');
-        var board = new Board(boardUI);
-        
-        var diceUI = new DiceUI('dice');
-        var dice = new Dice(diceUI);
-        
-        var statusUI = new StatusUI('status');
-        var statusLogger = new StatusLogger(statusUI);
-        
-        new Game(board, dice, statusLogger);
+    <script>        
+        new Game('board', 'dice', 'status');
     </script>
 </body>
 </html>
