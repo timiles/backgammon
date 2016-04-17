@@ -1,7 +1,6 @@
 var PointUI = (function () {
     function PointUI(pointId) {
         this.pointDiv = document.createElement('div');
-        this.pointDiv.id = 'point' + pointId.toString();
         var side = (pointId < 13 ? 'bottom' : 'top');
         var colour = (pointId % 2 == 0) ? 'black' : 'red';
         this.pointDiv.className = "point " + side + "-point " + colour + "-point";
