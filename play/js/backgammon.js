@@ -1,8 +1,52 @@
+var PointUI = (function () {
+    function PointUI(pointId) {
+        this.pointDiv = document.createElement('div');
+        this.pointDiv.id = 'point' + pointId.toString();
+        var side = (pointId < 13 ? 'bottom' : 'top');
+        var colour = (pointId % 2 == 0) ? 'black' : 'red';
+        this.pointDiv.className = "point " + side + "-point " + colour + "-point";
+    }
+    PointUI.prototype.clearCheckers = function () {
+        for (var i = 0; i < this.pointDiv.childNodes.length; i++) {
+            this.pointDiv.removeChild(this.pointDiv.childNodes[i]);
+        }
+    };
+    PointUI.prototype.setCheckers = function (player, count) {
+        this.clearCheckers();
+        var $pointDiv = $(this.pointDiv);
+        for (var i = 1; i <= count; i++) {
+            if (i > 5) {
+                $('.counter-total', $pointDiv).text(count);
+            }
+            else if (i == 5) {
+                $pointDiv.append($('<div class="counter counter-total">').addClass(Player[player]));
+            }
+            else {
+                $pointDiv.append($('<div class="counter">').addClass(Player[player]));
+            }
+        }
+    };
+    return PointUI;
+})();
+/// <reference path="PointUI.ts"/>
+var Point = (function () {
+    function Point(pointId) {
+        this.pointId = pointId;
+        this.checkers = [0, 0];
+        this.pointUI = new PointUI(pointId);
+    }
+    Point.prototype.increment = function (player, count) {
+        this.checkers[player] += count;
+        this.pointUI.setCheckers(player, this.checkers[player]);
+    };
+    return Point;
+})();
+/// <reference path="Point.ts"/>
 var BoardData = (function () {
     function BoardData() {
         this.data = new Array(26);
         for (var i = 0; i < 26; i++) {
-            this.data[i] = [0, 0];
+            this.data[i] = new Point(i);
         }
         this.increment(24, Player.RED, 2);
         this.increment(1, Player.BLACK, 2);
@@ -13,34 +57,10 @@ var BoardData = (function () {
         this.increment(13, Player.RED, 5);
         this.increment(12, Player.BLACK, 5);
     }
-    BoardData.getPipIndex = function (pipNumber, player) {
-        // special pips:
-        if ((pipNumber == 0) || (pipNumber == 25)) {
-            return pipNumber;
-        }
-        // otherwise invert board if we are black
-        return player == Player.RED ? pipNumber : 25 - pipNumber;
-    };
-    BoardData.prototype.increment = function (pipNumber, player, count) {
-        return (this.data[BoardData.getPipIndex(pipNumber, player)][player] += (count || 1));
-    };
-    BoardData.prototype.decrement = function (pipNumber, player) {
-        return --this.data[BoardData.getPipIndex(pipNumber, player)][player];
-    };
-    BoardData.prototype.getCounters = function (pipNumber, player) {
-        return this.data[BoardData.getPipIndex(pipNumber, player)][player];
+    BoardData.prototype.increment = function (pointId, player, count) {
+        this.data[pointId].increment(player, count || 1);
     };
     return BoardData;
-})();
-var PointUI = (function () {
-    function PointUI(pointId) {
-        this.pointDiv = document.createElement('div');
-        this.pointDiv.id = 'point' + pointId.toString();
-        var side = (pointId < 13 ? 'bottom' : 'top');
-        var colour = (pointId % 2 == 0) ? 'black' : 'red';
-        this.pointDiv.className = "point " + side + "-point " + colour + "-point";
-    }
-    return PointUI;
 })();
 /// <reference path="PointUI.ts"/>
 var BoardUI = (function () {
@@ -48,40 +68,38 @@ var BoardUI = (function () {
         this.boardDiv = document.getElementById(boardElementId);
         // TODO: check board element is empty
         this.boardDiv.className = 'board';
-        this.boardDiv.appendChild(BoardUI.createPip(13));
-        this.boardDiv.appendChild(BoardUI.createPip(14));
-        this.boardDiv.appendChild(BoardUI.createPip(15));
-        this.boardDiv.appendChild(BoardUI.createPip(16));
-        this.boardDiv.appendChild(BoardUI.createPip(17));
-        this.boardDiv.appendChild(BoardUI.createPip(18));
+    }
+    BoardUI.prototype.initialise = function (boardData) {
+        this.boardDiv.appendChild(boardData.data[13].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[14].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[15].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[16].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[17].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[18].pointUI.pointDiv);
         this.boardDiv.appendChild(BoardUI.createBar(Player.BLACK));
-        this.boardDiv.appendChild(BoardUI.createPip(19));
-        this.boardDiv.appendChild(BoardUI.createPip(20));
-        this.boardDiv.appendChild(BoardUI.createPip(21));
-        this.boardDiv.appendChild(BoardUI.createPip(22));
-        this.boardDiv.appendChild(BoardUI.createPip(23));
-        this.boardDiv.appendChild(BoardUI.createPip(24));
+        this.boardDiv.appendChild(boardData.data[19].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[20].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[21].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[22].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[23].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[24].pointUI.pointDiv);
         this.boardDiv.appendChild(BoardUI.createHome(Player.BLACK));
         this.boardDiv.appendChild(BoardUI.createClearBreak());
-        this.boardDiv.appendChild(BoardUI.createPip(12));
-        this.boardDiv.appendChild(BoardUI.createPip(11));
-        this.boardDiv.appendChild(BoardUI.createPip(10));
-        this.boardDiv.appendChild(BoardUI.createPip(9));
-        this.boardDiv.appendChild(BoardUI.createPip(8));
-        this.boardDiv.appendChild(BoardUI.createPip(7));
+        this.boardDiv.appendChild(boardData.data[12].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[11].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[10].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[9].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[8].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[7].pointUI.pointDiv);
         this.boardDiv.appendChild(BoardUI.createBar(Player.RED));
-        this.boardDiv.appendChild(BoardUI.createPip(6));
-        this.boardDiv.appendChild(BoardUI.createPip(5));
-        this.boardDiv.appendChild(BoardUI.createPip(4));
-        this.boardDiv.appendChild(BoardUI.createPip(3));
-        this.boardDiv.appendChild(BoardUI.createPip(2));
-        this.boardDiv.appendChild(BoardUI.createPip(1));
+        this.boardDiv.appendChild(boardData.data[6].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[5].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[4].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[3].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[2].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[1].pointUI.pointDiv);
         this.boardDiv.appendChild(BoardUI.createHome(Player.RED));
         this.boardDiv.appendChild(BoardUI.createClearBreak());
-    }
-    BoardUI.createPip = function (pipNumber) {
-        var point = new PointUI(pipNumber);
-        return point.pointDiv;
     };
     BoardUI.createBar = function (player) {
         var bar = document.createElement('div');
@@ -100,39 +118,6 @@ var BoardUI = (function () {
         br.className = 'clear';
         return br;
     };
-    BoardUI.prototype.getPipDiv = function (pipNumber, player) {
-        switch (pipNumber) {
-            case 0: {
-                return document.getElementById(Player[player] + '-home');
-            }
-            case 25: {
-                return document.getElementById(Player[player] + '-bar');
-            }
-            default: {
-                return document.getElementById('point' + pipNumber.toString());
-            }
-        }
-    };
-    BoardUI.prototype.setPipCounters = function (pipNumber, numberOfCounters, player) {
-        var $pipDiv = $(this.getPipDiv(pipNumber, player));
-        for (var i = 1; i <= numberOfCounters; i++) {
-            if (i > 5) {
-                $('.counter-total', $pipDiv).text(numberOfCounters);
-            }
-            else if (i == 5) {
-                $pipDiv.append($('<div class="counter counter-total">').addClass(Player[player]));
-            }
-            else {
-                $pipDiv.append($('<div class="counter">').addClass(Player[player]));
-            }
-        }
-    };
-    BoardUI.prototype.draw = function (boardData) {
-        for (var i = 0; i < 26; i++) {
-            this.setPipCounters(i, boardData.getCounters(i, Player.BLACK), Player.BLACK);
-            this.setPipCounters(i, boardData.getCounters(i, Player.RED), Player.RED);
-        }
-    };
     return BoardUI;
 })();
 /// <reference path="BoardData.ts"/>
@@ -141,7 +126,7 @@ var Board = (function () {
     function Board(boardUI) {
         this.boardData = new BoardData();
         this.boardUI = boardUI;
-        this.boardUI.draw(this.boardData);
+        this.boardUI.initialise(this.boardData);
     }
     return Board;
 })();

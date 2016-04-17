@@ -9,6 +9,6 @@ class Board {
         this.boardData = new BoardData();
 
         this.boardUI = boardUI;
-        this.boardUI.draw(this.boardData);
+        this.boardUI.initialise(this.boardData);
     }
 }

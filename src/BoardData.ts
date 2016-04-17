@@ -1,10 +1,12 @@
+/// <reference path="Point.ts"/>
+
 class BoardData {
 
-    data: Array<Array<number>>;
+    data: Array<Point>;
     constructor() {
         this.data = new Array(26);    
         for (let i = 0; i < 26; i++) {
-            this.data[i] = [0, 0];
+            this.data[i] = new Point(i);
         }
         
         this.increment(24, Player.RED, 2);
@@ -17,22 +19,7 @@ class BoardData {
         this.increment(12, Player.BLACK, 5);
     }
     
-    static getPipIndex(pipNumber: number, player: Player): number {
-        // special pips:
-        if ((pipNumber == 0) || (pipNumber == 25)) {
-            return pipNumber;
-        }
-        // otherwise invert board if we are black
-        return player == Player.RED ? pipNumber : 25 - pipNumber;
-    }
-    
-    increment(pipNumber: number, player: Player, count?: number): number {
-        return (this.data[BoardData.getPipIndex(pipNumber, player)][player] += (count || 1));
-    }
-    decrement(pipNumber: number, player: Player): number {
-        return --this.data[BoardData.getPipIndex(pipNumber, player)][player];
-    }
-    getCounters(pipNumber: number, player: Player): number {
-        return this.data[BoardData.getPipIndex(pipNumber, player)][player];
+    increment(pointId: number, player: Player, count?: number): void {
+        this.data[pointId].increment(player, count || 1);
     }
 }

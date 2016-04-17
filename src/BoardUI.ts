@@ -11,43 +11,41 @@ class BoardUI {
 
         // TODO: check board element is empty
         this.boardDiv.className = 'board';
-        
-        this.boardDiv.appendChild(BoardUI.createPip(13));
-        this.boardDiv.appendChild(BoardUI.createPip(14));
-        this.boardDiv.appendChild(BoardUI.createPip(15));
-        this.boardDiv.appendChild(BoardUI.createPip(16));
-        this.boardDiv.appendChild(BoardUI.createPip(17));
-        this.boardDiv.appendChild(BoardUI.createPip(18));
+    }
+    
+    initialise(boardData: BoardData): void {
+        this.boardDiv.appendChild(boardData.data[13].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[14].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[15].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[16].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[17].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[18].pointUI.pointDiv);
         this.boardDiv.appendChild(BoardUI.createBar(Player.BLACK));
-        this.boardDiv.appendChild(BoardUI.createPip(19));
-        this.boardDiv.appendChild(BoardUI.createPip(20));
-        this.boardDiv.appendChild(BoardUI.createPip(21));
-        this.boardDiv.appendChild(BoardUI.createPip(22));
-        this.boardDiv.appendChild(BoardUI.createPip(23));
-        this.boardDiv.appendChild(BoardUI.createPip(24));
+        this.boardDiv.appendChild(boardData.data[19].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[20].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[21].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[22].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[23].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[24].pointUI.pointDiv);
         this.boardDiv.appendChild(BoardUI.createHome(Player.BLACK));
         this.boardDiv.appendChild(BoardUI.createClearBreak());
-        this.boardDiv.appendChild(BoardUI.createPip(12));
-        this.boardDiv.appendChild(BoardUI.createPip(11));
-        this.boardDiv.appendChild(BoardUI.createPip(10));
-        this.boardDiv.appendChild(BoardUI.createPip(9));
-        this.boardDiv.appendChild(BoardUI.createPip(8));
-        this.boardDiv.appendChild(BoardUI.createPip(7));
+        this.boardDiv.appendChild(boardData.data[12].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[11].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[10].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[9].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[8].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[7].pointUI.pointDiv);
         this.boardDiv.appendChild(BoardUI.createBar(Player.RED));
-        this.boardDiv.appendChild(BoardUI.createPip(6));
-        this.boardDiv.appendChild(BoardUI.createPip(5));
-        this.boardDiv.appendChild(BoardUI.createPip(4));
-        this.boardDiv.appendChild(BoardUI.createPip(3));
-        this.boardDiv.appendChild(BoardUI.createPip(2));
-        this.boardDiv.appendChild(BoardUI.createPip(1));
+        this.boardDiv.appendChild(boardData.data[6].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[5].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[4].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[3].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[2].pointUI.pointDiv);
+        this.boardDiv.appendChild(boardData.data[1].pointUI.pointDiv);
         this.boardDiv.appendChild(BoardUI.createHome(Player.RED));
         this.boardDiv.appendChild(BoardUI.createClearBreak());
     }
     
-    private static createPip(pipNumber: number) {
-        let point = new PointUI(pipNumber);
-        return point.pointDiv;
-    }
     private static createBar(player: Player) {
         let bar = document.createElement('div');
         bar.id = Player[player] + '-bar';
@@ -64,39 +62,5 @@ class BoardUI {
         let br = document.createElement('br');
         br.className = 'clear';
         return br;
-    }
-    
-    getPipDiv(pipNumber: number, player: Player) {
-        switch (pipNumber) {
-            case 0 : {
-                return document.getElementById(Player[player] + '-home');
-            }
-            case 25: {
-                return document.getElementById(Player[player] + '-bar');
-            }
-            default: {
-                return document.getElementById('point' + pipNumber.toString());
-            }
-        }
-    }
-
-    setPipCounters(pipNumber: number, numberOfCounters: number, player: Player) {
-        let $pipDiv = $(this.getPipDiv(pipNumber, player));
-        for (let i = 1; i <= numberOfCounters; i++) {
-            if (i > 5) {
-                $('.counter-total', $pipDiv).text(numberOfCounters);
-            } else if (i == 5) {
-                $pipDiv.append($('<div class="counter counter-total">').addClass(Player[player]));
-            } else {
-                $pipDiv.append($('<div class="counter">').addClass(Player[player]));
-            }
-        }
-    }
-    
-    draw(boardData: BoardData) {
-        for (let i = 0; i < 26; i++){
-            this.setPipCounters(i, boardData.getCounters(i, Player.BLACK), Player.BLACK);
-            this.setPipCounters(i, boardData.getCounters(i, Player.RED), Player.RED);
-        }
     }
 }
