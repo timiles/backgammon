@@ -12,40 +12,40 @@ class BoardUI {
         // TODO: check board element is empty
         this.boardDiv.className = 'board';
         
-        this.boardDiv.appendChild(BoardUI.createPip(13, Side.TOP));
-        this.boardDiv.appendChild(BoardUI.createPip(14, Side.TOP));
-        this.boardDiv.appendChild(BoardUI.createPip(15, Side.TOP));
-        this.boardDiv.appendChild(BoardUI.createPip(16, Side.TOP));
-        this.boardDiv.appendChild(BoardUI.createPip(17, Side.TOP));
-        this.boardDiv.appendChild(BoardUI.createPip(18, Side.TOP));
+        this.boardDiv.appendChild(BoardUI.createPip(13));
+        this.boardDiv.appendChild(BoardUI.createPip(14));
+        this.boardDiv.appendChild(BoardUI.createPip(15));
+        this.boardDiv.appendChild(BoardUI.createPip(16));
+        this.boardDiv.appendChild(BoardUI.createPip(17));
+        this.boardDiv.appendChild(BoardUI.createPip(18));
         this.boardDiv.appendChild(BoardUI.createBar(Player.BLACK));
-        this.boardDiv.appendChild(BoardUI.createPip(19, Side.TOP));
-        this.boardDiv.appendChild(BoardUI.createPip(20, Side.TOP));
-        this.boardDiv.appendChild(BoardUI.createPip(21, Side.TOP));
-        this.boardDiv.appendChild(BoardUI.createPip(22, Side.TOP));
-        this.boardDiv.appendChild(BoardUI.createPip(23, Side.TOP));
-        this.boardDiv.appendChild(BoardUI.createPip(24, Side.TOP));
+        this.boardDiv.appendChild(BoardUI.createPip(19));
+        this.boardDiv.appendChild(BoardUI.createPip(20));
+        this.boardDiv.appendChild(BoardUI.createPip(21));
+        this.boardDiv.appendChild(BoardUI.createPip(22));
+        this.boardDiv.appendChild(BoardUI.createPip(23));
+        this.boardDiv.appendChild(BoardUI.createPip(24));
         this.boardDiv.appendChild(BoardUI.createHome(Player.BLACK));
         this.boardDiv.appendChild(BoardUI.createClearBreak());
-        this.boardDiv.appendChild(BoardUI.createPip(12, Side.BOTTOM));
-        this.boardDiv.appendChild(BoardUI.createPip(11, Side.BOTTOM));
-        this.boardDiv.appendChild(BoardUI.createPip(10, Side.BOTTOM));
-        this.boardDiv.appendChild(BoardUI.createPip(9, Side.BOTTOM));
-        this.boardDiv.appendChild(BoardUI.createPip(8, Side.BOTTOM));
-        this.boardDiv.appendChild(BoardUI.createPip(7, Side.BOTTOM));
+        this.boardDiv.appendChild(BoardUI.createPip(12));
+        this.boardDiv.appendChild(BoardUI.createPip(11));
+        this.boardDiv.appendChild(BoardUI.createPip(10));
+        this.boardDiv.appendChild(BoardUI.createPip(9));
+        this.boardDiv.appendChild(BoardUI.createPip(8));
+        this.boardDiv.appendChild(BoardUI.createPip(7));
         this.boardDiv.appendChild(BoardUI.createBar(Player.RED));
-        this.boardDiv.appendChild(BoardUI.createPip(6, Side.BOTTOM));
-        this.boardDiv.appendChild(BoardUI.createPip(5, Side.BOTTOM));
-        this.boardDiv.appendChild(BoardUI.createPip(4, Side.BOTTOM));
-        this.boardDiv.appendChild(BoardUI.createPip(3, Side.BOTTOM));
-        this.boardDiv.appendChild(BoardUI.createPip(2, Side.BOTTOM));
-        this.boardDiv.appendChild(BoardUI.createPip(1, Side.BOTTOM));
+        this.boardDiv.appendChild(BoardUI.createPip(6));
+        this.boardDiv.appendChild(BoardUI.createPip(5));
+        this.boardDiv.appendChild(BoardUI.createPip(4));
+        this.boardDiv.appendChild(BoardUI.createPip(3));
+        this.boardDiv.appendChild(BoardUI.createPip(2));
+        this.boardDiv.appendChild(BoardUI.createPip(1));
         this.boardDiv.appendChild(BoardUI.createHome(Player.RED));
         this.boardDiv.appendChild(BoardUI.createClearBreak());
     }
     
-    private static createPip(pipNumber: number, side: Side) {
-        let point = new PointUI(pipNumber, side);
+    private static createPip(pipNumber: number) {
+        let point = new PointUI(pipNumber);
         return point.pointDiv;
     }
     private static createBar(player: Player) {
