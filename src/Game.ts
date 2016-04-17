@@ -2,6 +2,8 @@
 /// <reference path="Dice.ts"/>
 /// <reference path="StatusLogger.ts"/>
 
+enum Player { BLACK, RED }
+
 class Game {
     
     board: Board;

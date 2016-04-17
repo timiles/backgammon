@@ -32,11 +32,6 @@ var BoardData = (function () {
     };
     return BoardData;
 })();
-var Player;
-(function (Player) {
-    Player[Player["BLACK"] = 0] = "BLACK";
-    Player[Player["RED"] = 1] = "RED";
-})(Player || (Player = {}));
 var BoardUI = (function () {
     function BoardUI(boardElementId) {
         this.boardDiv = document.getElementById(boardElementId);
@@ -187,6 +182,11 @@ var StatusLogger = (function () {
 /// <reference path="Board.ts"/>
 /// <reference path="Dice.ts"/>
 /// <reference path="StatusLogger.ts"/>
+var Player;
+(function (Player) {
+    Player[Player["BLACK"] = 0] = "BLACK";
+    Player[Player["RED"] = 1] = "RED";
+})(Player || (Player = {}));
 var Game = (function () {
     function Game(board, dice, statusLogger) {
         this.board = board;

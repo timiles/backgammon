@@ -1,5 +1,4 @@
 declare var $;
-enum Player { BLACK, RED }
 
 class BoardUI {
     
