@@ -17,6 +17,9 @@
     <h1>
         Backgammon</h1>
 
+    <div>
+        <span id="status"></span>
+    </div>
     <div id="board"></div>
     <div id="dice"></div>
 
@@ -27,7 +30,10 @@
         var diceUI = new DiceUI('dice');
         var dice = new Dice(diceUI);
         
-        new Game(board, dice);
+        var statusUI = new StatusUI('status');
+        var statusLogger = new StatusLogger(statusUI);
+        
+        new Game(board, dice, statusLogger);
     </script>
 </body>
 </html>

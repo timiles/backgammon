@@ -165,13 +165,35 @@ var Dice = (function () {
     };
     return Dice;
 })();
+var StatusUI = (function () {
+    function StatusUI(statusSpanElementId) {
+        this.statusSpan = document.getElementById(statusSpanElementId);
+    }
+    StatusUI.prototype.setStatus = function (s) {
+        this.statusSpan.innerText = s;
+    };
+    return StatusUI;
+})();
+/// <reference path="StatusUI.ts"/>
+var StatusLogger = (function () {
+    function StatusLogger(statusUI) {
+        this.statusUI = statusUI;
+    }
+    StatusLogger.prototype.logInfo = function (s) {
+        this.statusUI.setStatus(s);
+    };
+    return StatusLogger;
+})();
 /// <reference path="Board.ts"/>
 /// <reference path="Dice.ts"/>
+/// <reference path="StatusLogger.ts"/>
 var Game = (function () {
-    function Game(board, dice) {
+    function Game(board, dice, statusLogger) {
         this.board = board;
         this.dice = dice;
+        this.statusLogger = statusLogger;
         // TODO: roll to see who starts. Assume BLACK.
+        this.statusLogger.logInfo('BLACK to move');
         this.dice.roll();
     }
     return Game;
