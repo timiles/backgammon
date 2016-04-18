@@ -3,12 +3,15 @@ declare var $;
 class PointUI {
     
     pointDiv: HTMLDivElement;
-    constructor(pointId: number) {
+    
+    constructor(pointId: number, onSelected: (selected: boolean) => void) {
         this.pointDiv = document.createElement('div');
         
         let side = (pointId < 13 ? 'bottom' : 'top');
         let colour = (pointId % 2 == 0) ? 'black' : 'red'; 
         this.pointDiv.className = `point ${side}-point ${colour}-point`;
+        this.pointDiv.onmouseover = function() { onSelected(true); };
+        this.pointDiv.onmouseout = function() { onSelected(false); };
     }
     
     clearCheckers(): void {
@@ -29,6 +32,15 @@ class PointUI {
             } else {
                 $pointDiv.append($('<div class="checker">').addClass(Player[player]));
             }
+        }
+    }
+    
+    highlight(on: boolean): void {
+        if (on) {
+            $(this.pointDiv).addClass('highlight');
+        }
+        else {
+            $(this.pointDiv).removeClass('highlight');
         }
     }
 }

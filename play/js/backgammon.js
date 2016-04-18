@@ -1,9 +1,11 @@
 var PointUI = (function () {
-    function PointUI(pointId) {
+    function PointUI(pointId, onSelected) {
         this.pointDiv = document.createElement('div');
         var side = (pointId < 13 ? 'bottom' : 'top');
         var colour = (pointId % 2 == 0) ? 'black' : 'red';
         this.pointDiv.className = "point " + side + "-point " + colour + "-point";
+        this.pointDiv.onmouseover = function () { onSelected(true); };
+        this.pointDiv.onmouseout = function () { onSelected(false); };
     }
     PointUI.prototype.clearCheckers = function () {
         for (var i = 0; i < this.pointDiv.childNodes.length; i++) {
@@ -23,6 +25,14 @@ var PointUI = (function () {
             else {
                 $pointDiv.append($('<div class="checker">').addClass(Player[player]));
             }
+        }
+    };
+    PointUI.prototype.highlight = function (on) {
+        if (on) {
+            $(this.pointDiv).addClass('highlight');
+        }
+        else {
+            $(this.pointDiv).removeClass('highlight');
         }
     };
     return PointUI;
@@ -87,14 +97,18 @@ var BoardUI = (function () {
 })();
 /// <reference path="PointUI.ts"/>
 var Point = (function () {
-    function Point(pointId) {
+    function Point(pointId, onSelected) {
+        var self = this;
         this.pointId = pointId;
         this.checkers = [0, 0];
-        this.pointUI = new PointUI(pointId);
+        this.pointUI = new PointUI(pointId, function (selected) { onSelected(self, selected); });
     }
     Point.prototype.increment = function (player, count) {
         this.checkers[player] += count;
         this.pointUI.setCheckers(player, this.checkers[player]);
+    };
+    Point.prototype.highlight = function (on) {
+        this.pointUI.highlight(on);
     };
     return Point;
 })();
@@ -102,10 +116,16 @@ var Point = (function () {
 /// <reference path="Point.ts"/>
 var Board = (function () {
     function Board(boardUI) {
+        var _this = this;
         this.boardUI = boardUI;
+        var onPointSelected = function (point, selected) {
+            if (_this.onPointSelected) {
+                _this.onPointSelected(point, selected);
+            }
+        };
         this.points = new Array(26);
         for (var i = 0; i < 26; i++) {
-            this.points[i] = new Point(i);
+            this.points[i] = new Point(i, onPointSelected);
         }
         this.increment(24, Player.RED, 2);
         this.increment(1, Player.BLACK, 2);
@@ -119,6 +139,9 @@ var Board = (function () {
     }
     Board.prototype.increment = function (pointId, player, count) {
         this.points[pointId].increment(player, count || 1);
+    };
+    Board.prototype.highlightPoint = function (pointId, on) {
+        this.points[pointId].highlight(on);
     };
     return Board;
 })();
@@ -175,10 +198,20 @@ var Player;
 })(Player || (Player = {}));
 var Game = (function () {
     function Game(boardElementId, diceElementId, statusElementId) {
-        this.board = new Board(new BoardUI(boardElementId));
+        var self = this;
         this.dice = new Dice(new DiceUI(diceElementId));
+        this.board = new Board(new BoardUI(boardElementId));
+        this.board.onPointSelected = function (point, selected) {
+            if (point.checkers[self.currentPlayer] > 0) {
+                self.board.highlightPoint(point.pointId + self.dice.roll1, selected);
+                if (self.dice.roll2 !== self.dice.roll1) {
+                    self.board.highlightPoint(point.pointId + self.dice.roll2, selected);
+                }
+            }
+        };
         this.statusLogger = new StatusLogger(new StatusUI(statusElementId));
         // TODO: roll to see who starts. Assume BLACK.
+        this.currentPlayer = Player.BLACK;
         this.statusLogger.logInfo('BLACK to move');
         this.dice.roll();
     }
