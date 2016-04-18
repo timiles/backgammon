@@ -36,7 +36,13 @@ class Board {
         this.points[pointId].increment(player, count || 1);
     }
     
-    highlightPoint(pointId: number, on: boolean): void {
-        this.points[pointId].highlight(on);
+    highlightPointIfLegal(pointId: number, player: Player, on: boolean): boolean {
+        let point = this.points[pointId]; 
+        let otherPlayer = (player + 1) % 2;
+        if (point.checkers[otherPlayer] >= 2) {
+            return false;
+        }
+        point.highlight(on);
+        return true;
     }
 }

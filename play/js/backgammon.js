@@ -140,8 +140,14 @@ var Board = (function () {
     Board.prototype.increment = function (pointId, player, count) {
         this.points[pointId].increment(player, count || 1);
     };
-    Board.prototype.highlightPoint = function (pointId, on) {
-        this.points[pointId].highlight(on);
+    Board.prototype.highlightPointIfLegal = function (pointId, player, on) {
+        var point = this.points[pointId];
+        var otherPlayer = (player + 1) % 2;
+        if (point.checkers[otherPlayer] >= 2) {
+            return false;
+        }
+        point.highlight(on);
+        return true;
     };
     return Board;
 })();
@@ -203,9 +209,9 @@ var Game = (function () {
         this.board = new Board(new BoardUI(boardElementId));
         this.board.onPointSelected = function (point, selected) {
             if (point.checkers[self.currentPlayer] > 0) {
-                self.board.highlightPoint(point.pointId + self.dice.roll1, selected);
+                self.board.highlightPointIfLegal(point.pointId + self.dice.roll1, self.currentPlayer, selected);
                 if (self.dice.roll2 !== self.dice.roll1) {
-                    self.board.highlightPoint(point.pointId + self.dice.roll2, selected);
+                    self.board.highlightPointIfLegal(point.pointId + self.dice.roll2, self.currentPlayer, selected);
                 }
             }
         };

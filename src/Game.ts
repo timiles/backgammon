@@ -19,9 +19,9 @@ class Game {
         
         this.board.onPointSelected = (point: Point, selected: boolean) => {
             if (point.checkers[self.currentPlayer] > 0) {
-                self.board.highlightPoint(point.pointId + self.dice.roll1, selected);
+                self.board.highlightPointIfLegal(point.pointId + self.dice.roll1, self.currentPlayer, selected);
                 if (self.dice.roll2 !== self.dice.roll1) {
-                    self.board.highlightPoint(point.pointId + self.dice.roll2, selected);
+                    self.board.highlightPointIfLegal(point.pointId + self.dice.roll2, self.currentPlayer, selected);
                 }
             }
         };
