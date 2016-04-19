@@ -141,20 +141,20 @@ var Board = (function () {
         for (var i = 0; i < 26; i++) {
             this.points[i] = new Point(i, onPointInspected, onPointSelected);
         }
-        this.increment(24, Player.RED, 2);
-        this.increment(1, Player.BLACK, 2);
-        this.increment(6, Player.RED, 5);
-        this.increment(19, Player.BLACK, 5);
-        this.increment(8, Player.RED, 3);
-        this.increment(17, Player.BLACK, 3);
-        this.increment(13, Player.RED, 5);
-        this.increment(12, Player.BLACK, 5);
+        this.increment(Player.RED, 24, 2);
+        this.increment(Player.BLACK, 1, 2);
+        this.increment(Player.RED, 6, 5);
+        this.increment(Player.BLACK, 19, 5);
+        this.increment(Player.RED, 8, 3);
+        this.increment(Player.BLACK, 17, 3);
+        this.increment(Player.RED, 13, 5);
+        this.increment(Player.BLACK, 12, 5);
         this.boardUI.initialise(this.points.map(function (p) { return p.pointUI; }));
     }
-    Board.prototype.decrement = function (pointId, player) {
+    Board.prototype.decrement = function (player, pointId) {
         this.points[pointId].decrement(player);
     };
-    Board.prototype.increment = function (pointId, player, count) {
+    Board.prototype.increment = function (player, pointId, count) {
         this.points[pointId].increment(player, count || 1);
     };
     Board.prototype.isLegal = function (player, pointId) {
@@ -162,8 +162,8 @@ var Board = (function () {
         return this.points[pointId].checkers[otherPlayer] < 2;
     };
     Board.prototype.move = function (player, fromPointId, toPointId) {
-        this.decrement(fromPointId, player);
-        this.increment(toPointId, player);
+        this.decrement(player, fromPointId);
+        this.increment(player, toPointId);
     };
     Board.prototype.highlightPointIfLegal = function (pointId, player, on) {
         var point = this.points[pointId];

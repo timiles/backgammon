@@ -26,23 +26,23 @@ class Board {
             this.points[i] = new Point(i, onPointInspected, onPointSelected);
         }
         
-        this.increment(24, Player.RED, 2);
-        this.increment(1, Player.BLACK, 2);
-        this.increment(6, Player.RED, 5);
-        this.increment(19, Player.BLACK, 5);
-        this.increment(8, Player.RED, 3);
-        this.increment(17, Player.BLACK, 3);
-        this.increment(13, Player.RED, 5);
-        this.increment(12, Player.BLACK, 5);
+        this.increment(Player.RED, 24, 2);
+        this.increment(Player.BLACK, 1, 2);
+        this.increment(Player.RED, 6, 5);
+        this.increment(Player.BLACK, 19, 5);
+        this.increment(Player.RED, 8, 3);
+        this.increment(Player.BLACK, 17, 3);
+        this.increment(Player.RED, 13, 5);
+        this.increment(Player.BLACK, 12, 5);
     
         this.boardUI.initialise(this.points.map(function(p) { return p.pointUI; }));
     }
     
-    decrement(pointId: number, player: Player): void {
+    decrement(player: Player, pointId: number): void {
         this.points[pointId].decrement(player);
     }
         
-    increment(pointId: number, player: Player, count?: number): void {
+    increment(player: Player, pointId: number, count?: number): void {
         this.points[pointId].increment(player, count || 1);
     }
     
@@ -52,8 +52,8 @@ class Board {
     }
     
     move(player: Player, fromPointId: number, toPointId: number): void {
-        this.decrement(fromPointId, player);
-        this.increment(toPointId, player);
+        this.decrement(player, fromPointId);
+        this.increment(player, toPointId);
     }
     
     highlightPointIfLegal(pointId: number, player: Player, on: boolean): boolean {
