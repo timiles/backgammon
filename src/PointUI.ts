@@ -4,14 +4,14 @@ class PointUI {
     
     pointDiv: HTMLDivElement;
     
-    constructor(pointId: number, onSelected: (selected: boolean) => void) {
+    constructor(pointId: number, onInspected: (on: boolean) => void) {
         this.pointDiv = document.createElement('div');
         
         let side = (pointId < 13 ? 'bottom' : 'top');
         let colour = (pointId % 2 == 0) ? 'black' : 'red'; 
         this.pointDiv.className = `point ${side}-point ${colour}-point`;
-        this.pointDiv.onmouseover = function() { onSelected(true); };
-        this.pointDiv.onmouseout = function() { onSelected(false); };
+        this.pointDiv.onmouseover = function() { onInspected(true); };
+        this.pointDiv.onmouseout = function() { onInspected(false); };
     }
     
     clearCheckers(): void {

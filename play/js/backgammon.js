@@ -1,11 +1,11 @@
 var PointUI = (function () {
-    function PointUI(pointId, onSelected) {
+    function PointUI(pointId, onInspected) {
         this.pointDiv = document.createElement('div');
         var side = (pointId < 13 ? 'bottom' : 'top');
         var colour = (pointId % 2 == 0) ? 'black' : 'red';
         this.pointDiv.className = "point " + side + "-point " + colour + "-point";
-        this.pointDiv.onmouseover = function () { onSelected(true); };
-        this.pointDiv.onmouseout = function () { onSelected(false); };
+        this.pointDiv.onmouseover = function () { onInspected(true); };
+        this.pointDiv.onmouseout = function () { onInspected(false); };
     }
     PointUI.prototype.clearCheckers = function () {
         for (var i = 0; i < this.pointDiv.childNodes.length; i++) {
@@ -97,11 +97,11 @@ var BoardUI = (function () {
 })();
 /// <reference path="PointUI.ts"/>
 var Point = (function () {
-    function Point(pointId, onSelected) {
+    function Point(pointId, onInspected) {
         var self = this;
         this.pointId = pointId;
         this.checkers = [0, 0];
-        this.pointUI = new PointUI(pointId, function (selected) { onSelected(self, selected); });
+        this.pointUI = new PointUI(pointId, function (on) { onInspected(self, on); });
     }
     Point.prototype.increment = function (player, count) {
         this.checkers[player] += count;
@@ -118,14 +118,14 @@ var Board = (function () {
     function Board(boardUI) {
         var _this = this;
         this.boardUI = boardUI;
-        var onPointSelected = function (point, selected) {
-            if (_this.onPointSelected) {
-                _this.onPointSelected(point, selected);
+        var onPointInspected = function (point, on) {
+            if (_this.onPointInspected) {
+                _this.onPointInspected(point, on);
             }
         };
         this.points = new Array(26);
         for (var i = 0; i < 26; i++) {
-            this.points[i] = new Point(i, onPointSelected);
+            this.points[i] = new Point(i, onPointInspected);
         }
         this.increment(24, Player.RED, 2);
         this.increment(1, Player.BLACK, 2);
@@ -207,11 +207,11 @@ var Game = (function () {
         var self = this;
         this.dice = new Dice(new DiceUI(diceElementId));
         this.board = new Board(new BoardUI(boardElementId));
-        this.board.onPointSelected = function (point, selected) {
+        this.board.onPointInspected = function (point, on) {
             if (point.checkers[self.currentPlayer] > 0) {
-                self.board.highlightPointIfLegal(point.pointId + self.dice.roll1, self.currentPlayer, selected);
+                self.board.highlightPointIfLegal(point.pointId + self.dice.roll1, self.currentPlayer, on);
                 if (self.dice.roll2 !== self.dice.roll1) {
-                    self.board.highlightPointIfLegal(point.pointId + self.dice.roll2, self.currentPlayer, selected);
+                    self.board.highlightPointIfLegal(point.pointId + self.dice.roll2, self.currentPlayer, on);
                 }
             }
         };

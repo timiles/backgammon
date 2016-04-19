@@ -17,11 +17,11 @@ class Game {
         this.dice = new Dice(new DiceUI(diceElementId));
         this.board = new Board(new BoardUI(boardElementId));
         
-        this.board.onPointSelected = (point: Point, selected: boolean) => {
+        this.board.onPointInspected = (point: Point, on: boolean) => {
             if (point.checkers[self.currentPlayer] > 0) {
-                self.board.highlightPointIfLegal(point.pointId + self.dice.roll1, self.currentPlayer, selected);
+                self.board.highlightPointIfLegal(point.pointId + self.dice.roll1, self.currentPlayer, on);
                 if (self.dice.roll2 !== self.dice.roll1) {
-                    self.board.highlightPointIfLegal(point.pointId + self.dice.roll2, self.currentPlayer, selected);
+                    self.board.highlightPointIfLegal(point.pointId + self.dice.roll2, self.currentPlayer, on);
                 }
             }
         };

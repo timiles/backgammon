@@ -4,20 +4,20 @@
 class Board {
 
     points: Array<Point>;
-    onPointSelected: (point: Point, selected: boolean) => void;
+    onPointInspected: (point: Point, on: boolean) => void;
     boardUI: BoardUI;
         
     constructor(boardUI: BoardUI) {
         this.boardUI = boardUI;
 
-        let onPointSelected = (point: Point, selected: boolean) => {
-            if (this.onPointSelected) {
-                this.onPointSelected(point, selected);
+        let onPointInspected = (point: Point, on: boolean) => {
+            if (this.onPointInspected) {
+                this.onPointInspected(point, on);
             }
         }
         this.points = new Array(26);
         for (let i = 0; i < 26; i++) {
-            this.points[i] = new Point(i, onPointSelected);
+            this.points[i] = new Point(i, onPointInspected);
         }
         
         this.increment(24, Player.RED, 2);
