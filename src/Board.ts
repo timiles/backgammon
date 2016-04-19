@@ -35,7 +35,7 @@ class Board {
         this.increment(Player.RED, 13, 5);
         this.increment(Player.BLACK, 12, 5);
     
-        this.boardUI.initialise(this.points.map(function(p) { return p.pointUI; }));
+        this.boardUI.initialise(this.points.map(p => p.pointUI));
     }
     
     decrement(player: Player, pointId: number): void {
