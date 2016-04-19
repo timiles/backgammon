@@ -165,14 +165,10 @@ var Board = (function () {
         this.decrement(player, fromPointId);
         this.increment(player, toPointId);
     };
-    Board.prototype.highlightPointIfLegal = function (pointId, player, on) {
-        var point = this.points[pointId];
-        var otherPlayer = (player + 1) % 2;
-        if (point.checkers[otherPlayer] >= 2) {
-            return false;
+    Board.prototype.highlightPointIfLegal = function (player, pointId, on) {
+        if (this.isLegal(player, pointId)) {
+            this.points[pointId].highlight(on);
         }
-        point.highlight(on);
-        return true;
     };
     return Board;
 })();
@@ -234,9 +230,9 @@ var Game = (function () {
         this.board = new Board(new BoardUI(boardElementId));
         this.board.onPointInspected = function (point, on) {
             if (point.checkers[self.currentPlayer] > 0) {
-                self.board.highlightPointIfLegal(point.pointId + self.dice.roll1, self.currentPlayer, on);
+                self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.roll1, on);
                 if (self.dice.roll2 !== self.dice.roll1) {
-                    self.board.highlightPointIfLegal(point.pointId + self.dice.roll2, self.currentPlayer, on);
+                    self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.roll2, on);
                 }
             }
         };
