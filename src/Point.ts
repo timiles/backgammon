@@ -6,11 +6,20 @@ class Point {
     checkers: Array<number>;
     pointUI: PointUI;
     
-    constructor(pointId: number, onInspected: (point: Point, on: boolean) => void) {
+    constructor(
+        pointId: number,
+        onInspected: (point: Point, on: boolean) => void,
+        onSelected: (point: Point, on: boolean) => void) {
+        
         let self = this;
         this.pointId = pointId;
         this.checkers = [0, 0];
-        this.pointUI = new PointUI(pointId, (on: boolean) => { onInspected(self, on); });
+        this.pointUI = new PointUI(pointId, (on: boolean) => { onInspected(self, on); }, (on: boolean) => { onSelected(self, on); });
+    }
+    
+    decrement(player: Player): void {
+        this.checkers[player]--;
+        this.pointUI.setCheckers(player, this.checkers[player]);
     }
     
     increment(player: Player, count: number): void {

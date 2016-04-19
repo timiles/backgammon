@@ -1,15 +1,20 @@
 var PointUI = (function () {
-    function PointUI(pointId, onInspected) {
+    function PointUI(pointId, onInspected, onSelected) {
+        var self = this;
         this.pointDiv = document.createElement('div');
         var side = (pointId < 13 ? 'bottom' : 'top');
         var colour = (pointId % 2 == 0) ? 'black' : 'red';
         this.pointDiv.className = "point " + side + "-point " + colour + "-point";
         this.pointDiv.onmouseover = function () { onInspected(true); };
         this.pointDiv.onmouseout = function () { onInspected(false); };
+        this.pointDiv.onclick = function () {
+            self.isSelected = !self.isSelected;
+            onSelected(self.isSelected);
+        };
     }
     PointUI.prototype.clearCheckers = function () {
-        for (var i = 0; i < this.pointDiv.childNodes.length; i++) {
-            this.pointDiv.removeChild(this.pointDiv.childNodes[i]);
+        while (this.pointDiv.hasChildNodes()) {
+            this.pointDiv.removeChild(this.pointDiv.childNodes[0]);
         }
     };
     PointUI.prototype.setCheckers = function (player, count) {
@@ -97,12 +102,16 @@ var BoardUI = (function () {
 })();
 /// <reference path="PointUI.ts"/>
 var Point = (function () {
-    function Point(pointId, onInspected) {
+    function Point(pointId, onInspected, onSelected) {
         var self = this;
         this.pointId = pointId;
         this.checkers = [0, 0];
-        this.pointUI = new PointUI(pointId, function (on) { onInspected(self, on); });
+        this.pointUI = new PointUI(pointId, function (on) { onInspected(self, on); }, function (on) { onSelected(self, on); });
     }
+    Point.prototype.decrement = function (player) {
+        this.checkers[player]--;
+        this.pointUI.setCheckers(player, this.checkers[player]);
+    };
     Point.prototype.increment = function (player, count) {
         this.checkers[player] += count;
         this.pointUI.setCheckers(player, this.checkers[player]);
@@ -123,9 +132,14 @@ var Board = (function () {
                 _this.onPointInspected(point, on);
             }
         };
+        var onPointSelected = function (point, on) {
+            if (_this.onPointSelected) {
+                _this.onPointSelected(point, on);
+            }
+        };
         this.points = new Array(26);
         for (var i = 0; i < 26; i++) {
-            this.points[i] = new Point(i, onPointInspected);
+            this.points[i] = new Point(i, onPointInspected, onPointSelected);
         }
         this.increment(24, Player.RED, 2);
         this.increment(1, Player.BLACK, 2);
@@ -137,8 +151,19 @@ var Board = (function () {
         this.increment(12, Player.BLACK, 5);
         this.boardUI.initialise(this.points.map(function (p) { return p.pointUI; }));
     }
+    Board.prototype.decrement = function (pointId, player) {
+        this.points[pointId].decrement(player);
+    };
     Board.prototype.increment = function (pointId, player, count) {
         this.points[pointId].increment(player, count || 1);
+    };
+    Board.prototype.isLegal = function (player, pointId) {
+        var otherPlayer = (player + 1) % 2;
+        return this.points[pointId].checkers[otherPlayer] < 2;
+    };
+    Board.prototype.move = function (player, fromPointId, toPointId) {
+        this.decrement(fromPointId, player);
+        this.increment(toPointId, player);
     };
     Board.prototype.highlightPointIfLegal = function (pointId, player, on) {
         var point = this.points[pointId];
@@ -212,6 +237,16 @@ var Game = (function () {
                 self.board.highlightPointIfLegal(point.pointId + self.dice.roll1, self.currentPlayer, on);
                 if (self.dice.roll2 !== self.dice.roll1) {
                     self.board.highlightPointIfLegal(point.pointId + self.dice.roll2, self.currentPlayer, on);
+                }
+            }
+        };
+        this.board.onPointSelected = function (point, on) {
+            if (point.checkers[self.currentPlayer] > 0) {
+                if (self.board.isLegal(self.currentPlayer, point.pointId + self.dice.roll1)) {
+                    self.board.move(self.currentPlayer, point.pointId, point.pointId + self.dice.roll1);
+                }
+                else if (self.board.isLegal(self.currentPlayer, point.pointId + self.dice.roll2)) {
+                    self.board.move(self.currentPlayer, point.pointId, point.pointId + self.dice.roll2);
                 }
             }
         };

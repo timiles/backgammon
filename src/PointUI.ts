@@ -3,8 +3,11 @@ declare var $;
 class PointUI {
     
     pointDiv: HTMLDivElement;
+    isSelected: boolean;
     
-    constructor(pointId: number, onInspected: (on: boolean) => void) {
+    constructor(pointId: number, onInspected: (on: boolean) => void, onSelected: (on: boolean) => void) {
+        let self = this;
+        
         this.pointDiv = document.createElement('div');
         
         let side = (pointId < 13 ? 'bottom' : 'top');
@@ -12,12 +15,16 @@ class PointUI {
         this.pointDiv.className = `point ${side}-point ${colour}-point`;
         this.pointDiv.onmouseover = function() { onInspected(true); };
         this.pointDiv.onmouseout = function() { onInspected(false); };
+        this.pointDiv.onclick = function() {
+            self.isSelected = !self.isSelected;
+            onSelected(self.isSelected);
+        };
     }
     
     clearCheckers(): void {
-        for (let i = 0; i < this.pointDiv.childNodes.length; i++) {
-            this.pointDiv.removeChild(this.pointDiv.childNodes[i]);
-        }        
+        while (this.pointDiv.hasChildNodes()) {
+            this.pointDiv.removeChild(this.pointDiv.childNodes[0]);
+        }
     }
     
     setCheckers(player: Player, count: number) {

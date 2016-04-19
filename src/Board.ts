@@ -5,6 +5,7 @@ class Board {
 
     points: Array<Point>;
     onPointInspected: (point: Point, on: boolean) => void;
+    onPointSelected: (point: Point, on: boolean) => void;
     boardUI: BoardUI;
         
     constructor(boardUI: BoardUI) {
@@ -15,9 +16,14 @@ class Board {
                 this.onPointInspected(point, on);
             }
         }
+        let onPointSelected = (point: Point, on: boolean) => {
+            if (this.onPointSelected) {
+                this.onPointSelected(point, on);
+            }
+        }
         this.points = new Array(26);
         for (let i = 0; i < 26; i++) {
-            this.points[i] = new Point(i, onPointInspected);
+            this.points[i] = new Point(i, onPointInspected, onPointSelected);
         }
         
         this.increment(24, Player.RED, 2);
@@ -32,8 +38,22 @@ class Board {
         this.boardUI.initialise(this.points.map(function(p) { return p.pointUI; }));
     }
     
+    decrement(pointId: number, player: Player): void {
+        this.points[pointId].decrement(player);
+    }
+        
     increment(pointId: number, player: Player, count?: number): void {
         this.points[pointId].increment(player, count || 1);
+    }
+    
+    isLegal(player: Player, pointId: number): boolean {
+        let otherPlayer = (player + 1) % 2;
+        return this.points[pointId].checkers[otherPlayer] < 2;
+    }
+    
+    move(player: Player, fromPointId: number, toPointId: number): void {
+        this.decrement(fromPointId, player);
+        this.increment(toPointId, player);
     }
     
     highlightPointIfLegal(pointId: number, player: Player, on: boolean): boolean {

@@ -26,6 +26,17 @@ class Game {
             }
         };
         
+        this.board.onPointSelected = (point: Point, on: boolean) => {
+            if (point.checkers[self.currentPlayer] > 0) {
+                if (self.board.isLegal(self.currentPlayer, point.pointId + self.dice.roll1)) {
+                    self.board.move(self.currentPlayer, point.pointId, point.pointId + self.dice.roll1);
+                }
+                else if (self.board.isLegal(self.currentPlayer, point.pointId + self.dice.roll2)) {
+                    self.board.move(self.currentPlayer, point.pointId, point.pointId + self.dice.roll2);
+                }
+            }
+        };
+        
         
         this.statusLogger = new StatusLogger(new StatusUI(statusElementId));
         
