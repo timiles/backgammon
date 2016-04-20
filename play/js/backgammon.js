@@ -247,28 +247,34 @@ var Game = (function () {
         this.board.onPointInspected = function (point, on) {
             if (!on) {
                 // turn off highlights if any
-                self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.die1.value, on);
-                self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.die2.value, on);
+                self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value), on);
+                self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die2.value), on);
             }
             else if (point.checkers[self.currentPlayer] > 0) {
                 if (self.dice.die1.remainingUses > 0) {
-                    self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.die1.value, on);
+                    self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value), on);
                 }
                 if (self.dice.die2.remainingUses > 0) {
-                    self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.die2.value, on);
+                    self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die2.value), on);
                 }
             }
         };
         this.board.onPointSelected = function (point, on) {
             if (point.checkers[self.currentPlayer] > 0) {
-                if (self.dice.die1.remainingUses > 0 && self.board.isLegal(self.currentPlayer, point.pointId + self.dice.die1.value)) {
-                    self.board.move(self.currentPlayer, point.pointId, point.pointId + self.dice.die1.value);
+                if (self.dice.die1.remainingUses > 0 &&
+                    self.board.isLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value))) {
+                    self.board.move(self.currentPlayer, point.pointId, self.getDestinationPointId(point.pointId, self.dice.die1.value));
                     self.dice.die1.remainingUses--;
                 }
-                else if (self.dice.die2.remainingUses > 0 && self.board.isLegal(self.currentPlayer, point.pointId + self.dice.die2.value)) {
-                    self.board.move(self.currentPlayer, point.pointId, point.pointId + self.dice.die2.value);
+                else if (self.dice.die2.remainingUses > 0 &&
+                    self.board.isLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die2.value))) {
+                    self.board.move(self.currentPlayer, point.pointId, self.getDestinationPointId(point.pointId, self.dice.die2.value));
                     self.dice.die2.remainingUses--;
                 }
+            }
+            if (self.dice.die1.remainingUses == 0 && self.dice.die2.remainingUses == 0) {
+                self.switchPlayer();
+                self.dice.roll();
             }
         };
         this.statusLogger = new StatusLogger(new StatusUI(statusElementId));
@@ -277,5 +283,12 @@ var Game = (function () {
         this.statusLogger.logInfo('BLACK to move');
         this.dice.roll();
     }
+    Game.prototype.getDestinationPointId = function (startPointId, dieValue) {
+        var direction = this.currentPlayer == Player.BLACK ? 1 : -1;
+        return startPointId + (direction * dieValue);
+    };
+    Game.prototype.switchPlayer = function () {
+        this.currentPlayer = (this.currentPlayer + 1) % 2;
+    };
     return Game;
 })();
