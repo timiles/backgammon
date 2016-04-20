@@ -280,7 +280,7 @@ var Game = (function () {
         this.statusLogger = new StatusLogger(new StatusUI(statusElementId));
         // TODO: roll to see who starts. Assume BLACK.
         this.currentPlayer = Player.BLACK;
-        this.statusLogger.logInfo('BLACK to move');
+        this.logCurrentPlayer();
         this.dice.roll();
     }
     Game.prototype.getDestinationPointId = function (startPointId, dieValue) {
@@ -289,6 +289,10 @@ var Game = (function () {
     };
     Game.prototype.switchPlayer = function () {
         this.currentPlayer = (this.currentPlayer + 1) % 2;
+        this.logCurrentPlayer();
+    };
+    Game.prototype.logCurrentPlayer = function () {
+        this.statusLogger.logInfo(Player[this.currentPlayer] + " to move");
     };
     return Game;
 })();

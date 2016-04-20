@@ -58,7 +58,7 @@ class Game {
         
         // TODO: roll to see who starts. Assume BLACK.
         this.currentPlayer = Player.BLACK;
-        this.statusLogger.logInfo('BLACK to move');
+        this.logCurrentPlayer();
         
         this.dice.roll();
     }
@@ -70,5 +70,10 @@ class Game {
      
     switchPlayer(): void {
         this.currentPlayer = (this.currentPlayer + 1) % 2;
+        this.logCurrentPlayer();
+    }
+    
+    logCurrentPlayer(): void {
+        this.statusLogger.logInfo(`${Player[this.currentPlayer]} to move`);        
     }
 }
