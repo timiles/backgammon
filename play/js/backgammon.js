@@ -158,6 +158,9 @@ var Board = (function () {
         this.points[pointId].increment(player, count || 1);
     };
     Board.prototype.isLegal = function (player, pointId) {
+        if (pointId < 0 || pointId > 25) {
+            return false;
+        }
         var otherPlayer = (player + 1) % 2;
         return this.points[pointId].checkers[otherPlayer] < 2;
     };

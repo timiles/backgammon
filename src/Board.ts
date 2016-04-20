@@ -47,6 +47,9 @@ class Board {
     }
     
     isLegal(player: Player, pointId: number): boolean {
+        if (pointId < 0 || pointId > 25) { 
+            return false;
+        }
         let otherPlayer = (player + 1) % 2;
         return this.points[pointId].checkers[otherPlayer] < 2;
     }
