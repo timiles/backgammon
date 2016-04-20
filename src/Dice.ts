@@ -1,9 +1,10 @@
+/// <reference path="Die.ts"/>
 /// <reference path="DiceUI.ts"/>
 
 class Dice {
 
-    roll1: number;
-    roll2: number;    
+    die1: Die;
+    die2: Die;
     diceUI: DiceUI;
     constructor(diceUI: DiceUI) {
         this.diceUI = diceUI;
@@ -13,8 +14,15 @@ class Dice {
         return Math.floor(Math.random() * 6) + 1;        
     }
     roll() {
-        this.roll1 = Dice.generateDie();
-        this.roll2 = Dice.generateDie();
-        this.diceUI.setDiceRolls(this.roll1, this.roll2);    
+        this.die1 = new Die();
+        this.die2 = new Die();
+        let isDouble = (this.die1.value === this.die2.value);
+        
+        if (isDouble) {
+            this.die1.remainingUses = 2;
+            this.die2.remainingUses = 2;
+        }
+        
+        this.diceUI.setDiceRolls(this.die1.value, this.die2.value);    
     }
 }

@@ -172,6 +172,13 @@ var Board = (function () {
     };
     return Board;
 })();
+var Die = (function () {
+    function Die() {
+        this.value = Math.floor(Math.random() * 6) + 1;
+        this.remainingUses = 1;
+    }
+    return Die;
+})();
 var DiceUI = (function () {
     function DiceUI(diceContainerElementId) {
         this.diceContainerDiv = document.getElementById(diceContainerElementId);
@@ -181,6 +188,7 @@ var DiceUI = (function () {
     };
     return DiceUI;
 })();
+/// <reference path="Die.ts"/>
 /// <reference path="DiceUI.ts"/>
 var Dice = (function () {
     function Dice(diceUI) {
@@ -190,9 +198,14 @@ var Dice = (function () {
         return Math.floor(Math.random() * 6) + 1;
     };
     Dice.prototype.roll = function () {
-        this.roll1 = Dice.generateDie();
-        this.roll2 = Dice.generateDie();
-        this.diceUI.setDiceRolls(this.roll1, this.roll2);
+        this.die1 = new Die();
+        this.die2 = new Die();
+        var isDouble = (this.die1.value === this.die2.value);
+        if (isDouble) {
+            this.die1.remainingUses = 2;
+            this.die2.remainingUses = 2;
+        }
+        this.diceUI.setDiceRolls(this.die1.value, this.die2.value);
     };
     return Dice;
 })();
@@ -229,20 +242,29 @@ var Game = (function () {
         this.dice = new Dice(new DiceUI(diceElementId));
         this.board = new Board(new BoardUI(boardElementId));
         this.board.onPointInspected = function (point, on) {
-            if (point.checkers[self.currentPlayer] > 0) {
-                self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.roll1, on);
-                if (self.dice.roll2 !== self.dice.roll1) {
-                    self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.roll2, on);
+            if (!on) {
+                // turn off highlights if any
+                self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.die1.value, on);
+                self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.die2.value, on);
+            }
+            else if (point.checkers[self.currentPlayer] > 0) {
+                if (self.dice.die1.remainingUses > 0) {
+                    self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.die1.value, on);
+                }
+                if (self.dice.die2.remainingUses > 0) {
+                    self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.die2.value, on);
                 }
             }
         };
         this.board.onPointSelected = function (point, on) {
             if (point.checkers[self.currentPlayer] > 0) {
-                if (self.board.isLegal(self.currentPlayer, point.pointId + self.dice.roll1)) {
-                    self.board.move(self.currentPlayer, point.pointId, point.pointId + self.dice.roll1);
+                if (self.dice.die1.remainingUses > 0 && self.board.isLegal(self.currentPlayer, point.pointId + self.dice.die1.value)) {
+                    self.board.move(self.currentPlayer, point.pointId, point.pointId + self.dice.die1.value);
+                    self.dice.die1.remainingUses--;
                 }
-                else if (self.board.isLegal(self.currentPlayer, point.pointId + self.dice.roll2)) {
-                    self.board.move(self.currentPlayer, point.pointId, point.pointId + self.dice.roll2);
+                else if (self.dice.die2.remainingUses > 0 && self.board.isLegal(self.currentPlayer, point.pointId + self.dice.die2.value)) {
+                    self.board.move(self.currentPlayer, point.pointId, point.pointId + self.dice.die2.value);
+                    self.dice.die2.remainingUses--;
                 }
             }
         };

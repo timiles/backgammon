@@ -18,21 +18,30 @@ class Game {
         this.board = new Board(new BoardUI(boardElementId));
         
         this.board.onPointInspected = (point: Point, on: boolean) => {
-            if (point.checkers[self.currentPlayer] > 0) {
-                self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.roll1, on);
-                if (self.dice.roll2 !== self.dice.roll1) {
-                    self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.roll2, on);
+            if (!on) {
+                // turn off highlights if any
+                self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.die1.value, on);
+                self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.die2.value, on);
+            }
+            else if (point.checkers[self.currentPlayer] > 0) {
+                if (self.dice.die1.remainingUses > 0) {
+                    self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.die1.value, on);
+                }
+                if (self.dice.die2.remainingUses > 0) {
+                    self.board.highlightPointIfLegal(self.currentPlayer, point.pointId + self.dice.die2.value, on);
                 }
             }
         };
         
         this.board.onPointSelected = (point: Point, on: boolean) => {
             if (point.checkers[self.currentPlayer] > 0) {
-                if (self.board.isLegal(self.currentPlayer, point.pointId + self.dice.roll1)) {
-                    self.board.move(self.currentPlayer, point.pointId, point.pointId + self.dice.roll1);
+                if (self.dice.die1.remainingUses > 0 && self.board.isLegal(self.currentPlayer, point.pointId + self.dice.die1.value)) {
+                    self.board.move(self.currentPlayer, point.pointId, point.pointId + self.dice.die1.value);
+                    self.dice.die1.remainingUses--;
                 }
-                else if (self.board.isLegal(self.currentPlayer, point.pointId + self.dice.roll2)) {
-                    self.board.move(self.currentPlayer, point.pointId, point.pointId + self.dice.roll2);
+                else if (self.dice.die2.remainingUses > 0 && self.board.isLegal(self.currentPlayer, point.pointId + self.dice.die2.value)) {
+                    self.board.move(self.currentPlayer, point.pointId, point.pointId + self.dice.die2.value);
+                    self.dice.die2.remainingUses--;
                 }
             }
         };
