@@ -76,17 +76,17 @@ describe('Backgammon', function () {
         expect(board.points[22].checkers[Player.BLACK]).toBe(0);
         expect(board.points[22].checkers[Player.RED]).toBe(1);
 
-        expect(board.points[Player.BAR].checkers[Player.BLACK]).toBe(1);
+        expect(board.points[PointId.BAR].checkers[Player.BLACK]).toBe(1);
 
         // now Black cannot make any moves except from the bar:
         expect(board.isLegalMove(Player.BLACK, 17, 5)).toBe(false);
         expect(board.isLegalMove(Player.BLACK, 17, 6)).toBe(false);
-        expect(board.isLegalMove(Player.BLACK, Player.BAR, 6)).toBe(false);
-        expect(board.isLegalMove(Player.BLACK, Player.BAR, 5)).toBe(true);
-        expect(board.isLegalMove(Player.BLACK, Player.BAR, 1)).toBe(true);
+        expect(board.isLegalMove(Player.BLACK, PointId.BAR, 6)).toBe(false);
+        expect(board.isLegalMove(Player.BLACK, PointId.BAR, 5)).toBe(true);
+        expect(board.isLegalMove(Player.BLACK, PointId.BAR, 1)).toBe(true);
         
         // do the move
-        expect(board.move(Player.BLACK, Player.BAR, 1)).toBe(true);
+        expect(board.move(Player.BLACK, PointId.BAR, 1)).toBe(true);
 
     });
 
@@ -100,17 +100,17 @@ describe('Backgammon', function () {
         expect(board.points[3].checkers[Player.RED]).toBe(0);
         expect(board.points[3].checkers[Player.BLACK]).toBe(1);
 
-        expect(board.points[Player.BAR].checkers[Player.RED]).toBe(1);
+        expect(board.points[PointId.BAR].checkers[Player.RED]).toBe(1);
 
         // now Red cannot make any moves except from the bar:
         expect(board.isLegalMove(Player.RED, 8, 5)).toBe(false);
         expect(board.isLegalMove(Player.RED, 8, 6)).toBe(false);
-        expect(board.isLegalMove(Player.RED, Player.BAR, 6)).toBe(false);
-        expect(board.isLegalMove(Player.RED, Player.BAR, 5)).toBe(true);
-        expect(board.isLegalMove(Player.RED, Player.BAR, 1)).toBe(true);
+        expect(board.isLegalMove(Player.RED, PointId.BAR, 6)).toBe(false);
+        expect(board.isLegalMove(Player.RED, PointId.BAR, 5)).toBe(true);
+        expect(board.isLegalMove(Player.RED, PointId.BAR, 1)).toBe(true);
         
         // do the move
-        expect(board.move(Player.RED, Player.BAR, 1)).toBe(true);
+        expect(board.move(Player.RED, PointId.BAR, 1)).toBe(true);
 
     });
 

@@ -1,6 +1,8 @@
 /// <reference path="BoardUI.ts"/>
 /// <reference path="Point.ts"/>
 
+enum PointId { HOME = 0, BAR = 25 }
+
 class Board {
 
     points: Array<Point>;
@@ -47,9 +49,18 @@ class Board {
     }
     
     private static getDestinationPointId(player: Player, sourcePointId: number, numberOfMoves: number): number {
+        if (sourcePointId === PointId.BAR) {
+            if (player === Player.BLACK) {
+                return numberOfMoves;
+            }
+            else {
+                return 25 - numberOfMoves;
+            }
+        }
         let direction = player == Player.BLACK ? 1 : -1;
         return sourcePointId + (direction * numberOfMoves);
-    }   
+    }
+    
     /**
      * @deprecated Start using isLegalMove instead
      */
@@ -62,14 +73,46 @@ class Board {
     }
     
     isLegalMove(player: Player, sourcePointId: number, numberOfMoves: number): boolean {
-        // not a valid starting point
+        
+        // case: there is no counter to move: fail
         if (this.points[sourcePointId].checkers[player] == 0) {
+            console.info('no counter at ' + sourcePointId);
             return false;
         }
-        
+                
+        // case: there is a counter on the bar, and this is not it
+        if ((sourcePointId != PointId.BAR) && (this.points[PointId.BAR].checkers[player] > 0)) {
+            console.info('must move counter off bar first');
+            return false;
+        }
+
         let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
-        let otherPlayer = (player + 1) % 2;
-        return this.points[destinationPointId].checkers[otherPlayer] < 2;
+        if (destinationPointId == 0) {
+            // check all pieces are in home board
+            // REVIEW: this code is fiddly, should be extracted away somewhere
+            var p1 = 1, p2 = 18;
+            if (player == 0) {
+                p1 += 6;
+                p2 += 6;
+            }
+            for (var p = p1; p <= p2; p++) {
+                if (this.points[p].checkers[player] > 0) {
+                    return false;
+                }
+            }
+            // already checked bar above
+            return true;
+        }
+
+        let otherPlayer = Game.getOtherPlayer(player);
+
+        // case: there is a counter, but opponent blocks the end pip
+        if (this.points[destinationPointId].checkers[otherPlayer] >= 2) {
+            console.info('point is blocked');
+            return false;
+        }
+
+        return true;
     }
     
     move(player: Player, sourcePointId: number, numberOfMoves: number): boolean {
@@ -77,6 +120,11 @@ class Board {
             return false;
         }
         let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
+        let otherPlayer = Game.getOtherPlayer(player);
+        if (this.points[destinationPointId].checkers[otherPlayer] == 1) {
+            this.decrement(otherPlayer, destinationPointId);
+            this.increment(otherPlayer, PointId.BAR);
+        }
         this.decrement(player, sourcePointId);
         this.increment(player, destinationPointId);
         return true;

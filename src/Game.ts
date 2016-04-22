@@ -72,7 +72,11 @@ class Game {
         let direction = this.currentPlayer == Player.BLACK ? 1 : -1;
         return startPointId + (direction * dieValue);
     }   
-     
+ 
+    static getOtherPlayer(player: Player): Player {
+        return player === Player.BLACK ? Player.RED : Player.BLACK;
+    }
+        
     switchPlayer(): void {
         this.currentPlayer = (this.currentPlayer + 1) % 2;
         this.logCurrentPlayer();
