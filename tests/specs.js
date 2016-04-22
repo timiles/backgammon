@@ -19,12 +19,12 @@ describe('Backgammon', function () {
         // test for Red
         expect(board.points[24].checkers[Player.RED]).toBe(2);
 
-        var isLegal1 = board.isMoveLegal(Player.RED, 24, 6);
+        var isLegal1 = board.isLegalMove(Player.RED, 24, 6);
         expect(isLegal1).toBe(true);
-        var isLegal2 = board.isMoveLegal(Player.RED, 24, 5);
+        var isLegal2 = board.isLegalMove(Player.RED, 24, 5);
         expect(isLegal2).toBe(false); // end pip is blocked
 
-        var isLegal3 = board.isMoveLegal(Player.RED, 23, 1);
+        var isLegal3 = board.isLegalMove(Player.RED, 23, 1);
         expect(isLegal3).toBe(false); // start pip contains no counter
 
     });
@@ -33,12 +33,12 @@ describe('Backgammon', function () {
 
         // test for Black
         expect(board.points[1].checkers[Player.BLACK]).toBe(2);
-        var isLegal1 = board.isMoveLegal(Player.BLACK, 1, 6);
+        var isLegal1 = board.isLegalMove(Player.BLACK, 1, 6);
         expect(isLegal1).toBe(true);
-        var isLegal2 = board.isMoveLegal(Player.BLACK, 1, 5);
+        var isLegal2 = board.isLegalMove(Player.BLACK, 1, 5);
         expect(isLegal2).toBe(false); // end pip is blocked
 
-        var isLegal3 = board.isMoveLegal(Player.BLACK, 2, 1);
+        var isLegal3 = board.isLegalMove(Player.BLACK, 2, 1);
         expect(isLegal3).toBe(false); // start pip contains no counter
 
     });
@@ -79,11 +79,11 @@ describe('Backgammon', function () {
         expect(board.points[Player.BAR].checkers[Player.BLACK]).toBe(1);
 
         // now Black cannot make any moves except from the bar:
-        expect(board.isMoveLegal(Player.BLACK, 17, 5)).toBe(false);
-        expect(board.isMoveLegal(Player.BLACK, 17, 6)).toBe(false);
-        expect(board.isMoveLegal(Player.BLACK, Player.BAR, 6)).toBe(false);
-        expect(board.isMoveLegal(Player.BLACK, Player.BAR, 5)).toBe(true);
-        expect(board.isMoveLegal(Player.BLACK, Player.BAR, 1)).toBe(true);
+        expect(board.isLegalMove(Player.BLACK, 17, 5)).toBe(false);
+        expect(board.isLegalMove(Player.BLACK, 17, 6)).toBe(false);
+        expect(board.isLegalMove(Player.BLACK, Player.BAR, 6)).toBe(false);
+        expect(board.isLegalMove(Player.BLACK, Player.BAR, 5)).toBe(true);
+        expect(board.isLegalMove(Player.BLACK, Player.BAR, 1)).toBe(true);
         
         // do the move
         expect(board.move(Player.BLACK, Player.BAR, 1)).toBe(true);
@@ -103,11 +103,11 @@ describe('Backgammon', function () {
         expect(board.points[Player.BAR].checkers[Player.RED]).toBe(1);
 
         // now Red cannot make any moves except from the bar:
-        expect(board.isMoveLegal(Player.RED, 8, 5)).toBe(false);
-        expect(board.isMoveLegal(Player.RED, 8, 6)).toBe(false);
-        expect(board.isMoveLegal(Player.RED, Player.BAR, 6)).toBe(false);
-        expect(board.isMoveLegal(Player.RED, Player.BAR, 5)).toBe(true);
-        expect(board.isMoveLegal(Player.RED, Player.BAR, 1)).toBe(true);
+        expect(board.isLegalMove(Player.RED, 8, 5)).toBe(false);
+        expect(board.isLegalMove(Player.RED, 8, 6)).toBe(false);
+        expect(board.isLegalMove(Player.RED, Player.BAR, 6)).toBe(false);
+        expect(board.isLegalMove(Player.RED, Player.BAR, 5)).toBe(true);
+        expect(board.isLegalMove(Player.RED, Player.BAR, 1)).toBe(true);
         
         // do the move
         expect(board.move(Player.RED, Player.BAR, 1)).toBe(true);
@@ -117,7 +117,7 @@ describe('Backgammon', function () {
 
     it('should not allow to bear off until all in home board', function () {
 
-        expect(board.isMoveLegal(Player.BLACK, 19, 6)).toBe(false);
+        expect(board.isLegalMove(Player.BLACK, 19, 6)).toBe(false);
         
         // move pieces into home board
         board.move(Player.BLACK, 1, 6);
@@ -143,7 +143,7 @@ describe('Backgammon', function () {
         board.move(Player.BLACK, 18, 5);
 
         // now should be home dry
-        expect(board.isMoveLegal(Player.BLACK, 19, 6)).toBe(true);
+        expect(board.isLegalMove(Player.BLACK, 19, 6)).toBe(true);
         
         expect(board.move(Player.BLACK, 19, 6)).toBe(true);
         expect(board.move(Player.BLACK, 19, 6)).toBe(true);

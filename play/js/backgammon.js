@@ -170,12 +170,28 @@ var Board = (function () {
     Board.prototype.increment = function (player, pointId, count) {
         this.points[pointId].increment(player, count || 1);
     };
+    Board.getDestinationPointId = function (player, sourcePointId, numberOfMoves) {
+        var direction = player == Player.BLACK ? 1 : -1;
+        return sourcePointId + (direction * numberOfMoves);
+    };
+    /**
+     * @deprecated Start using isLegalMove instead
+     */
     Board.prototype.isLegal = function (player, pointId) {
         if (pointId < 0 || pointId > 25) {
             return false;
         }
         var otherPlayer = (player + 1) % 2;
         return this.points[pointId].checkers[otherPlayer] < 2;
+    };
+    Board.prototype.isLegalMove = function (player, sourcePointId, numberOfMoves) {
+        // not a valid starting point
+        if (this.points[sourcePointId].checkers[player] == 0) {
+            return false;
+        }
+        var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
+        var otherPlayer = (player + 1) % 2;
+        return this.points[destinationPointId].checkers[otherPlayer] < 2;
     };
     Board.prototype.move = function (player, fromPointId, toPointId) {
         this.decrement(player, fromPointId);
@@ -298,6 +314,9 @@ var Game = (function () {
         this.logCurrentPlayer();
         this.dice.roll();
     }
+    /**
+     * @deprecated This code is moved to Board.ts
+     */
     Game.prototype.getDestinationPointId = function (startPointId, dieValue) {
         var direction = this.currentPlayer == Player.BLACK ? 1 : -1;
         return startPointId + (direction * dieValue);

@@ -46,12 +46,30 @@ class Board {
         this.points[pointId].increment(player, count || 1);
     }
     
+    private static getDestinationPointId(player: Player, sourcePointId: number, numberOfMoves: number): number {
+        let direction = player == Player.BLACK ? 1 : -1;
+        return sourcePointId + (direction * numberOfMoves);
+    }   
+    /**
+     * @deprecated Start using isLegalMove instead
+     */
     isLegal(player: Player, pointId: number): boolean {
         if (pointId < 0 || pointId > 25) { 
             return false;
         }
         let otherPlayer = (player + 1) % 2;
         return this.points[pointId].checkers[otherPlayer] < 2;
+    }
+    
+    isLegalMove(player: Player, sourcePointId: number, numberOfMoves: number): boolean {
+        // not a valid starting point
+        if (this.points[sourcePointId].checkers[player] == 0) {
+            return false;
+        }
+        
+        let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
+        let otherPlayer = (player + 1) % 2;
+        return this.points[destinationPointId].checkers[otherPlayer] < 2;
     }
     
     move(player: Player, fromPointId: number, toPointId: number): void {

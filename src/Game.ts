@@ -65,6 +65,9 @@ class Game {
         this.dice.roll();
     }
 
+    /**
+     * @deprecated This code is moved to Board.ts
+     */
     getDestinationPointId(startPointId: number, dieValue: number): number {
         let direction = this.currentPlayer == Player.BLACK ? 1 : -1;
         return startPointId + (direction * dieValue);
