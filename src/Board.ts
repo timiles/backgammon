@@ -72,9 +72,14 @@ class Board {
         return this.points[destinationPointId].checkers[otherPlayer] < 2;
     }
     
-    move(player: Player, fromPointId: number, toPointId: number): void {
-        this.decrement(player, fromPointId);
-        this.increment(player, toPointId);
+    move(player: Player, sourcePointId: number, numberOfMoves: number): boolean {
+        if (!this.isLegalMove(player, sourcePointId, numberOfMoves)) {
+            return false;
+        }
+        let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
+        this.decrement(player, sourcePointId);
+        this.increment(player, destinationPointId);
+        return true;
     }
     
     highlightPointIfLegal(player: Player, pointId: number, on: boolean): void {

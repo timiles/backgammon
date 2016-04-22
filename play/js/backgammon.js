@@ -193,9 +193,14 @@ var Board = (function () {
         var otherPlayer = (player + 1) % 2;
         return this.points[destinationPointId].checkers[otherPlayer] < 2;
     };
-    Board.prototype.move = function (player, fromPointId, toPointId) {
-        this.decrement(player, fromPointId);
-        this.increment(player, toPointId);
+    Board.prototype.move = function (player, sourcePointId, numberOfMoves) {
+        if (!this.isLegalMove(player, sourcePointId, numberOfMoves)) {
+            return false;
+        }
+        var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
+        this.decrement(player, sourcePointId);
+        this.increment(player, destinationPointId);
+        return true;
     };
     Board.prototype.highlightPointIfLegal = function (player, pointId, on) {
         if (this.isLegal(player, pointId)) {
@@ -294,12 +299,12 @@ var Game = (function () {
             if (point.checkers[self.currentPlayer] > 0) {
                 if (self.dice.die1.remainingUses > 0 &&
                     self.board.isLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value))) {
-                    self.board.move(self.currentPlayer, point.pointId, self.getDestinationPointId(point.pointId, self.dice.die1.value));
+                    self.board.move(self.currentPlayer, point.pointId, self.dice.die1.value);
                     self.dice.die1.remainingUses--;
                 }
                 else if (self.dice.die2.remainingUses > 0 &&
                     self.board.isLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die2.value))) {
-                    self.board.move(self.currentPlayer, point.pointId, self.getDestinationPointId(point.pointId, self.dice.die2.value));
+                    self.board.move(self.currentPlayer, point.pointId, self.dice.die2.value);
                     self.dice.die2.remainingUses--;
                 }
             }

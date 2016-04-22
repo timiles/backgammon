@@ -39,12 +39,12 @@ class Game {
             if (point.checkers[self.currentPlayer] > 0) {
                 if (self.dice.die1.remainingUses > 0 &&
                     self.board.isLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value))) {
-                    self.board.move(self.currentPlayer, point.pointId, self.getDestinationPointId(point.pointId, self.dice.die1.value));
+                    self.board.move(self.currentPlayer, point.pointId, self.dice.die1.value);
                     self.dice.die1.remainingUses--;
                 }
                 else if (self.dice.die2.remainingUses > 0 &&
                     self.board.isLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die2.value))) {
-                    self.board.move(self.currentPlayer, point.pointId, self.getDestinationPointId(point.pointId, self.dice.die2.value));
+                    self.board.move(self.currentPlayer, point.pointId, self.dice.die2.value);
                     self.dice.die2.remainingUses--;
                 }
             }
