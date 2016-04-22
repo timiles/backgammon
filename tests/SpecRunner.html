@@ -4,17 +4,21 @@
     <title>tests</title>
         <link rel="shortcut icon" type="image/png" href="lib/jasmine-2.0.0/jasmine_favicon.png">
         <link rel="stylesheet" type="text/css" href="lib/jasmine-2.0.0/jasmine.css">
-        <link rel="stylesheet" type="text/css" href="../public/css/backgammon-board.css">
+        <link rel="stylesheet" type="text/css" href="../play/css/ui.css">
     </head>
     <body>
+        <div>
+            <span id="status"></span>
+        </div>
         <div id="board"></div>
+        <div id="dice"></div>
 
 	    <script src="lib/jasmine-2.0.0/jasmine.js"></script>
 	    <script src="lib/jasmine-2.0.0/jasmine-html.js"></script>
 	    <script src="lib/jasmine-2.0.0/boot.js"></script>
 	    
 	    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-	    <script src="../public/js/backgammon.js"></script>
+	    <script src="../play/js/backgammon.js"></script>
 	    <script src="specs.js"></script>
     </body>
 </html>

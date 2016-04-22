@@ -54,7 +54,9 @@ var PointUI = (function () {
 var BoardUI = (function () {
     function BoardUI(boardElementId) {
         this.boardDiv = document.getElementById(boardElementId);
-        // TODO: check board element is empty
+        while (this.boardDiv.hasChildNodes()) {
+            this.boardDiv.removeChild(this.boardDiv.childNodes[0]);
+        }
         this.boardDiv.className = 'board';
     }
     BoardUI.prototype.initialise = function (pointUIs) {
