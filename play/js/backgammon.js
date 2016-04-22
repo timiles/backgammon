@@ -20,15 +20,16 @@ var PointUI = (function () {
     PointUI.prototype.setCheckers = function (player, count) {
         this.clearCheckers();
         var $pointDiv = $(this.pointDiv);
+        var className = Player[player].toLowerCase();
         for (var i = 1; i <= count; i++) {
             if (i > 5) {
                 $('.checker-total', $pointDiv).text(count);
             }
             else if (i == 5) {
-                $pointDiv.append($('<div class="checker checker-total">').addClass(Player[player]));
+                $pointDiv.append($('<div class="checker checker-total">').addClass(className));
             }
             else {
-                $pointDiv.append($('<div class="checker">').addClass(Player[player]));
+                $pointDiv.append($('<div class="checker">').addClass(className));
             }
         }
     };

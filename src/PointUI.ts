@@ -31,13 +31,14 @@ class PointUI {
         this.clearCheckers();
 
         let $pointDiv = $(this.pointDiv);
+        let className = Player[player].toLowerCase();
         for (let i = 1; i <= count; i++) {
             if (i > 5) {
                 $('.checker-total', $pointDiv).text(count);
             } else if (i == 5) {
-                $pointDiv.append($('<div class="checker checker-total">').addClass(Player[player]));
+                $pointDiv.append($('<div class="checker checker-total">').addClass(className));
             } else {
-                $pointDiv.append($('<div class="checker">').addClass(Player[player]));
+                $pointDiv.append($('<div class="checker">').addClass(className));
             }
         }
     }
