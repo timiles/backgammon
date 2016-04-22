@@ -20,10 +20,12 @@ class Game {
         this.board.onPointInspected = (point: Point, on: boolean) => {
             if (!on) {
                 // turn off highlights if any
+                point.highlightSource(false);
                 self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value), on);
                 self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die2.value), on);
             }
             else if (point.checkers[self.currentPlayer] > 0) {
+                point.highlightSource(true);
                 if (self.dice.die1.remainingUses > 0) {
                     self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value), on);
                 }

@@ -32,12 +32,20 @@ var PointUI = (function () {
             }
         }
     };
-    PointUI.prototype.highlight = function (on) {
+    PointUI.prototype.highlightDestination = function (on) {
         if (on) {
-            $(this.pointDiv).addClass('highlight');
+            $(this.pointDiv).addClass('highlight-destination');
         }
         else {
-            $(this.pointDiv).removeClass('highlight');
+            $(this.pointDiv).removeClass('highlight-destination');
+        }
+    };
+    PointUI.prototype.highlightSource = function (on) {
+        if (on) {
+            $(this.pointDiv).addClass('highlight-source');
+        }
+        else {
+            $(this.pointDiv).removeClass('highlight-source');
         }
     };
     return PointUI;
@@ -116,8 +124,11 @@ var Point = (function () {
         this.checkers[player] += count;
         this.pointUI.setCheckers(player, this.checkers[player]);
     };
-    Point.prototype.highlight = function (on) {
-        this.pointUI.highlight(on);
+    Point.prototype.highlightDestination = function (on) {
+        this.pointUI.highlightDestination(on);
+    };
+    Point.prototype.highlightSource = function (on) {
+        this.pointUI.highlightSource(on);
     };
     return Point;
 })();
@@ -170,7 +181,7 @@ var Board = (function () {
     };
     Board.prototype.highlightPointIfLegal = function (player, pointId, on) {
         if (this.isLegal(player, pointId)) {
-            this.points[pointId].highlight(on);
+            this.points[pointId].highlightDestination(on);
         }
     };
     return Board;
@@ -247,10 +258,12 @@ var Game = (function () {
         this.board.onPointInspected = function (point, on) {
             if (!on) {
                 // turn off highlights if any
+                point.highlightSource(false);
                 self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value), on);
                 self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die2.value), on);
             }
             else if (point.checkers[self.currentPlayer] > 0) {
+                point.highlightSource(true);
                 if (self.dice.die1.remainingUses > 0) {
                     self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value), on);
                 }

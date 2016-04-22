@@ -27,7 +27,11 @@ class Point {
         this.pointUI.setCheckers(player, this.checkers[player]);
     }
     
-    highlight(on: boolean) {
-        this.pointUI.highlight(on);
+    highlightDestination(on: boolean) {
+        this.pointUI.highlightDestination(on);
+    }
+    
+    highlightSource(on: boolean) {
+        this.pointUI.highlightSource(on);        
     }
 }

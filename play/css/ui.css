@@ -34,7 +34,11 @@ DIV.point
     height: 110px;
     padding: 4px;
 }
-DIV.point.highlight
+DIV.point.highlight-source
+{
+    cursor: pointer;
+}
+DIV.point.highlight-destination
 {
     background: yellow;
 }

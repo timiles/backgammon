@@ -61,7 +61,7 @@ class Board {
     
     highlightPointIfLegal(player: Player, pointId: number, on: boolean): void {
         if (this.isLegal(player, pointId)) {
-            this.points[pointId].highlight(on);
+            this.points[pointId].highlightDestination(on);
         }
     }
 }

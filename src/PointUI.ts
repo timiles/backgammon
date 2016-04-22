@@ -42,12 +42,21 @@ class PointUI {
         }
     }
     
-    highlight(on: boolean): void {
+    highlightDestination(on: boolean): void {
         if (on) {
-            $(this.pointDiv).addClass('highlight');
+            $(this.pointDiv).addClass('highlight-destination');
         }
         else {
-            $(this.pointDiv).removeClass('highlight');
+            $(this.pointDiv).removeClass('highlight-destination');
+        }
+    }
+    
+    highlightSource(on: boolean): void {
+        if (on) {
+            $(this.pointDiv).addClass('highlight-source');
+        }
+        else {
+            $(this.pointDiv).removeClass('highlight-source');
         }
     }
 }
