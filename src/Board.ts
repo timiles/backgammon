@@ -58,7 +58,9 @@ class Board {
             }
         }
         let direction = player == Player.BLACK ? 1 : -1;
-        return sourcePointId + (direction * numberOfMoves);
+        var destinationPointId = sourcePointId + (direction * numberOfMoves);
+        if (destinationPointId > 24 || destinationPointId < 0) return 0; // when bearing off to home
+        return destinationPointId;
     }
     
     /**
@@ -86,21 +88,17 @@ class Board {
             return false;
         }
 
+        // case: bearing off
         let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
         if (destinationPointId == 0) {
-            // check all pieces are in home board
-            // REVIEW: this code is fiddly, should be extracted away somewhere
-            var p1 = 1, p2 = 18;
-            if (player == 0) {
-                p1 += 6;
-                p2 += 6;
-            }
-            for (var p = p1; p <= p2; p++) {
-                if (this.points[p].checkers[player] > 0) {
+            // check that there are no pieces outside of home board. (BAR has already been checked above)
+            const pointIdOutsideOfHomeBoard = (player === Player.BLACK) ? 1 : 7;
+            const totalPointsOutsideOfHomeBoard = 18;
+            for (var offset = 0; offset < totalPointsOutsideOfHomeBoard; offset++) {
+                if (this.points[pointIdOutsideOfHomeBoard + offset].checkers[player] > 0) {
                     return false;
                 }
             }
-            // already checked bar above
             return true;
         }
 
