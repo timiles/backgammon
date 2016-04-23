@@ -21,16 +21,16 @@ class Game {
             if (!on) {
                 // turn off highlights if any
                 point.highlightSource(false);
-                self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value), on);
-                self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die2.value), on);
+                self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die1.value, on);
+                self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die2.value, on);
             }
             else if (point.checkers[self.currentPlayer] > 0) {
                 point.highlightSource(true);
                 if (self.dice.die1.remainingUses > 0) {
-                    self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value), on);
+                    self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die1.value, on);
                 }
                 if (self.dice.die2.remainingUses > 0) {
-                    self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die2.value), on);
+                    self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die2.value, on);
                 }
             }
         };
@@ -38,12 +38,12 @@ class Game {
         this.board.onPointSelected = (point: Point, on: boolean) => {
             if (point.checkers[self.currentPlayer] > 0) {
                 if (self.dice.die1.remainingUses > 0 &&
-                    self.board.isLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value))) {
+                    self.board.isLegalMove(self.currentPlayer, point.pointId, self.dice.die1.value)) {
                     self.board.move(self.currentPlayer, point.pointId, self.dice.die1.value);
                     self.dice.die1.remainingUses--;
                 }
                 else if (self.dice.die2.remainingUses > 0 &&
-                    self.board.isLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die2.value))) {
+                    self.board.isLegalMove(self.currentPlayer, point.pointId, self.dice.die2.value)) {
                     self.board.move(self.currentPlayer, point.pointId, self.dice.die2.value);
                     self.dice.die2.remainingUses--;
                 }
@@ -64,14 +64,6 @@ class Game {
         
         this.dice.roll();
     }
-
-    /**
-     * @deprecated This code is moved to Board.ts
-     */
-    getDestinationPointId(startPointId: number, dieValue: number): number {
-        let direction = this.currentPlayer == Player.BLACK ? 1 : -1;
-        return startPointId + (direction * dieValue);
-    }   
  
     static getOtherPlayer(player: Player): Player {
         return player === Player.BLACK ? Player.RED : Player.BLACK;

@@ -191,16 +191,6 @@ var Board = (function () {
             return 0; // when bearing off to home
         return destinationPointId;
     };
-    /**
-     * @deprecated Start using isLegalMove instead
-     */
-    Board.prototype.isLegal = function (player, pointId) {
-        if (pointId < 0 || pointId > 25) {
-            return false;
-        }
-        var otherPlayer = (player + 1) % 2;
-        return this.points[pointId].checkers[otherPlayer] < 2;
-    };
     Board.prototype.isLegalMove = function (player, sourcePointId, numberOfMoves) {
         // case: there is no counter to move: fail
         if (this.points[sourcePointId].checkers[player] == 0) {
@@ -247,9 +237,10 @@ var Board = (function () {
         this.increment(player, destinationPointId);
         return true;
     };
-    Board.prototype.highlightPointIfLegal = function (player, pointId, on) {
-        if (this.isLegal(player, pointId)) {
-            this.points[pointId].highlightDestination(on);
+    Board.prototype.highlightIfLegalMove = function (player, sourcePointId, numberOfMoves, on) {
+        if (this.isLegalMove(player, sourcePointId, numberOfMoves)) {
+            var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
+            this.points[destinationPointId].highlightDestination(on);
         }
     };
     return Board;
@@ -327,28 +318,28 @@ var Game = (function () {
             if (!on) {
                 // turn off highlights if any
                 point.highlightSource(false);
-                self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value), on);
-                self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die2.value), on);
+                self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die1.value, on);
+                self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die2.value, on);
             }
             else if (point.checkers[self.currentPlayer] > 0) {
                 point.highlightSource(true);
                 if (self.dice.die1.remainingUses > 0) {
-                    self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value), on);
+                    self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die1.value, on);
                 }
                 if (self.dice.die2.remainingUses > 0) {
-                    self.board.highlightPointIfLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die2.value), on);
+                    self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die2.value, on);
                 }
             }
         };
         this.board.onPointSelected = function (point, on) {
             if (point.checkers[self.currentPlayer] > 0) {
                 if (self.dice.die1.remainingUses > 0 &&
-                    self.board.isLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die1.value))) {
+                    self.board.isLegalMove(self.currentPlayer, point.pointId, self.dice.die1.value)) {
                     self.board.move(self.currentPlayer, point.pointId, self.dice.die1.value);
                     self.dice.die1.remainingUses--;
                 }
                 else if (self.dice.die2.remainingUses > 0 &&
-                    self.board.isLegal(self.currentPlayer, self.getDestinationPointId(point.pointId, self.dice.die2.value))) {
+                    self.board.isLegalMove(self.currentPlayer, point.pointId, self.dice.die2.value)) {
                     self.board.move(self.currentPlayer, point.pointId, self.dice.die2.value);
                     self.dice.die2.remainingUses--;
                 }
@@ -364,13 +355,6 @@ var Game = (function () {
         this.logCurrentPlayer();
         this.dice.roll();
     }
-    /**
-     * @deprecated This code is moved to Board.ts
-     */
-    Game.prototype.getDestinationPointId = function (startPointId, dieValue) {
-        var direction = this.currentPlayer == Player.BLACK ? 1 : -1;
-        return startPointId + (direction * dieValue);
-    };
     Game.getOtherPlayer = function (player) {
         return player === Player.BLACK ? Player.RED : Player.BLACK;
     };

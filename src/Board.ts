@@ -63,17 +63,6 @@ class Board {
         return destinationPointId;
     }
     
-    /**
-     * @deprecated Start using isLegalMove instead
-     */
-    isLegal(player: Player, pointId: number): boolean {
-        if (pointId < 0 || pointId > 25) { 
-            return false;
-        }
-        let otherPlayer = (player + 1) % 2;
-        return this.points[pointId].checkers[otherPlayer] < 2;
-    }
-    
     isLegalMove(player: Player, sourcePointId: number, numberOfMoves: number): boolean {
         
         // case: there is no counter to move: fail
@@ -128,9 +117,10 @@ class Board {
         return true;
     }
     
-    highlightPointIfLegal(player: Player, pointId: number, on: boolean): void {
-        if (this.isLegal(player, pointId)) {
-            this.points[pointId].highlightDestination(on);
+    highlightIfLegalMove(player: Player, sourcePointId: number, numberOfMoves: number, on: boolean): void {
+        if (this.isLegalMove(player, sourcePointId, numberOfMoves)) {
+            let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
+            this.points[destinationPointId].highlightDestination(on);
         }
     }
 }
