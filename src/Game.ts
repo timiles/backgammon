@@ -23,18 +23,17 @@ class Game {
                 if (checkerContainer instanceof Point) {
                     (<Point> checkerContainer).highlightSource(false);
                 }
-                self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value, on);
-                self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value, on);
+                self.board.removeAllHighlights();
             }
             else if (checkerContainer.checkers[self.currentPlayer] > 0) {
                 if (checkerContainer instanceof Point) {
                     (<Point> checkerContainer).highlightSource(true);
                 }
                 if (self.dice.die1.remainingUses > 0) {
-                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value, on);
+                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value);
                 }
                 if (self.dice.die2.remainingUses > 0) {
-                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value, on);
+                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value);
                 }
             }
         };

@@ -120,10 +120,16 @@ class Board {
         return true;
     }
     
-    highlightIfLegalMove(player: Player, sourcePointId: number, numberOfMoves: number, on: boolean): void {
+    highlightIfLegalMove(player: Player, sourcePointId: number, numberOfMoves: number): void {
         if (this.isLegalMove(player, sourcePointId, numberOfMoves)) {
             let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
-            (<Point> this.checkerContainers[destinationPointId]).highlightDestination(on);
+            (<Point> this.checkerContainers[destinationPointId]).highlightDestination(true);
+        }
+    }
+    
+    removeAllHighlights(): void {
+        for (let pointId = 1; pointId <= 24; pointId++) {
+            (<Point> this.checkerContainers[pointId]).highlightDestination(false);            
         }
     }
 }

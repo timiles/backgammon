@@ -318,10 +318,15 @@ var Board = (function () {
         this.increment(player, destinationPointId);
         return true;
     };
-    Board.prototype.highlightIfLegalMove = function (player, sourcePointId, numberOfMoves, on) {
+    Board.prototype.highlightIfLegalMove = function (player, sourcePointId, numberOfMoves) {
         if (this.isLegalMove(player, sourcePointId, numberOfMoves)) {
             var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
-            this.checkerContainers[destinationPointId].highlightDestination(on);
+            this.checkerContainers[destinationPointId].highlightDestination(true);
+        }
+    };
+    Board.prototype.removeAllHighlights = function () {
+        for (var pointId = 1; pointId <= 24; pointId++) {
+            this.checkerContainers[pointId].highlightDestination(false);
         }
     };
     return Board;
@@ -401,18 +406,17 @@ var Game = (function () {
                 if (checkerContainer instanceof Point) {
                     checkerContainer.highlightSource(false);
                 }
-                self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value, on);
-                self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value, on);
+                self.board.removeAllHighlights();
             }
             else if (checkerContainer.checkers[self.currentPlayer] > 0) {
                 if (checkerContainer instanceof Point) {
                     checkerContainer.highlightSource(true);
                 }
                 if (self.dice.die1.remainingUses > 0) {
-                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value, on);
+                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value);
                 }
                 if (self.dice.die2.remainingUses > 0) {
-                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value, on);
+                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value);
                 }
             }
         };
