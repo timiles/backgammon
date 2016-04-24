@@ -17,20 +17,24 @@ class Game {
         this.dice = new Dice(new DiceUI(diceElementId));
         this.board = new Board(new BoardUI(boardElementId));
         
-        this.board.onPointInspected = (point: Point, on: boolean) => {
+        this.board.onPointInspected = (checkerContainer: CheckerContainer, on: boolean) => {
             if (!on) {
                 // turn off highlights if any
-                point.highlightSource(false);
-                self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die1.value, on);
-                self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die2.value, on);
+                if (checkerContainer instanceof Point) {
+                    (<Point> checkerContainer).highlightSource(false);
+                }
+                self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value, on);
+                self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value, on);
             }
-            else if (point.checkers[self.currentPlayer] > 0) {
-                point.highlightSource(true);
+            else if (checkerContainer.checkers[self.currentPlayer] > 0) {
+                if (checkerContainer instanceof Point) {
+                    (<Point> checkerContainer).highlightSource(true);
+                }
                 if (self.dice.die1.remainingUses > 0) {
-                    self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die1.value, on);
+                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value, on);
                 }
                 if (self.dice.die2.remainingUses > 0) {
-                    self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die2.value, on);
+                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value, on);
                 }
             }
         };

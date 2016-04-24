@@ -1,29 +1,28 @@
+/// <reference path="CheckerContainer.ts"/>
 /// <reference path="PointUI.ts"/>
 
-class Point {
+class Point extends CheckerContainer {
     
-    pointId: number;
-    checkers: Array<number>;
     pointUI: PointUI;
     
     constructor(
         pointId: number,
         onInspected: (point: Point, on: boolean) => void,
         onSelected: (point: Point, on: boolean) => void) {
+        super(pointId);
         
         let self = this;
         this.pointId = pointId;
-        this.checkers = [0, 0];
         this.pointUI = new PointUI(pointId, (on: boolean) => { onInspected(self, on); }, (on: boolean) => { onSelected(self, on); });
     }
     
     decrement(player: Player): void {
-        this.checkers[player]--;
+        super.decrement(player);
         this.pointUI.setCheckers(player, this.checkers[player]);
     }
     
     increment(player: Player, count: number): void {
-        this.checkers[player] += count;
+        super.increment(player, count);;
         this.pointUI.setCheckers(player, this.checkers[player]);
     }
     

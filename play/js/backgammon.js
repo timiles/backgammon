@@ -1,3 +1,52 @@
+var BarUI = (function () {
+    function BarUI(player, onInspected, onSelected) {
+        var self = this;
+        this.barDiv = document.createElement('div');
+        this.barDiv.id = Player[player] + '-bar';
+        this.barDiv.className = 'point bar';
+        this.barDiv.onmouseover = function () { onInspected(true); };
+        this.barDiv.onmouseout = function () { onInspected(false); };
+        this.barDiv.onclick = function () {
+            self.isSelected = !self.isSelected;
+            onSelected(self.isSelected);
+        };
+    }
+    BarUI.prototype.clearCheckers = function () {
+        while (this.barDiv.hasChildNodes()) {
+            this.barDiv.removeChild(this.barDiv.childNodes[0]);
+        }
+    };
+    BarUI.prototype.setCheckers = function (player, count) {
+        this.clearCheckers();
+        var $barDiv = $(this.barDiv);
+        var className = Player[player].toLowerCase();
+        for (var i = 1; i <= count; i++) {
+            if (i > 5) {
+                $('.checker-total', $barDiv).text(count);
+            }
+            else if (i == 5) {
+                $barDiv.append($('<div class="checker checker-total">').addClass(className));
+            }
+            else {
+                $barDiv.append($('<div class="checker">').addClass(className));
+            }
+        }
+    };
+    return BarUI;
+})();
+var CheckerContainer = (function () {
+    function CheckerContainer(pointId) {
+        this.pointId = pointId;
+        this.checkers = [0, 0];
+    }
+    CheckerContainer.prototype.decrement = function (player) {
+        this.checkers[player]--;
+    };
+    CheckerContainer.prototype.increment = function (player, count) {
+        this.checkers[player] += count;
+    };
+    return CheckerContainer;
+})();
 var PointUI = (function () {
     function PointUI(pointId, onInspected, onSelected) {
         var self = this;
@@ -51,6 +100,65 @@ var PointUI = (function () {
     };
     return PointUI;
 })();
+/// <reference path="CheckerContainer.ts"/>
+/// <reference path="PointUI.ts"/>
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Point = (function (_super) {
+    __extends(Point, _super);
+    function Point(pointId, onInspected, onSelected) {
+        _super.call(this, pointId);
+        var self = this;
+        this.pointId = pointId;
+        this.pointUI = new PointUI(pointId, function (on) { onInspected(self, on); }, function (on) { onSelected(self, on); });
+    }
+    Point.prototype.decrement = function (player) {
+        _super.prototype.decrement.call(this, player);
+        this.pointUI.setCheckers(player, this.checkers[player]);
+    };
+    Point.prototype.increment = function (player, count) {
+        _super.prototype.increment.call(this, player, count);
+        ;
+        this.pointUI.setCheckers(player, this.checkers[player]);
+    };
+    Point.prototype.highlightDestination = function (on) {
+        this.pointUI.highlightDestination(on);
+    };
+    Point.prototype.highlightSource = function (on) {
+        this.pointUI.highlightSource(on);
+    };
+    return Point;
+})(CheckerContainer);
+/// <reference path="BarUI.ts"/>
+/// <reference path="Point.ts"/>
+var Bar = (function (_super) {
+    __extends(Bar, _super);
+    function Bar(onInspected, onSelected) {
+        _super.call(this, PointId.BAR);
+        var self = this;
+        this.barUIs = new Array(2);
+        this.barUIs[Player.BLACK] =
+            new BarUI(Player.BLACK, function (on) { onInspected(self, on); }, function (on) { onSelected(self, on); });
+        this.barUIs[Player.RED] =
+            new BarUI(Player.RED, function (on) { onInspected(self, on); }, function (on) { onSelected(self, on); });
+    }
+    Bar.prototype.decrement = function (player) {
+        _super.prototype.decrement.call(this, player);
+        this.barUIs[player].setCheckers(player, this.checkers[player]);
+    };
+    Bar.prototype.increment = function (player, count) {
+        _super.prototype.increment.call(this, player, count);
+        ;
+        this.barUIs[player].setCheckers(player, this.checkers[player]);
+    };
+    return Bar;
+})(CheckerContainer);
+/// <reference path="Bar.ts"/>
+/// <reference path="Point.ts"/>
 /// <reference path="PointUI.ts"/>
 var BoardUI = (function () {
     function BoardUI(boardElementId) {
@@ -60,43 +168,37 @@ var BoardUI = (function () {
         }
         this.boardDiv.className = 'board';
     }
-    BoardUI.prototype.initialise = function (pointUIs) {
-        this.boardDiv.appendChild(pointUIs[13].pointDiv);
-        this.boardDiv.appendChild(pointUIs[14].pointDiv);
-        this.boardDiv.appendChild(pointUIs[15].pointDiv);
-        this.boardDiv.appendChild(pointUIs[16].pointDiv);
-        this.boardDiv.appendChild(pointUIs[17].pointDiv);
-        this.boardDiv.appendChild(pointUIs[18].pointDiv);
-        this.boardDiv.appendChild(BoardUI.createBar(Player.BLACK));
-        this.boardDiv.appendChild(pointUIs[19].pointDiv);
-        this.boardDiv.appendChild(pointUIs[20].pointDiv);
-        this.boardDiv.appendChild(pointUIs[21].pointDiv);
-        this.boardDiv.appendChild(pointUIs[22].pointDiv);
-        this.boardDiv.appendChild(pointUIs[23].pointDiv);
-        this.boardDiv.appendChild(pointUIs[24].pointDiv);
+    BoardUI.prototype.initialise = function (checkerContainers) {
+        this.boardDiv.appendChild(checkerContainers[13].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[14].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[15].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[16].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[17].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[18].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[PointId.BAR].barUIs[Player.RED].barDiv);
+        this.boardDiv.appendChild(checkerContainers[19].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[20].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[21].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[22].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[23].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[24].pointUI.pointDiv);
         this.boardDiv.appendChild(BoardUI.createHome(Player.BLACK));
         this.boardDiv.appendChild(BoardUI.createClearBreak());
-        this.boardDiv.appendChild(pointUIs[12].pointDiv);
-        this.boardDiv.appendChild(pointUIs[11].pointDiv);
-        this.boardDiv.appendChild(pointUIs[10].pointDiv);
-        this.boardDiv.appendChild(pointUIs[9].pointDiv);
-        this.boardDiv.appendChild(pointUIs[8].pointDiv);
-        this.boardDiv.appendChild(pointUIs[7].pointDiv);
-        this.boardDiv.appendChild(BoardUI.createBar(Player.RED));
-        this.boardDiv.appendChild(pointUIs[6].pointDiv);
-        this.boardDiv.appendChild(pointUIs[5].pointDiv);
-        this.boardDiv.appendChild(pointUIs[4].pointDiv);
-        this.boardDiv.appendChild(pointUIs[3].pointDiv);
-        this.boardDiv.appendChild(pointUIs[2].pointDiv);
-        this.boardDiv.appendChild(pointUIs[1].pointDiv);
+        this.boardDiv.appendChild(checkerContainers[12].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[11].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[10].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[9].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[8].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[7].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[PointId.BAR].barUIs[Player.BLACK].barDiv);
+        this.boardDiv.appendChild(checkerContainers[6].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[5].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[4].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[3].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[2].pointUI.pointDiv);
+        this.boardDiv.appendChild(checkerContainers[1].pointUI.pointDiv);
         this.boardDiv.appendChild(BoardUI.createHome(Player.RED));
         this.boardDiv.appendChild(BoardUI.createClearBreak());
-    };
-    BoardUI.createBar = function (player) {
-        var bar = document.createElement('div');
-        bar.id = Player[player] + '-bar';
-        bar.className = 'point bar';
-        return bar;
     };
     BoardUI.createHome = function (player) {
         var bar = document.createElement('div');
@@ -111,31 +213,9 @@ var BoardUI = (function () {
     };
     return BoardUI;
 })();
-/// <reference path="PointUI.ts"/>
-var Point = (function () {
-    function Point(pointId, onInspected, onSelected) {
-        var self = this;
-        this.pointId = pointId;
-        this.checkers = [0, 0];
-        this.pointUI = new PointUI(pointId, function (on) { onInspected(self, on); }, function (on) { onSelected(self, on); });
-    }
-    Point.prototype.decrement = function (player) {
-        this.checkers[player]--;
-        this.pointUI.setCheckers(player, this.checkers[player]);
-    };
-    Point.prototype.increment = function (player, count) {
-        this.checkers[player] += count;
-        this.pointUI.setCheckers(player, this.checkers[player]);
-    };
-    Point.prototype.highlightDestination = function (on) {
-        this.pointUI.highlightDestination(on);
-    };
-    Point.prototype.highlightSource = function (on) {
-        this.pointUI.highlightSource(on);
-    };
-    return Point;
-})();
+/// <reference path="Bar.ts"/>
 /// <reference path="BoardUI.ts"/>
+/// <reference path="CheckerContainer.ts"/>
 /// <reference path="Point.ts"/>
 var PointId;
 (function (PointId) {
@@ -146,20 +226,21 @@ var Board = (function () {
     function Board(boardUI) {
         var _this = this;
         this.boardUI = boardUI;
-        var onPointInspected = function (point, on) {
+        var onPointInspected = function (checkerContainer, on) {
             if (_this.onPointInspected) {
-                _this.onPointInspected(point, on);
+                _this.onPointInspected(checkerContainer, on);
             }
         };
-        var onPointSelected = function (point, on) {
+        var onPointSelected = function (checkerContainer, on) {
             if (_this.onPointSelected) {
-                _this.onPointSelected(point, on);
+                _this.onPointSelected(checkerContainer, on);
             }
         };
-        this.points = new Array(26);
-        for (var i = 0; i < 26; i++) {
-            this.points[i] = new Point(i, onPointInspected, onPointSelected);
+        this.checkerContainers = new Array(26);
+        for (var i = 0; i < 25; i++) {
+            this.checkerContainers[i] = new Point(i, onPointInspected, onPointSelected);
         }
+        this.checkerContainers[PointId.BAR] = new Bar(onPointInspected, onPointSelected);
         this.increment(Player.RED, 24, 2);
         this.increment(Player.BLACK, 1, 2);
         this.increment(Player.RED, 6, 5);
@@ -168,13 +249,13 @@ var Board = (function () {
         this.increment(Player.BLACK, 17, 3);
         this.increment(Player.RED, 13, 5);
         this.increment(Player.BLACK, 12, 5);
-        this.boardUI.initialise(this.points.map(function (p) { return p.pointUI; }));
+        this.boardUI.initialise(this.checkerContainers);
     }
     Board.prototype.decrement = function (player, pointId) {
-        this.points[pointId].decrement(player);
+        this.checkerContainers[pointId].decrement(player);
     };
     Board.prototype.increment = function (player, pointId, count) {
-        this.points[pointId].increment(player, count || 1);
+        this.checkerContainers[pointId].increment(player, count || 1);
     };
     Board.getDestinationPointId = function (player, sourcePointId, numberOfMoves) {
         if (sourcePointId === PointId.BAR) {
@@ -193,12 +274,12 @@ var Board = (function () {
     };
     Board.prototype.isLegalMove = function (player, sourcePointId, numberOfMoves) {
         // case: there is no counter to move: fail
-        if (this.points[sourcePointId].checkers[player] == 0) {
+        if (this.checkerContainers[sourcePointId].checkers[player] == 0) {
             console.info('no counter at ' + sourcePointId);
             return false;
         }
         // case: there is a counter on the bar, and this is not it
-        if ((sourcePointId != PointId.BAR) && (this.points[PointId.BAR].checkers[player] > 0)) {
+        if ((sourcePointId != PointId.BAR) && (this.checkerContainers[PointId.BAR].checkers[player] > 0)) {
             console.info('must move counter off bar first');
             return false;
         }
@@ -209,7 +290,7 @@ var Board = (function () {
             var pointIdOutsideOfHomeBoard = (player === Player.BLACK) ? 1 : 7;
             var totalPointsOutsideOfHomeBoard = 18;
             for (var offset = 0; offset < totalPointsOutsideOfHomeBoard; offset++) {
-                if (this.points[pointIdOutsideOfHomeBoard + offset].checkers[player] > 0) {
+                if (this.checkerContainers[pointIdOutsideOfHomeBoard + offset].checkers[player] > 0) {
                     return false;
                 }
             }
@@ -217,7 +298,7 @@ var Board = (function () {
         }
         var otherPlayer = Game.getOtherPlayer(player);
         // case: there is a counter, but opponent blocks the end pip
-        if (this.points[destinationPointId].checkers[otherPlayer] >= 2) {
+        if (this.checkerContainers[destinationPointId].checkers[otherPlayer] >= 2) {
             console.info('point is blocked');
             return false;
         }
@@ -229,7 +310,7 @@ var Board = (function () {
         }
         var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
         var otherPlayer = Game.getOtherPlayer(player);
-        if (this.points[destinationPointId].checkers[otherPlayer] == 1) {
+        if (this.checkerContainers[destinationPointId].checkers[otherPlayer] == 1) {
             this.decrement(otherPlayer, destinationPointId);
             this.increment(otherPlayer, PointId.BAR);
         }
@@ -240,7 +321,7 @@ var Board = (function () {
     Board.prototype.highlightIfLegalMove = function (player, sourcePointId, numberOfMoves, on) {
         if (this.isLegalMove(player, sourcePointId, numberOfMoves)) {
             var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
-            this.points[destinationPointId].highlightDestination(on);
+            this.checkerContainers[destinationPointId].highlightDestination(on);
         }
     };
     return Board;
@@ -314,20 +395,24 @@ var Game = (function () {
         var self = this;
         this.dice = new Dice(new DiceUI(diceElementId));
         this.board = new Board(new BoardUI(boardElementId));
-        this.board.onPointInspected = function (point, on) {
+        this.board.onPointInspected = function (checkerContainer, on) {
             if (!on) {
                 // turn off highlights if any
-                point.highlightSource(false);
-                self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die1.value, on);
-                self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die2.value, on);
+                if (checkerContainer instanceof Point) {
+                    checkerContainer.highlightSource(false);
+                }
+                self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value, on);
+                self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value, on);
             }
-            else if (point.checkers[self.currentPlayer] > 0) {
-                point.highlightSource(true);
+            else if (checkerContainer.checkers[self.currentPlayer] > 0) {
+                if (checkerContainer instanceof Point) {
+                    checkerContainer.highlightSource(true);
+                }
                 if (self.dice.die1.remainingUses > 0) {
-                    self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die1.value, on);
+                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value, on);
                 }
                 if (self.dice.die2.remainingUses > 0) {
-                    self.board.highlightIfLegalMove(self.currentPlayer, point.pointId, self.dice.die2.value, on);
+                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value, on);
                 }
             }
         };
