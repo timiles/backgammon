@@ -10,8 +10,9 @@ class BarUI {
         
         this.barDiv = document.createElement('div');
         
+        let side = (player === Player.BLACK ? 'bottom' : 'top');
         this.barDiv.id = Player[player] + '-bar';
-        this.barDiv.className = 'point bar';
+        this.barDiv.className = `point ${side}-point bar`;
 
         this.barDiv.onmouseover = function() { onInspected(true); };
         this.barDiv.onmouseout = function() { onInspected(false); };

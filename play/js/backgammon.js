@@ -2,8 +2,9 @@ var BarUI = (function () {
     function BarUI(player, onInspected, onSelected) {
         var self = this;
         this.barDiv = document.createElement('div');
+        var side = (player === Player.BLACK ? 'bottom' : 'top');
         this.barDiv.id = Player[player] + '-bar';
-        this.barDiv.className = 'point bar';
+        this.barDiv.className = "point " + side + "-point bar";
         this.barDiv.onmouseover = function () { onInspected(true); };
         this.barDiv.onmouseout = function () { onInspected(false); };
         this.barDiv.onclick = function () {
