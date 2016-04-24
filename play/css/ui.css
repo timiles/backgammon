@@ -49,9 +49,16 @@ DIV.bar
 DIV.home
 {
     border: none;
-    border-left: 4px solid brown;
     padding-left: 2px;
     padding-right: 2px;
+}
+DIV.home.top-point
+{
+    border-left: 4px solid brown;
+}
+DIV.home.bottom-point
+{
+    border-right: 4px solid brown;
 }
 DIV.bottom-point
 {

@@ -1,4 +1,5 @@
 /// <reference path="Bar.ts"/>
+/// <reference path="Home.ts"/>
 /// <reference path="Point.ts"/>
 /// <reference path="PointUI.ts"/>
 
@@ -32,7 +33,7 @@ class BoardUI {
         this.boardDiv.appendChild((<Point> checkerContainers[22]).pointUI.pointDiv);
         this.boardDiv.appendChild((<Point> checkerContainers[23]).pointUI.pointDiv);
         this.boardDiv.appendChild((<Point> checkerContainers[24]).pointUI.pointDiv);
-        this.boardDiv.appendChild(BoardUI.createHome(Player.BLACK));
+        this.boardDiv.appendChild((<Home> checkerContainers[PointId.HOME]).homeUIs[Player.BLACK].homeDiv);
         this.boardDiv.appendChild(BoardUI.createClearBreak());
         this.boardDiv.appendChild((<Point> checkerContainers[12]).pointUI.pointDiv);
         this.boardDiv.appendChild((<Point> checkerContainers[11]).pointUI.pointDiv);
@@ -47,16 +48,10 @@ class BoardUI {
         this.boardDiv.appendChild((<Point> checkerContainers[3]).pointUI.pointDiv);
         this.boardDiv.appendChild((<Point> checkerContainers[2]).pointUI.pointDiv);
         this.boardDiv.appendChild((<Point> checkerContainers[1]).pointUI.pointDiv);
-        this.boardDiv.appendChild(BoardUI.createHome(Player.RED));
+        this.boardDiv.appendChild((<Home> checkerContainers[PointId.HOME]).homeUIs[Player.RED].homeDiv);
         this.boardDiv.appendChild(BoardUI.createClearBreak());
     }
     
-    private static createHome(player: Player) {
-        let bar = document.createElement('div');
-        bar.id = Player[player] + '-home';
-        bar.className = 'point home';
-        return bar;
-    }
     private static createClearBreak() {
         let br = document.createElement('br');
         br.className = 'clear';
