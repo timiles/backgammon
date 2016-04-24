@@ -23,7 +23,7 @@ class Bar extends CheckerContainer {
     }
     
     increment(player: Player, count: number): void {
-        super.increment(player, count);;
+        super.increment(player, count);
         this.barUIs[player].setCheckers(player, this.checkers[player]);
     }
 }
