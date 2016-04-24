@@ -1,7 +1,5 @@
 /// <reference path="CheckerContainerUI.ts"/>
 
-declare var $;
-
 class BarUI extends CheckerContainerUI {
     
     isSelected: boolean;

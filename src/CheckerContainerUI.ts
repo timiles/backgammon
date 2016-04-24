@@ -1,3 +1,5 @@
+declare var $;
+
 class CheckerContainerUI {
     
     checkerContainerDiv: HTMLDivElement;

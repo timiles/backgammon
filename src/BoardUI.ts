@@ -3,8 +3,6 @@
 /// <reference path="Point.ts"/>
 /// <reference path="PointUI.ts"/>
 
-declare var $;
-
 class BoardUI {
     
     boardDiv: HTMLElement;
