@@ -19,15 +19,15 @@ class CheckerContainerUI {
     setCheckers(player: Player, count: number) {
         this.clearCheckers();
 
-        let $homeDiv = $(this.checkerContainerDiv);
+        let $checkerContainerDiv = $(this.checkerContainerDiv);
         let className = Player[player].toLowerCase();
         for (let i = 1; i <= count; i++) {
             if (i > 5) {
-                $('.checker-total', $homeDiv).text(count);
+                $('.checker-total', $checkerContainerDiv).text(count);
             } else if (i == 5) {
-                $homeDiv.append($('<div class="checker checker-total">').addClass(className));
+                $checkerContainerDiv.append($('<div class="checker checker-total">').addClass(className));
             } else {
-                $homeDiv.append($('<div class="checker">').addClass(className));
+                $checkerContainerDiv.append($('<div class="checker">').addClass(className));
             }
         }
     }
