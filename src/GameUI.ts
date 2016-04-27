@@ -5,20 +5,20 @@
 
 class GameUI {
     
-    board: BoardUI;
-    dice: DiceUI;
-    status: StatusUI;
+    boardUI: BoardUI;
+    diceUI: DiceUI;
+    statusUI: StatusUI;
     
     constructor(containerElementId: string) {
         let container = document.getElementById(containerElementId);
         Utils.removeAllChildren(container);
         
-        this.board = new BoardUI();
-        this.dice = new DiceUI();
-        this.status = new StatusUI();
+        this.boardUI = new BoardUI();
+        this.diceUI = new DiceUI();
+        this.statusUI = new StatusUI();
         
-        container.appendChild(this.board.containerDiv);
-        container.appendChild(this.dice.containerDiv);
-        container.appendChild(this.status.statusSpan);
+        container.appendChild(this.boardUI.containerDiv);
+        container.appendChild(this.diceUI.containerDiv);
+        container.appendChild(this.statusUI.statusSpan);
     }
 }

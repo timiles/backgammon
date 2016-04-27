@@ -408,12 +408,12 @@ var GameUI = (function () {
     function GameUI(containerElementId) {
         var container = document.getElementById(containerElementId);
         Utils.removeAllChildren(container);
-        this.board = new BoardUI();
-        this.dice = new DiceUI();
-        this.status = new StatusUI();
-        container.appendChild(this.board.containerDiv);
-        container.appendChild(this.dice.containerDiv);
-        container.appendChild(this.status.statusSpan);
+        this.boardUI = new BoardUI();
+        this.diceUI = new DiceUI();
+        this.statusUI = new StatusUI();
+        container.appendChild(this.boardUI.containerDiv);
+        container.appendChild(this.diceUI.containerDiv);
+        container.appendChild(this.statusUI.statusSpan);
     }
     return GameUI;
 })();
@@ -440,8 +440,8 @@ var Game = (function () {
     function Game(containerId) {
         var self = this;
         var ui = new GameUI(containerId);
-        this.dice = new Dice(ui.dice);
-        this.board = new Board(ui.board);
+        this.dice = new Dice(ui.diceUI);
+        this.board = new Board(ui.boardUI);
         this.board.onPointInspected = function (checkerContainer, on) {
             if (!on) {
                 // turn off highlights if any
@@ -480,7 +480,7 @@ var Game = (function () {
                 self.dice.roll();
             }
         };
-        this.statusLogger = new StatusLogger(ui.status);
+        this.statusLogger = new StatusLogger(ui.statusUI);
         // TODO: roll to see who starts. Assume BLACK.
         this.currentPlayer = Player.BLACK;
         this.logCurrentPlayer();

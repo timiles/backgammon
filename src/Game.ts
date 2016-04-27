@@ -16,8 +16,8 @@ class Game {
         let self = this;
 
         let ui = new GameUI(containerId);
-        this.dice = new Dice(ui.dice);
-        this.board = new Board(ui.board);
+        this.dice = new Dice(ui.diceUI);
+        this.board = new Board(ui.boardUI);
         
         this.board.onPointInspected = (checkerContainer: CheckerContainer, on: boolean) => {
             if (!on) {
@@ -61,7 +61,7 @@ class Game {
         };
         
         
-        this.statusLogger = new StatusLogger(ui.status);
+        this.statusLogger = new StatusLogger(ui.statusUI);
         
         // TODO: roll to see who starts. Assume BLACK.
         this.currentPlayer = Player.BLACK;
