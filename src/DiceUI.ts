@@ -1,12 +1,12 @@
 class DiceUI {
     
-    diceContainerDiv: HTMLElement;
-    constructor(diceContainerElementId: string) {
+    containerDiv: HTMLDivElement;
+    constructor() {
         
-        this.diceContainerDiv = document.getElementById(diceContainerElementId);
+        this.containerDiv = document.createElement('div');
     }
     
     setDiceRolls(roll1: number, roll2: number) {
-        this.diceContainerDiv.innerText = `${roll1}, ${roll2}`;
+        this.containerDiv.innerText = `${roll1}, ${roll2}`;
     }
 }

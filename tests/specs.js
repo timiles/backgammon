@@ -5,7 +5,7 @@ var board;
 describe('Backgammon', function () {
 
     beforeEach(function () {
-        var game = new Game('board', 'dice', 'status');
+        var game = new Game('backgammon');
         board = game.board;
     });
 

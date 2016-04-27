@@ -1,5 +1,6 @@
 /// <reference path="Board.ts"/>
 /// <reference path="Dice.ts"/>
+/// <reference path="GameUI.ts"/>
 /// <reference path="StatusLogger.ts"/>
 
 enum Player { BLACK, RED }
@@ -11,11 +12,12 @@ class Game {
     statusLogger: StatusLogger;
     currentPlayer: Player;
     
-    constructor(boardElementId: string, diceElementId: string, statusElementId: string) {
+    constructor(containerId) {
         let self = this;
 
-        this.dice = new Dice(new DiceUI(diceElementId));
-        this.board = new Board(new BoardUI(boardElementId));
+        let ui = new GameUI(containerId);
+        this.dice = new Dice(ui.dice);
+        this.board = new Board(ui.board);
         
         this.board.onPointInspected = (checkerContainer: CheckerContainer, on: boolean) => {
             if (!on) {
@@ -59,7 +61,7 @@ class Game {
         };
         
         
-        this.statusLogger = new StatusLogger(new StatusUI(statusElementId));
+        this.statusLogger = new StatusLogger(ui.status);
         
         // TODO: roll to see who starts. Assume BLACK.
         this.currentPlayer = Player.BLACK;

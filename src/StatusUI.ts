@@ -1,8 +1,8 @@
 class StatusUI {
     
     statusSpan: HTMLSpanElement;
-    constructor(statusSpanElementId: string) {
-        this.statusSpan = document.getElementById(statusSpanElementId);
+    constructor() {
+        this.statusSpan = document.createElement('span');
     }
     
     setStatus(s: string) {
