@@ -164,7 +164,7 @@ var HomeUI = (function (_super) {
 var Home = (function (_super) {
     __extends(Home, _super);
     function Home(blackHomeUI, redHomeUI) {
-        _super.call(this, PointId.BAR);
+        _super.call(this, PointId.HOME);
         this.homeUIs = new Array(2);
         this.homeUIs[Player.BLACK] = blackHomeUI;
         this.homeUIs[Player.RED] = redHomeUI;

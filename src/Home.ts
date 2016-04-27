@@ -5,7 +5,7 @@ class Home extends CheckerContainer {
     homeUIs: Array<HomeUI>;
     
     constructor(blackHomeUI: HomeUI, redHomeUI: HomeUI) {
-        super(PointId.BAR);
+        super(PointId.HOME);
         
         this.homeUIs = new Array<HomeUI>(2);
         this.homeUIs[Player.BLACK] = blackHomeUI;
