@@ -1,5 +1,5 @@
-/// <reference path="Bar.ts"/>
-/// <reference path="Home.ts"/>
+/// <reference path="BarUI.ts"/>
+/// <reference path="HomeUI.ts"/>
 /// <reference path="PointUI.ts"/>
 /// <reference path="Utils.ts"/>
 
@@ -30,23 +30,22 @@ class BoardUI {
         
         this.blackBarUI = new BarUI(Player.BLACK);
         this.redBarUI = new BarUI(Player.RED);
-    }
-    
-    initialise(checkerContainers: Array<CheckerContainer>): void {
+
+        // append all elements in the correct order
         this.containerDiv.appendChild(this.pointUIs[12].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[13].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[14].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[15].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[16].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[17].checkerContainerDiv);
-        this.containerDiv.appendChild((<Bar> checkerContainers[PointId.BAR]).barUIs[Player.RED].checkerContainerDiv);
+        this.containerDiv.appendChild(this.redBarUI.checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[18].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[19].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[20].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[21].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[22].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[23].checkerContainerDiv);
-        this.containerDiv.appendChild((<Home> checkerContainers[PointId.HOME]).homeUIs[Player.BLACK].checkerContainerDiv);
+        this.containerDiv.appendChild(this.blackHomeUI.checkerContainerDiv);
         this.containerDiv.appendChild(BoardUI.createClearBreak());
         this.containerDiv.appendChild(this.pointUIs[11].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[10].checkerContainerDiv);
@@ -54,14 +53,14 @@ class BoardUI {
         this.containerDiv.appendChild(this.pointUIs[8].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[7].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[6].checkerContainerDiv);
-        this.containerDiv.appendChild((<Bar> checkerContainers[PointId.BAR]).barUIs[Player.BLACK].checkerContainerDiv);
+        this.containerDiv.appendChild(this.blackBarUI.checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[5].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[4].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[3].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[2].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[1].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[0].checkerContainerDiv);
-        this.containerDiv.appendChild((<Home> checkerContainers[PointId.HOME]).homeUIs[Player.RED].checkerContainerDiv);
+        this.containerDiv.appendChild(this.redHomeUI.checkerContainerDiv);
         this.containerDiv.appendChild(BoardUI.createClearBreak());
     }
     

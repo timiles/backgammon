@@ -1,6 +1,7 @@
 /// <reference path="Bar.ts"/>
 /// <reference path="BoardUI.ts"/>
 /// <reference path="CheckerContainer.ts"/>
+/// <reference path="Home.ts"/>
 /// <reference path="Point.ts"/>
 
 enum PointId { HOME = 0, BAR = 25 }
@@ -40,8 +41,6 @@ class Board {
         this.increment(Player.BLACK, 17, 3);
         this.increment(Player.RED, 13, 5);
         this.increment(Player.BLACK, 12, 5);
-    
-        this.boardUI.initialise(this.checkerContainers);
     }
     
     decrement(player: Player, pointId: number): void {

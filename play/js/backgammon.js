@@ -161,24 +161,8 @@ var HomeUI = (function (_super) {
     }
     return HomeUI;
 })(CheckerContainerUI);
-/// <reference path="CheckerContainer.ts"/>
+/// <reference path="BarUI.ts"/>
 /// <reference path="HomeUI.ts"/>
-var Home = (function (_super) {
-    __extends(Home, _super);
-    function Home(blackHomeUI, redHomeUI) {
-        _super.call(this, PointId.HOME);
-        this.homeUIs = new Array(2);
-        this.homeUIs[Player.BLACK] = blackHomeUI;
-        this.homeUIs[Player.RED] = redHomeUI;
-    }
-    Home.prototype.increment = function (player) {
-        _super.prototype.increment.call(this, player, 1);
-        this.homeUIs[player].setCheckers(player, this.checkers[player]);
-    };
-    return Home;
-})(CheckerContainer);
-/// <reference path="Bar.ts"/>
-/// <reference path="Home.ts"/>
 /// <reference path="PointUI.ts"/>
 /// <reference path="Utils.ts"/>
 var BoardUI = (function () {
@@ -196,22 +180,21 @@ var BoardUI = (function () {
         }
         this.blackBarUI = new BarUI(Player.BLACK);
         this.redBarUI = new BarUI(Player.RED);
-    }
-    BoardUI.prototype.initialise = function (checkerContainers) {
+        // append all elements in the correct order
         this.containerDiv.appendChild(this.pointUIs[12].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[13].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[14].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[15].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[16].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[17].checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[PointId.BAR].barUIs[Player.RED].checkerContainerDiv);
+        this.containerDiv.appendChild(this.redBarUI.checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[18].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[19].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[20].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[21].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[22].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[23].checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[PointId.HOME].homeUIs[Player.BLACK].checkerContainerDiv);
+        this.containerDiv.appendChild(this.blackHomeUI.checkerContainerDiv);
         this.containerDiv.appendChild(BoardUI.createClearBreak());
         this.containerDiv.appendChild(this.pointUIs[11].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[10].checkerContainerDiv);
@@ -219,16 +202,16 @@ var BoardUI = (function () {
         this.containerDiv.appendChild(this.pointUIs[8].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[7].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[6].checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[PointId.BAR].barUIs[Player.BLACK].checkerContainerDiv);
+        this.containerDiv.appendChild(this.blackBarUI.checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[5].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[4].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[3].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[2].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[1].checkerContainerDiv);
         this.containerDiv.appendChild(this.pointUIs[0].checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[PointId.HOME].homeUIs[Player.RED].checkerContainerDiv);
+        this.containerDiv.appendChild(this.redHomeUI.checkerContainerDiv);
         this.containerDiv.appendChild(BoardUI.createClearBreak());
-    };
+    }
     BoardUI.createClearBreak = function () {
         var br = document.createElement('br');
         br.className = 'clear';
@@ -236,9 +219,26 @@ var BoardUI = (function () {
     };
     return BoardUI;
 })();
+/// <reference path="CheckerContainer.ts"/>
+/// <reference path="HomeUI.ts"/>
+var Home = (function (_super) {
+    __extends(Home, _super);
+    function Home(blackHomeUI, redHomeUI) {
+        _super.call(this, PointId.HOME);
+        this.homeUIs = new Array(2);
+        this.homeUIs[Player.BLACK] = blackHomeUI;
+        this.homeUIs[Player.RED] = redHomeUI;
+    }
+    Home.prototype.increment = function (player) {
+        _super.prototype.increment.call(this, player, 1);
+        this.homeUIs[player].setCheckers(player, this.checkers[player]);
+    };
+    return Home;
+})(CheckerContainer);
 /// <reference path="Bar.ts"/>
 /// <reference path="BoardUI.ts"/>
 /// <reference path="CheckerContainer.ts"/>
+/// <reference path="Home.ts"/>
 /// <reference path="Point.ts"/>
 var PointId;
 (function (PointId) {
@@ -273,7 +273,6 @@ var Board = (function () {
         this.increment(Player.BLACK, 17, 3);
         this.increment(Player.RED, 13, 5);
         this.increment(Player.BLACK, 12, 5);
-        this.boardUI.initialise(this.checkerContainers);
     }
     Board.prototype.decrement = function (player, pointId) {
         this.checkerContainers[pointId].decrement(player);
