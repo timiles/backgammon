@@ -72,8 +72,8 @@ var CheckerContainer = (function () {
 /// <reference path="CheckerContainerUI.ts"/>
 var PointUI = (function (_super) {
     __extends(PointUI, _super);
-    function PointUI(pointId) {
-        _super.call(this, "point-" + ((pointId % 2 == 0) ? 'black' : 'red'), pointId >= 12);
+    function PointUI(colour, isTopSide) {
+        _super.call(this, "point-" + colour, isTopSide);
         var self = this;
         this.checkerContainerDiv.onclick = function () {
             self.isSelected = !self.isSelected;
@@ -177,7 +177,6 @@ var Home = (function (_super) {
 })(CheckerContainer);
 /// <reference path="Bar.ts"/>
 /// <reference path="Home.ts"/>
-/// <reference path="Point.ts"/>
 /// <reference path="PointUI.ts"/>
 /// <reference path="Utils.ts"/>
 var BoardUI = (function () {
@@ -187,38 +186,40 @@ var BoardUI = (function () {
         this.containerDiv.className = 'board';
         this.pointUIs = new Array(24);
         for (var i = 0; i < this.pointUIs.length; i++) {
-            this.pointUIs[i] = new PointUI(i);
+            var colour = (i % 2 == 0) ? 'black' : 'red';
+            var isTopSide = i >= 12;
+            this.pointUIs[i] = new PointUI(colour, isTopSide);
         }
     }
     BoardUI.prototype.initialise = function (checkerContainers) {
-        this.containerDiv.appendChild(checkerContainers[13].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[14].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[15].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[16].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[17].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[18].pointUI.checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[12].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[13].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[14].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[15].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[16].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[17].checkerContainerDiv);
         this.containerDiv.appendChild(checkerContainers[PointId.BAR].barUIs[Player.RED].checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[19].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[20].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[21].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[22].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[23].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[24].pointUI.checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[18].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[19].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[20].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[21].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[22].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[23].checkerContainerDiv);
         this.containerDiv.appendChild(checkerContainers[PointId.HOME].homeUIs[Player.BLACK].checkerContainerDiv);
         this.containerDiv.appendChild(BoardUI.createClearBreak());
-        this.containerDiv.appendChild(checkerContainers[12].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[11].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[10].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[9].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[8].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[7].pointUI.checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[11].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[10].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[9].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[8].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[7].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[6].checkerContainerDiv);
         this.containerDiv.appendChild(checkerContainers[PointId.BAR].barUIs[Player.BLACK].checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[6].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[5].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[4].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[3].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[2].pointUI.checkerContainerDiv);
-        this.containerDiv.appendChild(checkerContainers[1].pointUI.checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[5].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[4].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[3].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[2].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[1].checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[0].checkerContainerDiv);
         this.containerDiv.appendChild(checkerContainers[PointId.HOME].homeUIs[Player.RED].checkerContainerDiv);
         this.containerDiv.appendChild(BoardUI.createClearBreak());
     };

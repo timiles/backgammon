@@ -8,8 +8,8 @@ class PointUI extends CheckerContainerUI {
     onInspected: (on: boolean) => void;
     onSelected: (on: boolean) => void;
     
-    constructor(pointId: number) {
-        super(`point-${(pointId % 2 == 0) ? 'black' : 'red'}`, pointId >= 12);
+    constructor(colour: string, isTopSide: boolean) {
+        super(`point-${colour}`, isTopSide);
 
         let self = this;
         this.checkerContainerDiv.onclick = function() {
