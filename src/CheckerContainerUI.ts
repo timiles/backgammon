@@ -1,3 +1,5 @@
+/// <reference path="Utils.ts"/>
+
 declare var $;
 
 class CheckerContainerUI {
@@ -10,14 +12,8 @@ class CheckerContainerUI {
         this.checkerContainerDiv.className = `checker-container checker-container-${side} ${containerType}`;
     }
 
-    private clearCheckers(): void {
-        while (this.checkerContainerDiv.hasChildNodes()) {
-            this.checkerContainerDiv.removeChild(this.checkerContainerDiv.childNodes[0]);
-        }
-    }
-    
     setCheckers(player: Player, count: number) {
-        this.clearCheckers();
+        Utils.removeAllChildren(this.checkerContainerDiv);
 
         let $checkerContainerDiv = $(this.checkerContainerDiv);
         let className = Player[player].toLowerCase();

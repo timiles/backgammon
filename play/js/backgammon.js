@@ -1,16 +1,24 @@
+// REVIEW: invoke as extensions/prototype?
+var Utils = (function () {
+    function Utils() {
+    }
+    Utils.removeAllChildren = function (element) {
+        // fastest way to remove all child nodes: http://stackoverflow.com/a/3955238/487544
+        while (element.lastChild) {
+            element.removeChild(element.lastChild);
+        }
+    };
+    return Utils;
+})();
+/// <reference path="Utils.ts"/>
 var CheckerContainerUI = (function () {
     function CheckerContainerUI(containerType, isTopSide) {
         this.checkerContainerDiv = document.createElement('div');
         var side = (isTopSide ? 'top' : 'bottom');
         this.checkerContainerDiv.className = "checker-container checker-container-" + side + " " + containerType;
     }
-    CheckerContainerUI.prototype.clearCheckers = function () {
-        while (this.checkerContainerDiv.hasChildNodes()) {
-            this.checkerContainerDiv.removeChild(this.checkerContainerDiv.childNodes[0]);
-        }
-    };
     CheckerContainerUI.prototype.setCheckers = function (player, count) {
-        this.clearCheckers();
+        Utils.removeAllChildren(this.checkerContainerDiv);
         var $checkerContainerDiv = $(this.checkerContainerDiv);
         var className = Player[player].toLowerCase();
         for (var i = 1; i <= count; i++) {
@@ -170,12 +178,11 @@ var Home = (function (_super) {
 /// <reference path="Home.ts"/>
 /// <reference path="Point.ts"/>
 /// <reference path="PointUI.ts"/>
+/// <reference path="Utils.ts"/>
 var BoardUI = (function () {
     function BoardUI() {
         this.containerDiv = document.createElement('div');
-        while (this.containerDiv.hasChildNodes()) {
-            this.containerDiv.removeChild(this.containerDiv.childNodes[0]);
-        }
+        Utils.removeAllChildren(this.containerDiv);
         this.containerDiv.className = 'board';
     }
     BoardUI.prototype.initialise = function (checkerContainers) {
@@ -385,9 +392,11 @@ var StatusUI = (function () {
 /// <reference path="BoardUI.ts"/>
 /// <reference path="DiceUI.ts"/>
 /// <reference path="StatusUI.ts"/>
+/// <reference path="Utils.ts"/>
 var GameUI = (function () {
     function GameUI(containerElementId) {
         var container = document.getElementById(containerElementId);
+        Utils.removeAllChildren(container);
         this.board = new BoardUI();
         this.dice = new DiceUI();
         this.status = new StatusUI();

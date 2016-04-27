@@ -1,6 +1,7 @@
 /// <reference path="BoardUI.ts"/>
 /// <reference path="DiceUI.ts"/>
 /// <reference path="StatusUI.ts"/>
+/// <reference path="Utils.ts"/>
 
 class GameUI {
     
@@ -10,6 +11,7 @@ class GameUI {
     
     constructor(containerElementId: string) {
         let container = document.getElementById(containerElementId);
+        Utils.removeAllChildren(container);
         
         this.board = new BoardUI();
         this.dice = new DiceUI();

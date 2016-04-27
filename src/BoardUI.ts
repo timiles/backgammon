@@ -2,6 +2,7 @@
 /// <reference path="Home.ts"/>
 /// <reference path="Point.ts"/>
 /// <reference path="PointUI.ts"/>
+/// <reference path="Utils.ts"/>
 
 class BoardUI {
     
@@ -10,9 +11,7 @@ class BoardUI {
         
         this.containerDiv = document.createElement('div');
 
-        while (this.containerDiv.hasChildNodes()) {
-            this.containerDiv.removeChild(this.containerDiv.childNodes[0]);
-        }
+        Utils.removeAllChildren(this.containerDiv);
         
         this.containerDiv.className = 'board';
     }
