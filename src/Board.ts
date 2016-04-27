@@ -26,7 +26,7 @@ class Board {
             }
         }
         this.checkerContainers = new Array(26);
-        this.checkerContainers[PointId.HOME] = new Home();
+        this.checkerContainers[PointId.HOME] = new Home(this.boardUI.blackHomeUI, this.boardUI.redHomeUI);
         for (let i = 1; i < 25; i++) {
             this.checkerContainers[i] = new Point(this.boardUI.pointUIs[i-1], i, onPointInspected, onPointSelected);
         }

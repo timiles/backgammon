@@ -6,6 +6,8 @@
 class BoardUI {
     
     containerDiv: HTMLDivElement;
+    blackHomeUI: HomeUI;
+    redHomeUI: HomeUI;
     pointUIs: Array<PointUI>;
     
     constructor() {
@@ -13,6 +15,9 @@ class BoardUI {
         this.containerDiv = document.createElement('div');
         Utils.removeAllChildren(this.containerDiv);
         this.containerDiv.className = 'board';
+        
+        this.blackHomeUI = new HomeUI(Player.BLACK);
+        this.redHomeUI = new HomeUI(Player.RED);
         
         this.pointUIs = new Array<PointUI>(24);
         for (let i = 0; i < this.pointUIs.length; i++) {

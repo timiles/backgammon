@@ -163,11 +163,11 @@ var HomeUI = (function (_super) {
 /// <reference path="HomeUI.ts"/>
 var Home = (function (_super) {
     __extends(Home, _super);
-    function Home() {
+    function Home(blackHomeUI, redHomeUI) {
         _super.call(this, PointId.BAR);
         this.homeUIs = new Array(2);
-        this.homeUIs[Player.BLACK] = new HomeUI(Player.BLACK);
-        this.homeUIs[Player.RED] = new HomeUI(Player.RED);
+        this.homeUIs[Player.BLACK] = blackHomeUI;
+        this.homeUIs[Player.RED] = redHomeUI;
     }
     Home.prototype.increment = function (player) {
         _super.prototype.increment.call(this, player, 1);
@@ -184,6 +184,8 @@ var BoardUI = (function () {
         this.containerDiv = document.createElement('div');
         Utils.removeAllChildren(this.containerDiv);
         this.containerDiv.className = 'board';
+        this.blackHomeUI = new HomeUI(Player.BLACK);
+        this.redHomeUI = new HomeUI(Player.RED);
         this.pointUIs = new Array(24);
         for (var i = 0; i < this.pointUIs.length; i++) {
             var colour = (i % 2 == 0) ? 'black' : 'red';
@@ -254,7 +256,7 @@ var Board = (function () {
             }
         };
         this.checkerContainers = new Array(26);
-        this.checkerContainers[PointId.HOME] = new Home();
+        this.checkerContainers[PointId.HOME] = new Home(this.boardUI.blackHomeUI, this.boardUI.redHomeUI);
         for (var i = 1; i < 25; i++) {
             this.checkerContainers[i] = new Point(this.boardUI.pointUIs[i - 1], i, onPointInspected, onPointSelected);
         }
