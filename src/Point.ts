@@ -6,6 +6,7 @@ class Point extends CheckerContainer {
     pointUI: PointUI;
     
     constructor(
+        pointUI: PointUI,
         pointId: number,
         onInspected: (point: Point, on: boolean) => void,
         onSelected: (point: Point, on: boolean) => void) {
@@ -13,7 +14,9 @@ class Point extends CheckerContainer {
         
         let self = this;
         this.pointId = pointId;
-        this.pointUI = new PointUI(pointId, (on: boolean) => { onInspected(self, on); }, (on: boolean) => { onSelected(self, on); });
+        this.pointUI = pointUI;
+        this.pointUI.onInspected = (on: boolean) => { onInspected(self, on); };
+        this.pointUI.onSelected = (on: boolean) => { onSelected(self, on); };
     }
     
     decrement(player: Player): void {
@@ -22,7 +25,7 @@ class Point extends CheckerContainer {
     }
     
     increment(player: Player, count: number): void {
-        super.increment(player, count);;
+        super.increment(player, count);
         this.pointUI.setCheckers(player, this.checkers[player]);
     }
     

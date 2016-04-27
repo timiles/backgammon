@@ -5,17 +5,19 @@ declare var $;
 class PointUI extends CheckerContainerUI {
     
     isSelected: boolean;
+    onInspected: (on: boolean) => void;
+    onSelected: (on: boolean) => void;
     
-    constructor(pointId: number, onInspected: (on: boolean) => void, onSelected: (on: boolean) => void) {
-        super(`point-${(pointId % 2 == 0) ? 'black' : 'red'}`, pointId >= 13);
+    constructor(pointId: number) {
+        super(`point-${(pointId % 2 == 0) ? 'black' : 'red'}`, pointId >= 12);
 
         let self = this;
         this.checkerContainerDiv.onclick = function() {
             self.isSelected = !self.isSelected;
-            onSelected(self.isSelected);
+            self.onSelected(self.isSelected);
         };
-        this.checkerContainerDiv.onmouseover = function() { onInspected(true); };
-        this.checkerContainerDiv.onmouseout = function() { onInspected(false); };
+        this.checkerContainerDiv.onmouseover = function() { self.onInspected(true); };
+        this.checkerContainerDiv.onmouseout = function() { self.onInspected(false); };
     }
     
     highlightDestination(on: boolean): void {

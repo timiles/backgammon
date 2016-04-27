@@ -7,13 +7,18 @@
 class BoardUI {
     
     containerDiv: HTMLDivElement;
+    pointUIs: Array<PointUI>;
+    
     constructor() {
         
         this.containerDiv = document.createElement('div');
-
         Utils.removeAllChildren(this.containerDiv);
-        
         this.containerDiv.className = 'board';
+        
+        this.pointUIs = new Array<PointUI>(24);
+        for (let i = 0; i < this.pointUIs.length; i++) {
+            this.pointUIs[i] = new PointUI(i);
+        }
     }
     
     initialise(checkerContainers: Array<CheckerContainer>): void {
