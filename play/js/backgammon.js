@@ -44,14 +44,14 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var BarUI = (function (_super) {
     __extends(BarUI, _super);
-    function BarUI(player, onInspected, onSelected) {
+    function BarUI(player) {
         _super.call(this, 'bar', player === Player.RED);
         var self = this;
-        this.checkerContainerDiv.onmouseover = function () { onInspected(true); };
-        this.checkerContainerDiv.onmouseout = function () { onInspected(false); };
+        this.checkerContainerDiv.onmouseover = function () { self.onInspected(true); };
+        this.checkerContainerDiv.onmouseout = function () { self.onInspected(false); };
         this.checkerContainerDiv.onclick = function () {
             self.isSelected = !self.isSelected;
-            onSelected(self.isSelected);
+            self.onSelected(self.isSelected);
         };
     }
     return BarUI;
@@ -132,14 +132,16 @@ var Point = (function (_super) {
 /// <reference path="Point.ts"/>
 var Bar = (function (_super) {
     __extends(Bar, _super);
-    function Bar(onInspected, onSelected) {
+    function Bar(blackBarUI, redBarUI, onInspected, onSelected) {
         _super.call(this, PointId.BAR);
         var self = this;
+        blackBarUI.onInspected = function (on) { onInspected(self, on); };
+        blackBarUI.onSelected = function (on) { onSelected(self, on); };
+        redBarUI.onInspected = function (on) { onInspected(self, on); };
+        redBarUI.onSelected = function (on) { onSelected(self, on); };
         this.barUIs = new Array(2);
-        this.barUIs[Player.BLACK] =
-            new BarUI(Player.BLACK, function (on) { onInspected(self, on); }, function (on) { onSelected(self, on); });
-        this.barUIs[Player.RED] =
-            new BarUI(Player.RED, function (on) { onInspected(self, on); }, function (on) { onSelected(self, on); });
+        this.barUIs[Player.BLACK] = blackBarUI;
+        this.barUIs[Player.RED] = redBarUI;
     }
     Bar.prototype.decrement = function (player) {
         _super.prototype.decrement.call(this, player);
@@ -192,6 +194,8 @@ var BoardUI = (function () {
             var isTopSide = i >= 12;
             this.pointUIs[i] = new PointUI(colour, isTopSide);
         }
+        this.blackBarUI = new BarUI(Player.BLACK);
+        this.redBarUI = new BarUI(Player.RED);
     }
     BoardUI.prototype.initialise = function (checkerContainers) {
         this.containerDiv.appendChild(this.pointUIs[12].checkerContainerDiv);
@@ -260,7 +264,7 @@ var Board = (function () {
         for (var i = 1; i < 25; i++) {
             this.checkerContainers[i] = new Point(this.boardUI.pointUIs[i - 1], i, onPointInspected, onPointSelected);
         }
-        this.checkerContainers[PointId.BAR] = new Bar(onPointInspected, onPointSelected);
+        this.checkerContainers[PointId.BAR] = new Bar(this.boardUI.blackBarUI, this.boardUI.redBarUI, onPointInspected, onPointSelected);
         this.increment(Player.RED, 24, 2);
         this.increment(Player.BLACK, 1, 2);
         this.increment(Player.RED, 6, 5);

@@ -30,7 +30,7 @@ class Board {
         for (let i = 1; i < 25; i++) {
             this.checkerContainers[i] = new Point(this.boardUI.pointUIs[i-1], i, onPointInspected, onPointSelected);
         }
-        this.checkerContainers[PointId.BAR] = new Bar(onPointInspected, onPointSelected);
+        this.checkerContainers[PointId.BAR] = new Bar(this.boardUI.blackBarUI, this.boardUI.redBarUI, onPointInspected, onPointSelected);
         
         this.increment(Player.RED, 24, 2);
         this.increment(Player.BLACK, 1, 2);

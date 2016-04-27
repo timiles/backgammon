@@ -9,6 +9,8 @@ class BoardUI {
     blackHomeUI: HomeUI;
     redHomeUI: HomeUI;
     pointUIs: Array<PointUI>;
+    blackBarUI: BarUI;
+    redBarUI: BarUI;
     
     constructor() {
         
@@ -25,6 +27,9 @@ class BoardUI {
             let isTopSide = i >= 12;
             this.pointUIs[i] = new PointUI(colour, isTopSide);
         }
+        
+        this.blackBarUI = new BarUI(Player.BLACK);
+        this.redBarUI = new BarUI(Player.RED);
     }
     
     initialise(checkerContainers: Array<CheckerContainer>): void {
