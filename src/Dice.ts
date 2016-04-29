@@ -13,7 +13,7 @@ class Dice {
     private static generateDie(): number {
         return Math.floor(Math.random() * 6) + 1;        
     }
-    roll() {
+    roll(): void {
         this.die1 = new Die();
         this.die2 = new Die();
         let isDouble = (this.die1.value === this.die2.value);
@@ -23,6 +23,10 @@ class Dice {
             this.die2.remainingUses = 2;
         }
         
-        this.diceUI.setDiceRolls(this.die1.value, this.die2.value);    
+        this.updateUI();
+    }
+    
+    updateUI(): void {
+        this.diceUI.setDiceRolls(this.die1, this.die2);        
     }
 }

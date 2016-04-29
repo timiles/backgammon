@@ -99,3 +99,24 @@ BR.clear
 {
     clear: both;
 }
+DIV.die
+{
+    width: 20px;
+    height: 20px;
+    border-radius: 8px;
+    padding: 6px;
+    margin: 5px;
+}
+DIV.die.die-uses-0
+{
+    background: lightblue;
+}
+DIV.die.die-uses-1, DIV.die.die-uses-2
+{
+    background: lightgreen;
+}
+DIV.die.die-uses-2::after
+{
+    content: 'x2';
+    font-size: x-small;
+}

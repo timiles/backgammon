@@ -366,12 +366,21 @@ var Die = (function () {
     }
     return Die;
 })();
+/// <reference path="Die.ts" />
 var DiceUI = (function () {
     function DiceUI() {
         this.containerDiv = document.createElement('div');
     }
-    DiceUI.prototype.setDiceRolls = function (roll1, roll2) {
-        this.containerDiv.innerText = roll1 + ", " + roll2;
+    DiceUI.prototype.setDiceRolls = function (die1, die2) {
+        Utils.removeAllChildren(this.containerDiv);
+        this.containerDiv.appendChild(DiceUI.createDie(die1));
+        this.containerDiv.appendChild(DiceUI.createDie(die2));
+    };
+    DiceUI.createDie = function (die) {
+        var div = document.createElement('div');
+        div.className = 'die die-uses-' + die.remainingUses;
+        div.innerText = die.value.toString();
+        return div;
     };
     return DiceUI;
 })();
@@ -392,7 +401,10 @@ var Dice = (function () {
             this.die1.remainingUses = 2;
             this.die2.remainingUses = 2;
         }
-        this.diceUI.setDiceRolls(this.die1.value, this.die2.value);
+        this.updateUI();
+    };
+    Dice.prototype.updateUI = function () {
+        this.diceUI.setDiceRolls(this.die1, this.die2);
     };
     return Dice;
 })();
@@ -513,11 +525,13 @@ var Game = (function () {
                     self.board.isLegalMove(self.currentPlayer, point.pointId, self.dice.die1.value)) {
                     self.board.move(self.currentPlayer, point.pointId, self.dice.die1.value);
                     self.dice.die1.remainingUses--;
+                    self.dice.updateUI();
                 }
                 else if (self.dice.die2.remainingUses > 0 &&
                     self.board.isLegalMove(self.currentPlayer, point.pointId, self.dice.die2.value)) {
                     self.board.move(self.currentPlayer, point.pointId, self.dice.die2.value);
                     self.dice.die2.remainingUses--;
+                    self.dice.updateUI();
                 }
             }
             if (self.dice.die1.remainingUses == 0 && self.dice.die2.remainingUses == 0) {

@@ -63,11 +63,13 @@ class Game {
                     self.board.isLegalMove(self.currentPlayer, point.pointId, self.dice.die1.value)) {
                     self.board.move(self.currentPlayer, point.pointId, self.dice.die1.value);
                     self.dice.die1.remainingUses--;
+                    self.dice.updateUI();
                 }
                 else if (self.dice.die2.remainingUses > 0 &&
                     self.board.isLegalMove(self.currentPlayer, point.pointId, self.dice.die2.value)) {
                     self.board.move(self.currentPlayer, point.pointId, self.dice.die2.value);
                     self.dice.die2.remainingUses--;
+                    self.dice.updateUI();
                 }
             }
             
