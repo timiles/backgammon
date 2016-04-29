@@ -17,15 +17,24 @@ DIV.red
 {
     background: red;
     text-align: center;
-    color: Black;
+    color: black;
     font-weight: bold;
 }
 DIV.black
 {
     background: black;
     text-align: center;
-    color: Red;
+    color: red;
     font-weight: bold;
+}
+DIV.player-indicator.checker
+{
+    opacity: 0.2;
+}
+DIV.player-indicator.checker.active
+{
+    opacity: 1;
+    box-shadow: 0 0 10px yellow;
 }
 DIV.checker-container
 {

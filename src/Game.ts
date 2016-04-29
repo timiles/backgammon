@@ -1,6 +1,7 @@
 /// <reference path="Board.ts"/>
 /// <reference path="Dice.ts"/>
 /// <reference path="GameUI.ts"/>
+/// <reference path="PlayerIndicatorUI.ts"/>
 /// <reference path="StatusLogger.ts"/>
 
 enum Player { BLACK, RED }
@@ -9,6 +10,7 @@ class Game {
     
     board: Board;
     dice: Dice;
+    playerIndicatorUI: PlayerIndicatorUI;
     statusLogger: StatusLogger;
     currentPlayer: Player;
     
@@ -18,6 +20,7 @@ class Game {
         let ui = new GameUI(containerId);
         this.dice = new Dice(ui.diceUI);
         this.board = new Board(ui.boardUI);
+        this.playerIndicatorUI = ui.playerIndicatorUI;
         
         this.board.onPointInspected = (checkerContainer: CheckerContainer, on: boolean) => {
             if (!on) {
@@ -80,6 +83,7 @@ class Game {
     }
     
     logCurrentPlayer(): void {
-        this.statusLogger.logInfo(`${Player[this.currentPlayer]} to move`);        
+        this.statusLogger.logInfo(`${Player[this.currentPlayer]} to move`);
+        this.playerIndicatorUI.setActivePlayer(this.currentPlayer);
     }
 }
