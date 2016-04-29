@@ -33,6 +33,14 @@ var CheckerContainerUI = (function () {
             }
         }
     };
+    CheckerContainerUI.prototype.highlightSource = function (on) {
+        if (on) {
+            $(this.checkerContainerDiv).addClass('highlight-source');
+        }
+        else {
+            $(this.checkerContainerDiv).removeClass('highlight-source');
+        }
+    };
     return CheckerContainerUI;
 })();
 /// <reference path="CheckerContainerUI.ts"/>
@@ -90,14 +98,6 @@ var PointUI = (function (_super) {
             $(this.checkerContainerDiv).removeClass('highlight-destination');
         }
     };
-    PointUI.prototype.highlightSource = function (on) {
-        if (on) {
-            $(this.checkerContainerDiv).addClass('highlight-source');
-        }
-        else {
-            $(this.checkerContainerDiv).removeClass('highlight-source');
-        }
-    };
     return PointUI;
 })(CheckerContainerUI);
 /// <reference path="CheckerContainer.ts"/>
@@ -150,6 +150,9 @@ var Bar = (function (_super) {
     Bar.prototype.increment = function (player, count) {
         _super.prototype.increment.call(this, player, count);
         this.barUIs[player].setCheckers(player, this.checkers[player]);
+    };
+    Bar.prototype.highlightSource = function (player, on) {
+        this.barUIs[player].highlightSource(on);
     };
     return Bar;
 })(CheckerContainer);
@@ -345,7 +348,9 @@ var Board = (function () {
         if (this.isLegalMove(player, sourcePointId, numberOfMoves)) {
             var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
             this.checkerContainers[destinationPointId].highlightDestination(true);
+            return true;
         }
+        return false;
     };
     Board.prototype.removeAllHighlights = function () {
         for (var pointId = 1; pointId <= 24; pointId++) {
@@ -462,6 +467,7 @@ var Player;
 })(Player || (Player = {}));
 var Game = (function () {
     function Game(containerId) {
+        var _this = this;
         var self = this;
         var ui = new GameUI(containerId);
         this.dice = new Dice(ui.diceUI);
@@ -473,17 +479,31 @@ var Game = (function () {
                 if (checkerContainer instanceof Point) {
                     checkerContainer.highlightSource(false);
                 }
+                else if (checkerContainer instanceof Bar) {
+                    checkerContainer.highlightSource(Player.BLACK, false);
+                    checkerContainer.highlightSource(Player.RED, false);
+                }
                 self.board.removeAllHighlights();
             }
             else if (checkerContainer.checkers[self.currentPlayer] > 0) {
-                if (checkerContainer instanceof Point) {
-                    checkerContainer.highlightSource(true);
-                }
+                var validMoveExists = false;
                 if (self.dice.die1.remainingUses > 0) {
-                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value);
+                    if (self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value)) {
+                        validMoveExists = true;
+                    }
                 }
                 if (self.dice.die2.remainingUses > 0) {
-                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value);
+                    if (self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value)) {
+                        validMoveExists = true;
+                    }
+                }
+                if (validMoveExists) {
+                    if (checkerContainer instanceof Point) {
+                        checkerContainer.highlightSource(true);
+                    }
+                    else if (checkerContainer instanceof Bar) {
+                        checkerContainer.highlightSource(_this.currentPlayer, true);
+                    }
                 }
             }
         };

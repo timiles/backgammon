@@ -27,4 +27,13 @@ class CheckerContainerUI {
             }
         }
     }
+    
+    highlightSource(on: boolean): void {
+        if (on) {
+            $(this.checkerContainerDiv).addClass('highlight-source');
+        }
+        else {
+            $(this.checkerContainerDiv).removeClass('highlight-source');
+        }
+    }
 }

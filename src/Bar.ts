@@ -32,4 +32,8 @@ class Bar extends CheckerContainer {
         super.increment(player, count);
         this.barUIs[player].setCheckers(player, this.checkers[player]);
     }
+    
+    highlightSource(player: Player, on: boolean) {
+        this.barUIs[player].highlightSource(on);        
+    }
 }

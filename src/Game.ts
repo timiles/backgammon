@@ -28,17 +28,31 @@ class Game {
                 if (checkerContainer instanceof Point) {
                     (<Point> checkerContainer).highlightSource(false);
                 }
+                else if (checkerContainer instanceof Bar) {
+                    (<Bar> checkerContainer).highlightSource(Player.BLACK, false);
+                    (<Bar> checkerContainer).highlightSource(Player.RED, false);
+                }
                 self.board.removeAllHighlights();
             }
             else if (checkerContainer.checkers[self.currentPlayer] > 0) {
-                if (checkerContainer instanceof Point) {
-                    (<Point> checkerContainer).highlightSource(true);
-                }
+                let validMoveExists = false;
                 if (self.dice.die1.remainingUses > 0) {
-                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value);
+                    if (self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value)) {
+                        validMoveExists = true;
+                    }
                 }
                 if (self.dice.die2.remainingUses > 0) {
-                    self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value);
+                    if (self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value)) {
+                        validMoveExists = true;
+                    }
+                }
+                if (validMoveExists) {
+                    if (checkerContainer instanceof Point) {
+                        (<Point> checkerContainer).highlightSource(true);
+                    }
+                    else if (checkerContainer instanceof Bar) {
+                        (<Bar> checkerContainer).highlightSource(this.currentPlayer, true);
+                    }
                 }
             }
         };

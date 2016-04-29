@@ -28,13 +28,4 @@ class PointUI extends CheckerContainerUI {
             $(this.checkerContainerDiv).removeClass('highlight-destination');
         }
     }
-    
-    highlightSource(on: boolean): void {
-        if (on) {
-            $(this.checkerContainerDiv).addClass('highlight-source');
-        }
-        else {
-            $(this.checkerContainerDiv).removeClass('highlight-source');
-        }
-    }
 }
