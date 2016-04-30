@@ -3,15 +3,26 @@
 class DiceUI {
     
     containerDiv: HTMLDivElement;
-    constructor() {
-        
+    die1: Die;
+    die2: Die;
+    
+    constructor() {        
         this.containerDiv = document.createElement('div');
     }
     
     setDiceRolls(die1: Die, die2: Die) {
+        this.die1 = die1;
+        this.die1.onChange = () => { this.redraw(); };
+        this.die2 = die2;
+        this.die2.onChange = () => { this.redraw(); };
+        
+        this.redraw();
+    }
+    
+    private redraw(): void {
         Utils.removeAllChildren(this.containerDiv);
-        this.containerDiv.appendChild(DiceUI.createDie(die1));
-        this.containerDiv.appendChild(DiceUI.createDie(die2));
+        this.containerDiv.appendChild(DiceUI.createDie(this.die1));
+        this.containerDiv.appendChild(DiceUI.createDie(this.die2));
     }
     
     private static createDie(die: Die): HTMLDivElement {

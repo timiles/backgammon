@@ -364,6 +364,12 @@ var Die = (function () {
         this.value = Math.floor(Math.random() * 6) + 1;
         this.remainingUses = 1;
     }
+    Die.prototype.decrementRemainingUses = function () {
+        this.remainingUses--;
+        if (this.onChange) {
+            this.onChange(this);
+        }
+    };
     return Die;
 })();
 /// <reference path="Die.ts" />
@@ -372,9 +378,17 @@ var DiceUI = (function () {
         this.containerDiv = document.createElement('div');
     }
     DiceUI.prototype.setDiceRolls = function (die1, die2) {
+        var _this = this;
+        this.die1 = die1;
+        this.die1.onChange = function () { _this.redraw(); };
+        this.die2 = die2;
+        this.die2.onChange = function () { _this.redraw(); };
+        this.redraw();
+    };
+    DiceUI.prototype.redraw = function () {
         Utils.removeAllChildren(this.containerDiv);
-        this.containerDiv.appendChild(DiceUI.createDie(die1));
-        this.containerDiv.appendChild(DiceUI.createDie(die2));
+        this.containerDiv.appendChild(DiceUI.createDie(this.die1));
+        this.containerDiv.appendChild(DiceUI.createDie(this.die2));
     };
     DiceUI.createDie = function (die) {
         var div = document.createElement('div');
@@ -401,9 +415,6 @@ var Dice = (function () {
             this.die1.remainingUses = 2;
             this.die2.remainingUses = 2;
         }
-        this.updateUI();
-    };
-    Dice.prototype.updateUI = function () {
         this.diceUI.setDiceRolls(this.die1, this.die2);
     };
     return Dice;
@@ -524,14 +535,12 @@ var Game = (function () {
                 if (self.dice.die1.remainingUses > 0 &&
                     self.board.isLegalMove(self.currentPlayer, point.pointId, self.dice.die1.value)) {
                     self.board.move(self.currentPlayer, point.pointId, self.dice.die1.value);
-                    self.dice.die1.remainingUses--;
-                    self.dice.updateUI();
+                    self.dice.die1.decrementRemainingUses();
                 }
                 else if (self.dice.die2.remainingUses > 0 &&
                     self.board.isLegalMove(self.currentPlayer, point.pointId, self.dice.die2.value)) {
                     self.board.move(self.currentPlayer, point.pointId, self.dice.die2.value);
-                    self.dice.die2.remainingUses--;
-                    self.dice.updateUI();
+                    self.dice.die2.decrementRemainingUses();
                 }
             }
             if (self.dice.die1.remainingUses == 0 && self.dice.die2.remainingUses == 0) {

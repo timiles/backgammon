@@ -23,10 +23,6 @@ class Dice {
             this.die2.remainingUses = 2;
         }
         
-        this.updateUI();
-    }
-    
-    updateUI(): void {
-        this.diceUI.setDiceRolls(this.die1, this.die2);        
+        this.diceUI.setDiceRolls(this.die1, this.die2);
     }
 }
