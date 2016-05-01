@@ -75,6 +75,10 @@ class Game {
                 self.switchPlayer();
                 self.dice.roll();
             }
+            
+            // reinspect point
+            this.board.onPointInspected(point, false);
+            this.board.onPointInspected(point, true);
         };
         
         

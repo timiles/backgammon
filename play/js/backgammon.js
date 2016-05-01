@@ -547,6 +547,9 @@ var Game = (function () {
                 self.switchPlayer();
                 self.dice.roll();
             }
+            // reinspect point
+            _this.board.onPointInspected(point, false);
+            _this.board.onPointInspected(point, true);
         };
         this.statusLogger = new StatusLogger(ui.statusUI);
         // TODO: roll to see who starts. Assume BLACK.
