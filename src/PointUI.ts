@@ -12,20 +12,20 @@ class PointUI extends CheckerContainerUI {
         super(`point-${colour}`, isTopSide);
 
         let self = this;
-        this.checkerContainerDiv.onclick = () => {
+        this.containerDiv.onclick = () => {
             self.isSelected = !self.isSelected;
             self.onSelected(self.isSelected);
         };
-        this.checkerContainerDiv.onmouseover = () => { self.onInspected(true); };
-        this.checkerContainerDiv.onmouseout = () => { self.onInspected(false); };
+        this.containerDiv.onmouseover = () => { self.onInspected(true); };
+        this.containerDiv.onmouseout = () => { self.onInspected(false); };
     }
     
     highlightDestination(on: boolean): void {
         if (on) {
-            $(this.checkerContainerDiv).addClass('highlight-destination');
+            $(this.containerDiv).addClass('highlight-destination');
         }
         else {
-            $(this.checkerContainerDiv).removeClass('highlight-destination');
+            $(this.containerDiv).removeClass('highlight-destination');
         }
     }
 }

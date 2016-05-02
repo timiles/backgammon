@@ -4,36 +4,36 @@ declare var $;
 
 class CheckerContainerUI {
     
-    checkerContainerDiv: HTMLDivElement;
+    containerDiv: HTMLDivElement;
     
     constructor(containerType: string, isTopSide: boolean) {
-        this.checkerContainerDiv = document.createElement('div');
+        this.containerDiv = document.createElement('div');
         let side = (isTopSide ? 'top': 'bottom');
-        this.checkerContainerDiv.className = `checker-container checker-container-${side} ${containerType}`;
+        this.containerDiv.className = `checker-container checker-container-${side} ${containerType}`;
     }
 
     setCheckers(player: Player, count: number) {
-        Utils.removeAllChildren(this.checkerContainerDiv);
+        Utils.removeAllChildren(this.containerDiv);
 
-        let $checkerContainerDiv = $(this.checkerContainerDiv);
+        let $containerDiv = $(this.containerDiv);
         let className = Player[player].toLowerCase();
         for (let i = 1; i <= count; i++) {
             if (i > 5) {
-                $('.checker-total', $checkerContainerDiv).text(count);
+                $('.checker-total', $containerDiv).text(count);
             } else if (i == 5) {
-                $checkerContainerDiv.append($('<div class="checker checker-total">').addClass(className));
+                $containerDiv.append($('<div class="checker checker-total">').addClass(className));
             } else {
-                $checkerContainerDiv.append($('<div class="checker">').addClass(className));
+                $containerDiv.append($('<div class="checker">').addClass(className));
             }
         }
     }
     
     highlightSource(on: boolean): void {
         if (on) {
-            $(this.checkerContainerDiv).addClass('highlight-source');
+            $(this.containerDiv).addClass('highlight-source');
         }
         else {
-            $(this.checkerContainerDiv).removeClass('highlight-source');
+            $(this.containerDiv).removeClass('highlight-source');
         }
     }
 }

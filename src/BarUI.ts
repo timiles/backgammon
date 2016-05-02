@@ -10,9 +10,9 @@ class BarUI extends CheckerContainerUI {
         super('bar', player === Player.RED);
         let self = this;
                 
-        this.checkerContainerDiv.onmouseover = () => { self.onInspected(true); };
-        this.checkerContainerDiv.onmouseout = () => { self.onInspected(false); };
-        this.checkerContainerDiv.onclick = () => {
+        this.containerDiv.onmouseover = () => { self.onInspected(true); };
+        this.containerDiv.onmouseout = () => { self.onInspected(false); };
+        this.containerDiv.onclick = () => {
             self.isSelected = !self.isSelected;
             self.onSelected(self.isSelected);
         };

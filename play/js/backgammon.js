@@ -13,32 +13,32 @@ var Utils = (function () {
 /// <reference path="Utils.ts"/>
 var CheckerContainerUI = (function () {
     function CheckerContainerUI(containerType, isTopSide) {
-        this.checkerContainerDiv = document.createElement('div');
+        this.containerDiv = document.createElement('div');
         var side = (isTopSide ? 'top' : 'bottom');
-        this.checkerContainerDiv.className = "checker-container checker-container-" + side + " " + containerType;
+        this.containerDiv.className = "checker-container checker-container-" + side + " " + containerType;
     }
     CheckerContainerUI.prototype.setCheckers = function (player, count) {
-        Utils.removeAllChildren(this.checkerContainerDiv);
-        var $checkerContainerDiv = $(this.checkerContainerDiv);
+        Utils.removeAllChildren(this.containerDiv);
+        var $containerDiv = $(this.containerDiv);
         var className = Player[player].toLowerCase();
         for (var i = 1; i <= count; i++) {
             if (i > 5) {
-                $('.checker-total', $checkerContainerDiv).text(count);
+                $('.checker-total', $containerDiv).text(count);
             }
             else if (i == 5) {
-                $checkerContainerDiv.append($('<div class="checker checker-total">').addClass(className));
+                $containerDiv.append($('<div class="checker checker-total">').addClass(className));
             }
             else {
-                $checkerContainerDiv.append($('<div class="checker">').addClass(className));
+                $containerDiv.append($('<div class="checker">').addClass(className));
             }
         }
     };
     CheckerContainerUI.prototype.highlightSource = function (on) {
         if (on) {
-            $(this.checkerContainerDiv).addClass('highlight-source');
+            $(this.containerDiv).addClass('highlight-source');
         }
         else {
-            $(this.checkerContainerDiv).removeClass('highlight-source');
+            $(this.containerDiv).removeClass('highlight-source');
         }
     };
     return CheckerContainerUI;
@@ -55,9 +55,9 @@ var BarUI = (function (_super) {
     function BarUI(player) {
         _super.call(this, 'bar', player === Player.RED);
         var self = this;
-        this.checkerContainerDiv.onmouseover = function () { self.onInspected(true); };
-        this.checkerContainerDiv.onmouseout = function () { self.onInspected(false); };
-        this.checkerContainerDiv.onclick = function () {
+        this.containerDiv.onmouseover = function () { self.onInspected(true); };
+        this.containerDiv.onmouseout = function () { self.onInspected(false); };
+        this.containerDiv.onclick = function () {
             self.isSelected = !self.isSelected;
             self.onSelected(self.isSelected);
         };
@@ -83,19 +83,19 @@ var PointUI = (function (_super) {
     function PointUI(colour, isTopSide) {
         _super.call(this, "point-" + colour, isTopSide);
         var self = this;
-        this.checkerContainerDiv.onclick = function () {
+        this.containerDiv.onclick = function () {
             self.isSelected = !self.isSelected;
             self.onSelected(self.isSelected);
         };
-        this.checkerContainerDiv.onmouseover = function () { self.onInspected(true); };
-        this.checkerContainerDiv.onmouseout = function () { self.onInspected(false); };
+        this.containerDiv.onmouseover = function () { self.onInspected(true); };
+        this.containerDiv.onmouseout = function () { self.onInspected(false); };
     }
     PointUI.prototype.highlightDestination = function (on) {
         if (on) {
-            $(this.checkerContainerDiv).addClass('highlight-destination');
+            $(this.containerDiv).addClass('highlight-destination');
         }
         else {
-            $(this.checkerContainerDiv).removeClass('highlight-destination');
+            $(this.containerDiv).removeClass('highlight-destination');
         }
     };
     return PointUI;
@@ -184,35 +184,35 @@ var BoardUI = (function () {
         this.blackBarUI = new BarUI(Player.BLACK);
         this.redBarUI = new BarUI(Player.RED);
         // append all elements in the correct order
-        this.containerDiv.appendChild(this.pointUIs[12].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[13].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[14].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[15].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[16].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[17].checkerContainerDiv);
-        this.containerDiv.appendChild(this.redBarUI.checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[18].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[19].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[20].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[21].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[22].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[23].checkerContainerDiv);
-        this.containerDiv.appendChild(this.blackHomeUI.checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[12].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[13].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[14].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[15].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[16].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[17].containerDiv);
+        this.containerDiv.appendChild(this.redBarUI.containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[18].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[19].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[20].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[21].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[22].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[23].containerDiv);
+        this.containerDiv.appendChild(this.blackHomeUI.containerDiv);
         this.containerDiv.appendChild(BoardUI.createClearBreak());
-        this.containerDiv.appendChild(this.pointUIs[11].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[10].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[9].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[8].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[7].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[6].checkerContainerDiv);
-        this.containerDiv.appendChild(this.blackBarUI.checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[5].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[4].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[3].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[2].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[1].checkerContainerDiv);
-        this.containerDiv.appendChild(this.pointUIs[0].checkerContainerDiv);
-        this.containerDiv.appendChild(this.redHomeUI.checkerContainerDiv);
+        this.containerDiv.appendChild(this.pointUIs[11].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[10].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[9].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[8].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[7].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[6].containerDiv);
+        this.containerDiv.appendChild(this.blackBarUI.containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[5].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[4].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[3].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[2].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[1].containerDiv);
+        this.containerDiv.appendChild(this.pointUIs[0].containerDiv);
+        this.containerDiv.appendChild(this.redHomeUI.containerDiv);
         this.containerDiv.appendChild(BoardUI.createClearBreak());
     }
     BoardUI.createClearBreak = function () {
