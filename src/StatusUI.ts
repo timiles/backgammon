@@ -1,11 +1,13 @@
 class StatusUI {
     
-    statusSpan: HTMLSpanElement;
+    containerDiv: HTMLDivElement;
     constructor() {
-        this.statusSpan = document.createElement('span');
+        this.containerDiv = document.createElement('div');
     }
     
     setStatus(s: string) {
-        this.statusSpan.innerText = s;
+        let statusP = document.createElement('p');
+        statusP.innerText = s;
+        this.containerDiv.appendChild(statusP);
     }
 }

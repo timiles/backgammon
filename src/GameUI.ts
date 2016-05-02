@@ -22,8 +22,8 @@ class GameUI {
         
         container.appendChild(this.boardUI.containerDiv);
         container.appendChild(this.diceUI.containerDiv);
-        container.appendChild(this.statusUI.statusSpan);
         container.appendChild(this.playerIndicatorUI.indicators[Player.BLACK]);
         container.appendChild(this.playerIndicatorUI.indicators[Player.RED]);
+        container.appendChild(this.statusUI.containerDiv);
     }
 }

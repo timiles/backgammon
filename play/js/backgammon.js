@@ -440,10 +440,12 @@ var PlayerIndicatorUI = (function () {
 })();
 var StatusUI = (function () {
     function StatusUI() {
-        this.statusSpan = document.createElement('span');
+        this.containerDiv = document.createElement('div');
     }
     StatusUI.prototype.setStatus = function (s) {
-        this.statusSpan.innerText = s;
+        var statusP = document.createElement('p');
+        statusP.innerText = s;
+        this.containerDiv.appendChild(statusP);
     };
     return StatusUI;
 })();
@@ -462,9 +464,9 @@ var GameUI = (function () {
         this.statusUI = new StatusUI();
         container.appendChild(this.boardUI.containerDiv);
         container.appendChild(this.diceUI.containerDiv);
-        container.appendChild(this.statusUI.statusSpan);
         container.appendChild(this.playerIndicatorUI.indicators[Player.BLACK]);
         container.appendChild(this.playerIndicatorUI.indicators[Player.RED]);
+        container.appendChild(this.statusUI.containerDiv);
     }
     return GameUI;
 })();
@@ -624,7 +626,7 @@ var Game = (function () {
         this.logCurrentPlayer();
     };
     Game.prototype.logCurrentPlayer = function () {
-        // this.statusLogger.logInfo(`${Player[this.currentPlayer]} to move`);
+        this.statusLogger.logInfo(Player[this.currentPlayer] + " to move");
         this.playerIndicatorUI.setActivePlayer(this.currentPlayer);
     };
     return Game;

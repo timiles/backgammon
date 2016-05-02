@@ -173,7 +173,7 @@ class Game {
     }
     
     logCurrentPlayer(): void {
-        // this.statusLogger.logInfo(`${Player[this.currentPlayer]} to move`);
+        this.statusLogger.logInfo(`${Player[this.currentPlayer]} to move`);
         this.playerIndicatorUI.setActivePlayer(this.currentPlayer);
     }
 }
