@@ -479,6 +479,7 @@ var StatusLogger = (function () {
     return StatusLogger;
 })();
 /// <reference path="Board.ts"/>
+/// <reference path="CheckerContainer.ts"/>
 /// <reference path="Dice.ts"/>
 /// <reference path="GameUI.ts"/>
 /// <reference path="PlayerIndicatorUI.ts"/>
@@ -497,6 +498,10 @@ var Game = (function () {
         this.board = new Board(ui.boardUI);
         this.playerIndicatorUI = ui.playerIndicatorUI;
         this.board.onPointInspected = function (checkerContainer, on) {
+            if (self.currentSelectedCheckerContainer != undefined) {
+                // if we're halfway a move, don't check
+                return;
+            }
             if (!on) {
                 // turn off highlights if any
                 if (checkerContainer instanceof Point) {
@@ -531,25 +536,55 @@ var Game = (function () {
             }
         };
         this.board.onPointSelected = function (point, on) {
-            if (point.checkers[self.currentPlayer] > 0) {
-                if (self.dice.die1.remainingUses > 0 &&
-                    self.board.isLegalMove(self.currentPlayer, point.pointId, self.dice.die1.value)) {
-                    self.board.move(self.currentPlayer, point.pointId, self.dice.die1.value);
+            if (self.currentSelectedCheckerContainer == undefined) {
+                if (point.checkers[self.currentPlayer] == 0) {
+                    // if no pieces here, exit
+                    return;
+                }
+                var canUseDie = function (die) {
+                    return (die.remainingUses > 0 &&
+                        self.board.isLegalMove(self.currentPlayer, point.pointId, die.value));
+                };
+                var canUseDie1 = canUseDie(self.dice.die1);
+                var canUseDie2 = canUseDie(self.dice.die2);
+                // if can use one die but not the other, or if it's doubles, just play it
+                if ((canUseDie1 != canUseDie2) || (self.dice.die1.value === self.dice.die2.value)) {
+                    if (canUseDie1) {
+                        self.board.move(self.currentPlayer, point.pointId, self.dice.die1.value);
+                        self.dice.die1.decrementRemainingUses();
+                    }
+                    else if (canUseDie2) {
+                        self.board.move(self.currentPlayer, point.pointId, self.dice.die2.value);
+                        self.dice.die2.decrementRemainingUses();
+                    }
+                    self.checkIfValidMovesRemain();
+                    // reinspect point
+                    _this.board.onPointInspected(point, false);
+                    _this.board.onPointInspected(point, true);
+                }
+                else {
+                    _this.currentSelectedCheckerContainer = point;
+                }
+            }
+            else {
+                var isUsingDie = function (die) {
+                    return (Math.abs(point.pointId - _this.currentSelectedCheckerContainer.pointId) === die.value);
+                };
+                if (isUsingDie(self.dice.die1)) {
+                    self.board.move(self.currentPlayer, _this.currentSelectedCheckerContainer.pointId, self.dice.die1.value);
                     self.dice.die1.decrementRemainingUses();
+                    _this.currentSelectedCheckerContainer = undefined;
                 }
-                else if (self.dice.die2.remainingUses > 0 &&
-                    self.board.isLegalMove(self.currentPlayer, point.pointId, self.dice.die2.value)) {
-                    self.board.move(self.currentPlayer, point.pointId, self.dice.die2.value);
+                else if (isUsingDie(self.dice.die2)) {
+                    self.board.move(self.currentPlayer, _this.currentSelectedCheckerContainer.pointId, self.dice.die2.value);
                     self.dice.die2.decrementRemainingUses();
+                    _this.currentSelectedCheckerContainer = undefined;
                 }
+                self.checkIfValidMovesRemain();
+                // reinspect point
+                _this.board.onPointInspected(point, false);
+                _this.board.onPointInspected(point, true);
             }
-            if (self.dice.die1.remainingUses == 0 && self.dice.die2.remainingUses == 0) {
-                self.switchPlayer();
-                self.dice.roll();
-            }
-            // reinspect point
-            _this.board.onPointInspected(point, false);
-            _this.board.onPointInspected(point, true);
         };
         this.statusLogger = new StatusLogger(ui.statusUI);
         // TODO: roll to see who starts. Assume BLACK.
@@ -557,6 +592,12 @@ var Game = (function () {
         this.logCurrentPlayer();
         this.dice.roll();
     }
+    Game.prototype.checkIfValidMovesRemain = function () {
+        if (this.dice.die1.remainingUses == 0 && this.dice.die2.remainingUses == 0) {
+            this.switchPlayer();
+            this.dice.roll();
+        }
+    };
     Game.getOtherPlayer = function (player) {
         return player === Player.BLACK ? Player.RED : Player.BLACK;
     };
