@@ -91,7 +91,7 @@ class Game {
                         self.dice.die2.decrementRemainingUses();
                     }
                     
-                    self.checkIfValidMovesRemain();
+                    self.switchPlayerIfNoValidMovesRemain();
                 
                     // reinspect point
                     this.board.onPointInspected(point, false);
@@ -118,7 +118,7 @@ class Game {
                     this.currentSelectedCheckerContainer = undefined;           
                 }
 
-                self.checkIfValidMovesRemain();
+                self.switchPlayerIfNoValidMovesRemain();
                                 
                 // reinspect point
                 this.board.onPointInspected(point, false);
@@ -136,10 +136,30 @@ class Game {
         this.dice.roll();
     }
     
-    checkIfValidMovesRemain(): void {
+    private checkIfValidMovesRemain(): boolean {
         if (this.dice.die1.remainingUses == 0 && this.dice.die2.remainingUses == 0) {
+            return false;
+        }
+        
+        let isValidMove = (die: Die, pointId: number): boolean => {
+            return (die.remainingUses > 0) && this.board.isLegalMove(this.currentPlayer, pointId, die.value);
+        }
+        for (let pointId = 1; pointId <= 25; pointId++) {
+            if (isValidMove(this.dice.die1, pointId) || isValidMove(this.dice.die2, pointId)) {
+                return true;
+            }
+        }
+
+        this.statusLogger.logInfo('No valid moves remain!');
+        return false;
+    }
+    
+    private switchPlayerIfNoValidMovesRemain(): void {
+        if (!this.checkIfValidMovesRemain()) {
+            // if we're still here, 
             this.switchPlayer();
             this.dice.roll();
+            this.switchPlayerIfNoValidMovesRemain();
         }
     }
  
@@ -153,7 +173,7 @@ class Game {
     }
     
     logCurrentPlayer(): void {
-        this.statusLogger.logInfo(`${Player[this.currentPlayer]} to move`);
+        // this.statusLogger.logInfo(`${Player[this.currentPlayer]} to move`);
         this.playerIndicatorUI.setActivePlayer(this.currentPlayer);
     }
 }

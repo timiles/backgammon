@@ -557,7 +557,7 @@ var Game = (function () {
                         self.board.move(self.currentPlayer, point.pointId, self.dice.die2.value);
                         self.dice.die2.decrementRemainingUses();
                     }
-                    self.checkIfValidMovesRemain();
+                    self.switchPlayerIfNoValidMovesRemain();
                     // reinspect point
                     _this.board.onPointInspected(point, false);
                     _this.board.onPointInspected(point, true);
@@ -580,7 +580,7 @@ var Game = (function () {
                     self.dice.die2.decrementRemainingUses();
                     _this.currentSelectedCheckerContainer = undefined;
                 }
-                self.checkIfValidMovesRemain();
+                self.switchPlayerIfNoValidMovesRemain();
                 // reinspect point
                 _this.board.onPointInspected(point, false);
                 _this.board.onPointInspected(point, true);
@@ -593,9 +593,27 @@ var Game = (function () {
         this.dice.roll();
     }
     Game.prototype.checkIfValidMovesRemain = function () {
+        var _this = this;
         if (this.dice.die1.remainingUses == 0 && this.dice.die2.remainingUses == 0) {
+            return false;
+        }
+        var isValidMove = function (die, pointId) {
+            return (die.remainingUses > 0) && _this.board.isLegalMove(_this.currentPlayer, pointId, die.value);
+        };
+        for (var pointId = 1; pointId <= 25; pointId++) {
+            if (isValidMove(this.dice.die1, pointId) || isValidMove(this.dice.die2, pointId)) {
+                return true;
+            }
+        }
+        this.statusLogger.logInfo('No valid moves remain!');
+        return false;
+    };
+    Game.prototype.switchPlayerIfNoValidMovesRemain = function () {
+        if (!this.checkIfValidMovesRemain()) {
+            // if we're still here, 
             this.switchPlayer();
             this.dice.roll();
+            this.switchPlayerIfNoValidMovesRemain();
         }
     };
     Game.getOtherPlayer = function (player) {
@@ -606,7 +624,7 @@ var Game = (function () {
         this.logCurrentPlayer();
     };
     Game.prototype.logCurrentPlayer = function () {
-        this.statusLogger.logInfo(Player[this.currentPlayer] + " to move");
+        // this.statusLogger.logInfo(`${Player[this.currentPlayer]} to move`);
         this.playerIndicatorUI.setActivePlayer(this.currentPlayer);
     };
     return Game;
