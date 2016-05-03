@@ -40,12 +40,10 @@ var CheckerContainerUI = (function () {
         }
     };
     CheckerContainerUI.prototype.highlightSource = function (on) {
-        if (on) {
-            $(this.containerDiv).addClass('highlight-source');
-        }
-        else {
-            $(this.containerDiv).removeClass('highlight-source');
-        }
+        $(this.containerDiv).toggleClass('highlight-source', on);
+    };
+    CheckerContainerUI.prototype.setSelected = function (on) {
+        $(this.containerDiv).toggleClass('selected', on);
     };
     return CheckerContainerUI;
 })();
@@ -99,12 +97,7 @@ var PointUI = (function (_super) {
         this.containerDiv.onmouseout = function () { self.onInspected(false); };
     }
     PointUI.prototype.highlightDestination = function (on) {
-        if (on) {
-            $(this.containerDiv).addClass('highlight-destination');
-        }
-        else {
-            $(this.containerDiv).removeClass('highlight-destination');
-        }
+        $(this.containerDiv).toggleClass('highlight-destination', on);
     };
     return PointUI;
 })(CheckerContainerUI);
@@ -133,6 +126,9 @@ var Point = (function (_super) {
     };
     Point.prototype.highlightSource = function (on) {
         this.pointUI.highlightSource(on);
+    };
+    Point.prototype.setSelected = function (on) {
+        this.pointUI.setSelected(on);
     };
     return Point;
 })(CheckerContainer);
@@ -550,6 +546,7 @@ var Game = (function () {
                     // if no pieces here, exit
                     return;
                 }
+                point.setSelected(true);
                 var canUseDie = function (die) {
                     return (die.remainingUses > 0 &&
                         self.board.isLegalMove(self.currentPlayer, point.pointId, die.value));
@@ -567,6 +564,7 @@ var Game = (function () {
                         self.dice.die2.decrementRemainingUses();
                     }
                     self.switchPlayerIfNoValidMovesRemain();
+                    point.setSelected(false);
                     // reinspect point
                     _this.board.onPointInspected(point, false);
                     _this.board.onPointInspected(point, true);
@@ -576,10 +574,8 @@ var Game = (function () {
                 }
             }
             else if (point.pointId === _this.currentSelectedCheckerContainer.pointId) {
+                _this.currentSelectedCheckerContainer.setSelected(false);
                 _this.currentSelectedCheckerContainer = undefined;
-                // reinspect point
-                _this.board.onPointInspected(point, false);
-                _this.board.onPointInspected(point, true);
             }
             else {
                 var isUsingDie = function (die) {
@@ -588,11 +584,13 @@ var Game = (function () {
                 if (isUsingDie(self.dice.die1)) {
                     self.board.move(self.currentPlayer, _this.currentSelectedCheckerContainer.pointId, self.dice.die1.value);
                     self.dice.die1.decrementRemainingUses();
+                    _this.currentSelectedCheckerContainer.setSelected(false);
                     _this.currentSelectedCheckerContainer = undefined;
                 }
                 else if (isUsingDie(self.dice.die2)) {
                     self.board.move(self.currentPlayer, _this.currentSelectedCheckerContainer.pointId, self.dice.die2.value);
                     self.dice.die2.decrementRemainingUses();
+                    _this.currentSelectedCheckerContainer.setSelected(false);
                     _this.currentSelectedCheckerContainer = undefined;
                 }
                 self.switchPlayerIfNoValidMovesRemain();

@@ -21,11 +21,6 @@ class PointUI extends CheckerContainerUI {
     }
     
     highlightDestination(on: boolean): void {
-        if (on) {
-            $(this.containerDiv).addClass('highlight-destination');
-        }
-        else {
-            $(this.containerDiv).removeClass('highlight-destination');
-        }
+        $(this.containerDiv).toggleClass('highlight-destination', on);
     }
 }

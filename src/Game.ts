@@ -68,6 +68,8 @@ class Game {
                     return;
                 }
                 
+                point.setSelected(true);
+                
                 let canUseDie = (die: Die) => {
                     return (die.remainingUses > 0 &&
                         self.board.isLegalMove(self.currentPlayer, point.pointId, die.value));
@@ -89,6 +91,8 @@ class Game {
                     
                     self.switchPlayerIfNoValidMovesRemain();
                 
+                    point.setSelected(false);
+                
                     // reinspect point
                     this.board.onPointInspected(point, false);
                     this.board.onPointInspected(point, true);
@@ -98,10 +102,8 @@ class Game {
                 }
             }
             else if (point.pointId === this.currentSelectedCheckerContainer.pointId) {
+                (<Point> this.currentSelectedCheckerContainer).setSelected(false);
                 this.currentSelectedCheckerContainer = undefined;
-                // reinspect point
-                this.board.onPointInspected(point, false);
-                this.board.onPointInspected(point, true);
             }
             else {
                 
@@ -112,11 +114,13 @@ class Game {
                 if (isUsingDie(self.dice.die1)) {
                     self.board.move(self.currentPlayer, this.currentSelectedCheckerContainer.pointId, self.dice.die1.value);
                     self.dice.die1.decrementRemainingUses();
+                    (<Point> this.currentSelectedCheckerContainer).setSelected(false);
                     this.currentSelectedCheckerContainer = undefined;           
                 }
                 else if (isUsingDie(self.dice.die2)) {
                     self.board.move(self.currentPlayer, this.currentSelectedCheckerContainer.pointId, self.dice.die2.value);
                     self.dice.die2.decrementRemainingUses();
+                    (<Point> this.currentSelectedCheckerContainer).setSelected(false);
                     this.currentSelectedCheckerContainer = undefined;           
                 }
 

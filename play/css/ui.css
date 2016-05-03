@@ -42,6 +42,10 @@ DIV.checker-container.highlight-source
     background: green;
     cursor: pointer;
 }
+DIV.checker-container.selected
+{
+    background: darkgreen;
+}
 DIV.checker-container.highlight-destination
 {
     background: yellow;

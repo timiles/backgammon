@@ -36,4 +36,8 @@ class Point extends CheckerContainer {
     highlightSource(on: boolean) {
         this.pointUI.highlightSource(on);        
     }
+    
+    setSelected(on: boolean) {
+        this.pointUI.setSelected(on);        
+    }
 }

@@ -30,11 +30,10 @@ class CheckerContainerUI {
     }
     
     highlightSource(on: boolean): void {
-        if (on) {
-            $(this.containerDiv).addClass('highlight-source');
-        }
-        else {
-            $(this.containerDiv).removeClass('highlight-source');
-        }
+        $(this.containerDiv).toggleClass('highlight-source', on);
+    }
+    
+    setSelected(on: boolean): void {
+        $(this.containerDiv).toggleClass('selected', on);
     }
 }
