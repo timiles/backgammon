@@ -61,7 +61,7 @@ class Game {
             }
         };
         
-        this.board.onPointSelected = (point: Point, on: boolean) => {
+        this.board.onPointSelected = (point: CheckerContainer, on: boolean) => {
             if (self.currentSelectedCheckerContainer == undefined) {
                 if (point.checkers[self.currentPlayer] == 0) {
                     // if no pieces here, exit
@@ -89,19 +89,25 @@ class Game {
                     
                     self.switchPlayerIfNoValidMovesRemain();
                 
-                    point.touchSelected();
-                
+                    if (point instanceof Point) {
+                        (<Point> point).touchSelected();
+                    }
+                    
                     // reinspect point
                     this.board.onPointInspected(point, false);
                     this.board.onPointInspected(point, true);
                 }
                 else {
-                    point.setSelected(true);
+                    if (point instanceof Point) {
+                        (<Point> point).setSelected(true);
+                    }
                     this.currentSelectedCheckerContainer = point;
                 }
             }
             else if (point.pointId === this.currentSelectedCheckerContainer.pointId) {
-                (<Point> this.currentSelectedCheckerContainer).setSelected(false);
+                if (this.currentSelectedCheckerContainer instanceof Point) {
+                    (<Point> this.currentSelectedCheckerContainer).setSelected(false);
+                }
                 this.currentSelectedCheckerContainer = undefined;
             }
             else {
@@ -113,13 +119,17 @@ class Game {
                 if (isUsingDie(self.dice.die1)) {
                     self.board.move(self.currentPlayer, this.currentSelectedCheckerContainer.pointId, self.dice.die1.value);
                     self.dice.die1.decrementRemainingUses();
-                    (<Point> this.currentSelectedCheckerContainer).setSelected(false);
+                    if (this.currentSelectedCheckerContainer instanceof Point) {
+                        (<Point> this.currentSelectedCheckerContainer).setSelected(false);
+                    }
                     this.currentSelectedCheckerContainer = undefined;           
                 }
                 else if (isUsingDie(self.dice.die2)) {
                     self.board.move(self.currentPlayer, this.currentSelectedCheckerContainer.pointId, self.dice.die2.value);
                     self.dice.die2.decrementRemainingUses();
-                    (<Point> this.currentSelectedCheckerContainer).setSelected(false);
+                    if (this.currentSelectedCheckerContainer instanceof Point) {
+                        (<Point> this.currentSelectedCheckerContainer).setSelected(false);
+                    }
                     this.currentSelectedCheckerContainer = undefined;           
                 }
 

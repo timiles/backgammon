@@ -571,18 +571,24 @@ var Game = (function () {
                         self.dice.die2.decrementRemainingUses();
                     }
                     self.switchPlayerIfNoValidMovesRemain();
-                    point.touchSelected();
+                    if (point instanceof Point) {
+                        point.touchSelected();
+                    }
                     // reinspect point
                     _this.board.onPointInspected(point, false);
                     _this.board.onPointInspected(point, true);
                 }
                 else {
-                    point.setSelected(true);
+                    if (point instanceof Point) {
+                        point.setSelected(true);
+                    }
                     _this.currentSelectedCheckerContainer = point;
                 }
             }
             else if (point.pointId === _this.currentSelectedCheckerContainer.pointId) {
-                _this.currentSelectedCheckerContainer.setSelected(false);
+                if (_this.currentSelectedCheckerContainer instanceof Point) {
+                    _this.currentSelectedCheckerContainer.setSelected(false);
+                }
                 _this.currentSelectedCheckerContainer = undefined;
             }
             else {
@@ -592,13 +598,17 @@ var Game = (function () {
                 if (isUsingDie(self.dice.die1)) {
                     self.board.move(self.currentPlayer, _this.currentSelectedCheckerContainer.pointId, self.dice.die1.value);
                     self.dice.die1.decrementRemainingUses();
-                    _this.currentSelectedCheckerContainer.setSelected(false);
+                    if (_this.currentSelectedCheckerContainer instanceof Point) {
+                        _this.currentSelectedCheckerContainer.setSelected(false);
+                    }
                     _this.currentSelectedCheckerContainer = undefined;
                 }
                 else if (isUsingDie(self.dice.die2)) {
                     self.board.move(self.currentPlayer, _this.currentSelectedCheckerContainer.pointId, self.dice.die2.value);
                     self.dice.die2.decrementRemainingUses();
-                    _this.currentSelectedCheckerContainer.setSelected(false);
+                    if (_this.currentSelectedCheckerContainer instanceof Point) {
+                        _this.currentSelectedCheckerContainer.setSelected(false);
+                    }
                     _this.currentSelectedCheckerContainer = undefined;
                 }
                 self.switchPlayerIfNoValidMovesRemain();
