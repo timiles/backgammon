@@ -39,11 +39,13 @@ DIV.checker-container
 }
 DIV.checker-container.highlight-source
 {
+    background: green;
     cursor: pointer;
 }
 DIV.checker-container.highlight-destination
 {
     background: yellow;
+    cursor: pointer;
 }
 DIV.bar
 {

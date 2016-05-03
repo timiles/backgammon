@@ -133,6 +133,7 @@ class Board {
     removeAllHighlights(): void {
         for (let pointId = 1; pointId <= 24; pointId++) {
             (<Point> this.checkerContainers[pointId]).highlightDestination(false);            
+            (<Point> this.checkerContainers[pointId]).highlightSource(false);            
         }
     }
 }

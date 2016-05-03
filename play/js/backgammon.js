@@ -366,6 +366,7 @@ var Board = (function () {
     Board.prototype.removeAllHighlights = function () {
         for (var pointId = 1; pointId <= 24; pointId++) {
             this.checkerContainers[pointId].highlightDestination(false);
+            this.checkerContainers[pointId].highlightSource(false);
         }
     };
     return Board;
