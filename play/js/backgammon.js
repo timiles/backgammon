@@ -479,6 +479,7 @@ var GameUI = (function () {
         this.statusUI = new StatusUI();
         container.appendChild(this.boardUI.containerDiv);
         var sideContainer = document.createElement('div');
+        sideContainer.className = 'side-container';
         sideContainer.appendChild(this.blackDiceUI.containerDiv);
         sideContainer.appendChild(this.statusUI.containerDiv);
         sideContainer.appendChild(this.redDiceUI.containerDiv);

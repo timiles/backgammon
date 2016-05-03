@@ -23,6 +23,7 @@ class GameUI {
         
         container.appendChild(this.boardUI.containerDiv);
         let sideContainer = document.createElement('div');
+        sideContainer.className = 'side-container';
         sideContainer.appendChild(this.blackDiceUI.containerDiv);
         sideContainer.appendChild(this.statusUI.containerDiv);
         sideContainer.appendChild(this.redDiceUI.containerDiv);

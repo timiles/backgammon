@@ -1,3 +1,7 @@
+DIV.game-container
+{
+    font-family: Arial;
+}
 DIV.game-container > DIV
 {
     float: left;
@@ -100,6 +104,10 @@ BR.clear
     clear: both;
 }
 
+DIV.side-container
+{
+    background: lightgray;    
+}
 DIV.dice-container.active > DIV.die
 {
     box-shadow: 0 0 100px yellow;
@@ -141,6 +149,17 @@ DIV.status-container
     height: 144px;
     overflow-y: scroll;
     float: left;
-    margin: 10px 2px;
+    margin: 8px 2px;
     width: 100px;
+}
+DIV.status-container::-webkit-scrollbar
+{
+    width: 1em;
+}
+DIV.status-container::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+DIV.status-container::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
 }
