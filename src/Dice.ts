@@ -27,5 +27,8 @@ class Dice {
         }
         
         this.diceUIs[player].setDiceRolls(this.die1, this.die2);
+        this.diceUIs[player].setActive(true);
+        let otherPlayer = player === Player.BLACK ? Player.RED : Player.BLACK;
+        this.diceUIs[otherPlayer].setActive(false);
     }
 }

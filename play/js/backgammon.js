@@ -398,6 +398,14 @@ var DiceUI = (function () {
         this.die2.onChange = function () { _this.redraw(); };
         this.redraw();
     };
+    DiceUI.prototype.setActive = function (active) {
+        if (active) {
+            $(this.containerDiv).addClass('active');
+        }
+        else {
+            $(this.containerDiv).removeClass('active');
+        }
+    };
     DiceUI.prototype.redraw = function () {
         Utils.removeAllChildren(this.containerDiv);
         this.containerDiv.appendChild(DiceUI.createDie(this.die1));
@@ -432,27 +440,11 @@ var Dice = (function () {
             this.die2.remainingUses = 2;
         }
         this.diceUIs[player].setDiceRolls(this.die1, this.die2);
+        this.diceUIs[player].setActive(true);
+        var otherPlayer = player === Player.BLACK ? Player.RED : Player.BLACK;
+        this.diceUIs[otherPlayer].setActive(false);
     };
     return Dice;
-})();
-/// <reference path="Game.ts"/>
-var PlayerIndicatorUI = (function () {
-    function PlayerIndicatorUI() {
-        this.indicators = new Array(2);
-        this.indicators[Player.BLACK] = PlayerIndicatorUI.createIndicator(Player.BLACK);
-        this.indicators[Player.RED] = PlayerIndicatorUI.createIndicator(Player.RED);
-    }
-    PlayerIndicatorUI.createIndicator = function (player) {
-        var div = document.createElement('div');
-        div.className = 'player-indicator checker ' + Player[player].toString().toLowerCase();
-        return div;
-    };
-    PlayerIndicatorUI.prototype.setActivePlayer = function (player) {
-        var otherPlayer = player === Player.BLACK ? Player.RED : Player.BLACK;
-        $(this.indicators[otherPlayer]).removeClass('active');
-        $(this.indicators[player]).addClass('active');
-    };
-    return PlayerIndicatorUI;
 })();
 var StatusUI = (function () {
     function StatusUI() {
@@ -470,7 +462,6 @@ var StatusUI = (function () {
 /// <reference path="BoardUI.ts"/>
 /// <reference path="DiceUI.ts"/>
 /// <reference path="Enums.ts"/>
-/// <reference path="PlayerIndicatorUI.ts"/>
 /// <reference path="StatusUI.ts"/>
 /// <reference path="Utils.ts"/>
 var GameUI = (function () {
@@ -481,15 +472,12 @@ var GameUI = (function () {
         this.boardUI = new BoardUI();
         this.blackDiceUI = new DiceUI(Player.BLACK);
         this.redDiceUI = new DiceUI(Player.RED);
-        this.playerIndicatorUI = new PlayerIndicatorUI();
         this.statusUI = new StatusUI();
         container.appendChild(this.boardUI.containerDiv);
         var sideContainer = document.createElement('div');
         sideContainer.appendChild(this.blackDiceUI.containerDiv);
-        sideContainer.appendChild(this.playerIndicatorUI.indicators[Player.BLACK]);
         sideContainer.appendChild(this.statusUI.containerDiv);
         sideContainer.appendChild(this.redDiceUI.containerDiv);
-        sideContainer.appendChild(this.playerIndicatorUI.indicators[Player.RED]);
         container.appendChild(sideContainer);
     }
     return GameUI;
@@ -509,7 +497,6 @@ var StatusLogger = (function () {
 /// <reference path="Dice.ts"/>
 /// <reference path="Enums.ts"/>
 /// <reference path="GameUI.ts"/>
-/// <reference path="PlayerIndicatorUI.ts"/>
 /// <reference path="StatusLogger.ts"/>
 var Game = (function () {
     function Game(containerId) {
@@ -518,7 +505,6 @@ var Game = (function () {
         var ui = new GameUI(containerId);
         this.dice = new Dice(ui.blackDiceUI, ui.redDiceUI);
         this.board = new Board(ui.boardUI);
-        this.playerIndicatorUI = ui.playerIndicatorUI;
         this.board.onPointInspected = function (checkerContainer, on) {
             if (self.currentSelectedCheckerContainer != undefined) {
                 // if we're halfway a move, don't check
@@ -647,7 +633,6 @@ var Game = (function () {
     };
     Game.prototype.logCurrentPlayer = function () {
         this.statusLogger.logInfo(Player[this.currentPlayer] + " to move");
-        this.playerIndicatorUI.setActivePlayer(this.currentPlayer);
     };
     return Game;
 })();

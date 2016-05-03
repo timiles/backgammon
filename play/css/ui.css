@@ -30,15 +30,6 @@ DIV.black
     color: red;
     font-weight: bold;
 }
-DIV.player-indicator.checker
-{
-    opacity: 0.2;
-}
-DIV.player-indicator.checker.active
-{
-    opacity: 1;
-    box-shadow: 0 0 10px yellow;
-}
 DIV.checker-container
 {
     float: left;
@@ -101,6 +92,11 @@ DIV.point-black
 BR.clear
 {
     clear: both;
+}
+
+DIV.dice-container.active > DIV.die
+{
+    box-shadow: 0 0 100px yellow;
 }
 DIV.dice-container.dice-container-black > DIV.die
 {

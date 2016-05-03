@@ -21,6 +21,15 @@ class DiceUI {
         this.redraw();
     }
     
+    setActive(active: boolean) {
+        if (active) {
+            $(this.containerDiv).addClass('active');
+        }
+        else {
+            $(this.containerDiv).removeClass('active');            
+        }
+    }
+    
     private redraw(): void {
         Utils.removeAllChildren(this.containerDiv);
         this.containerDiv.appendChild(DiceUI.createDie(this.die1));
