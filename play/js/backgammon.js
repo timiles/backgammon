@@ -457,11 +457,13 @@ var PlayerIndicatorUI = (function () {
 var StatusUI = (function () {
     function StatusUI() {
         this.containerDiv = document.createElement('div');
+        this.containerDiv.className = 'status-container';
     }
     StatusUI.prototype.setStatus = function (s) {
         var statusP = document.createElement('p');
         statusP.innerText = s;
         this.containerDiv.appendChild(statusP);
+        this.containerDiv.scrollTop = this.containerDiv.scrollHeight;
     };
     return StatusUI;
 })();
@@ -474,6 +476,7 @@ var StatusUI = (function () {
 var GameUI = (function () {
     function GameUI(containerElementId) {
         var container = document.getElementById(containerElementId);
+        container.className = 'game-container';
         Utils.removeAllChildren(container);
         this.boardUI = new BoardUI();
         this.blackDiceUI = new DiceUI(Player.BLACK);
@@ -481,11 +484,13 @@ var GameUI = (function () {
         this.playerIndicatorUI = new PlayerIndicatorUI();
         this.statusUI = new StatusUI();
         container.appendChild(this.boardUI.containerDiv);
-        container.appendChild(this.blackDiceUI.containerDiv);
-        container.appendChild(this.redDiceUI.containerDiv);
-        container.appendChild(this.playerIndicatorUI.indicators[Player.BLACK]);
-        container.appendChild(this.playerIndicatorUI.indicators[Player.RED]);
-        container.appendChild(this.statusUI.containerDiv);
+        var sideContainer = document.createElement('div');
+        sideContainer.appendChild(this.blackDiceUI.containerDiv);
+        sideContainer.appendChild(this.playerIndicatorUI.indicators[Player.BLACK]);
+        sideContainer.appendChild(this.statusUI.containerDiv);
+        sideContainer.appendChild(this.redDiceUI.containerDiv);
+        sideContainer.appendChild(this.playerIndicatorUI.indicators[Player.RED]);
+        container.appendChild(sideContainer);
     }
     return GameUI;
 })();

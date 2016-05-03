@@ -1,4 +1,7 @@
-
+DIV.game-container > DIV
+{
+    float: left;
+}
 DIV.board
 {
     width: 392px;
@@ -130,4 +133,12 @@ DIV.dice-container DIV.die.die-uses-2::after
 {
     content: 'x2';
     font-size: x-small;
+}
+DIV.status-container
+{
+    height: 144px;
+    overflow-y: scroll;
+    float: left;
+    margin: 10px 2px;
+    width: 100px;
 }

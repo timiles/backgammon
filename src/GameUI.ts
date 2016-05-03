@@ -15,6 +15,7 @@ class GameUI {
     
     constructor(containerElementId: string) {
         let container = document.getElementById(containerElementId);
+        container.className = 'game-container';
         Utils.removeAllChildren(container);
         
         this.boardUI = new BoardUI();
@@ -24,10 +25,12 @@ class GameUI {
         this.statusUI = new StatusUI();
         
         container.appendChild(this.boardUI.containerDiv);
-        container.appendChild(this.blackDiceUI.containerDiv);
-        container.appendChild(this.redDiceUI.containerDiv);
-        container.appendChild(this.playerIndicatorUI.indicators[Player.BLACK]);
-        container.appendChild(this.playerIndicatorUI.indicators[Player.RED]);
-        container.appendChild(this.statusUI.containerDiv);
+        let sideContainer = document.createElement('div');
+        sideContainer.appendChild(this.blackDiceUI.containerDiv);
+        sideContainer.appendChild(this.playerIndicatorUI.indicators[Player.BLACK]);
+        sideContainer.appendChild(this.statusUI.containerDiv);
+        sideContainer.appendChild(this.redDiceUI.containerDiv);
+        sideContainer.appendChild(this.playerIndicatorUI.indicators[Player.RED]);
+        container.appendChild(sideContainer);
     }
 }
