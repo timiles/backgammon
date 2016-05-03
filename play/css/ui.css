@@ -99,23 +99,34 @@ BR.clear
 {
     clear: both;
 }
-DIV.die
+DIV.dice-container.dice-container-black > DIV.die
+{
+    background: black;
+    color: red;
+}
+DIV.dice-container.dice-container-red > DIV.die
+{
+    background: red;
+    color: black;
+}
+DIV.dice-container DIV.die
 {
     width: 20px;
     height: 20px;
     border-radius: 8px;
     padding: 6px;
     margin: 5px;
+    float: left;
 }
-DIV.die.die-uses-0
+DIV.dice-container DIV.die.die-uses-0
 {
-    background: lightblue;
+    opacity: 0.3;
 }
-DIV.die.die-uses-1, DIV.die.die-uses-2
+DIV.dice-container DIV.die.die-uses-1, DIV.dice-container DIV.die.die-uses-2
 {
-    background: lightgreen;
+    opacity: 1.0;
 }
-DIV.die.die-uses-2::after
+DIV.dice-container DIV.die.die-uses-2::after
 {
     content: 'x2';
     font-size: x-small;

@@ -384,9 +384,11 @@ var Die = (function () {
     return Die;
 })();
 /// <reference path="Die.ts" />
+/// <reference path="Enums.ts"/>
 var DiceUI = (function () {
-    function DiceUI() {
+    function DiceUI(player) {
         this.containerDiv = document.createElement('div');
+        this.containerDiv.className = "dice-container dice-container-" + Player[player];
     }
     DiceUI.prototype.setDiceRolls = function (die1, die2) {
         var _this = this;
@@ -413,13 +415,15 @@ var DiceUI = (function () {
 /// <reference path="DiceUI.ts"/>
 /// <reference path="Enums.ts"/>
 var Dice = (function () {
-    function Dice(diceUI) {
-        this.diceUI = diceUI;
+    function Dice(blackDiceUI, redDiceUI) {
+        this.diceUIs = new Array();
+        this.diceUIs[Player.BLACK] = blackDiceUI;
+        this.diceUIs[Player.RED] = redDiceUI;
     }
     Dice.generateDie = function () {
         return Math.floor(Math.random() * 6) + 1;
     };
-    Dice.prototype.roll = function () {
+    Dice.prototype.roll = function (player) {
         this.die1 = new Die();
         this.die2 = new Die();
         var isDouble = (this.die1.value === this.die2.value);
@@ -427,7 +431,7 @@ var Dice = (function () {
             this.die1.remainingUses = 2;
             this.die2.remainingUses = 2;
         }
-        this.diceUI.setDiceRolls(this.die1, this.die2);
+        this.diceUIs[player].setDiceRolls(this.die1, this.die2);
     };
     return Dice;
 })();
@@ -463,6 +467,7 @@ var StatusUI = (function () {
 })();
 /// <reference path="BoardUI.ts"/>
 /// <reference path="DiceUI.ts"/>
+/// <reference path="Enums.ts"/>
 /// <reference path="PlayerIndicatorUI.ts"/>
 /// <reference path="StatusUI.ts"/>
 /// <reference path="Utils.ts"/>
@@ -471,11 +476,13 @@ var GameUI = (function () {
         var container = document.getElementById(containerElementId);
         Utils.removeAllChildren(container);
         this.boardUI = new BoardUI();
-        this.diceUI = new DiceUI();
+        this.blackDiceUI = new DiceUI(Player.BLACK);
+        this.redDiceUI = new DiceUI(Player.RED);
         this.playerIndicatorUI = new PlayerIndicatorUI();
         this.statusUI = new StatusUI();
         container.appendChild(this.boardUI.containerDiv);
-        container.appendChild(this.diceUI.containerDiv);
+        container.appendChild(this.blackDiceUI.containerDiv);
+        container.appendChild(this.redDiceUI.containerDiv);
         container.appendChild(this.playerIndicatorUI.indicators[Player.BLACK]);
         container.appendChild(this.playerIndicatorUI.indicators[Player.RED]);
         container.appendChild(this.statusUI.containerDiv);
@@ -504,7 +511,7 @@ var Game = (function () {
         var _this = this;
         var self = this;
         var ui = new GameUI(containerId);
-        this.dice = new Dice(ui.diceUI);
+        this.dice = new Dice(ui.blackDiceUI, ui.redDiceUI);
         this.board = new Board(ui.boardUI);
         this.playerIndicatorUI = ui.playerIndicatorUI;
         this.board.onPointInspected = function (checkerContainer, on) {
@@ -600,7 +607,7 @@ var Game = (function () {
         // TODO: roll to see who starts. Assume BLACK.
         this.currentPlayer = Player.BLACK;
         this.logCurrentPlayer();
-        this.dice.roll();
+        this.dice.roll(this.currentPlayer);
     }
     Game.prototype.checkIfValidMovesRemain = function () {
         var _this = this;
@@ -622,7 +629,7 @@ var Game = (function () {
         if (!this.checkIfValidMovesRemain()) {
             // if we're still here, 
             this.switchPlayer();
-            this.dice.roll();
+            this.dice.roll(this.currentPlayer);
             this.switchPlayerIfNoValidMovesRemain();
         }
     };

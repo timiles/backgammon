@@ -6,15 +6,17 @@ class Dice {
 
     die1: Die;
     die2: Die;
-    diceUI: DiceUI;
-    constructor(diceUI: DiceUI) {
-        this.diceUI = diceUI;
+    diceUIs: Array<DiceUI>;
+    constructor(blackDiceUI: DiceUI, redDiceUI: DiceUI) {
+        this.diceUIs = new Array<DiceUI>();
+        this.diceUIs[Player.BLACK] = blackDiceUI;
+        this.diceUIs[Player.RED] = redDiceUI;
     }
 
     private static generateDie(): number {
         return Math.floor(Math.random() * 6) + 1;        
     }
-    roll(): void {
+    roll(player: Player): void {
         this.die1 = new Die();
         this.die2 = new Die();
         let isDouble = (this.die1.value === this.die2.value);
@@ -24,6 +26,6 @@ class Dice {
             this.die2.remainingUses = 2;
         }
         
-        this.diceUI.setDiceRolls(this.die1, this.die2);
+        this.diceUIs[player].setDiceRolls(this.die1, this.die2);
     }
 }

@@ -1,4 +1,5 @@
 /// <reference path="Die.ts" />
+/// <reference path="Enums.ts"/>
 
 class DiceUI {
     
@@ -6,8 +7,9 @@ class DiceUI {
     die1: Die;
     die2: Die;
     
-    constructor() {        
+    constructor(player: Player) {        
         this.containerDiv = document.createElement('div');
+        this.containerDiv.className = `dice-container dice-container-${Player[player]}`;
     }
     
     setDiceRolls(die1: Die, die2: Die) {

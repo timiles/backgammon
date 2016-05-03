@@ -20,7 +20,7 @@ class Game {
         let self = this;
 
         let ui = new GameUI(containerId);
-        this.dice = new Dice(ui.diceUI);
+        this.dice = new Dice(ui.blackDiceUI, ui.redDiceUI);
         this.board = new Board(ui.boardUI);
         this.playerIndicatorUI = ui.playerIndicatorUI;
         
@@ -132,7 +132,7 @@ class Game {
         this.currentPlayer = Player.BLACK;
         this.logCurrentPlayer();
         
-        this.dice.roll();
+        this.dice.roll(this.currentPlayer);
     }
     
     private checkIfValidMovesRemain(): boolean {
@@ -157,7 +157,7 @@ class Game {
         if (!this.checkIfValidMovesRemain()) {
             // if we're still here, 
             this.switchPlayer();
-            this.dice.roll();
+            this.dice.roll(this.currentPlayer);
             this.switchPlayerIfNoValidMovesRemain();
         }
     }
