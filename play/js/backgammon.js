@@ -130,6 +130,13 @@ var Point = (function (_super) {
     Point.prototype.setSelected = function (on) {
         this.pointUI.setSelected(on);
     };
+    Point.prototype.touchSelected = function () {
+        var self = this;
+        self.pointUI.setSelected(true);
+        setTimeout(function () {
+            self.pointUI.setSelected(false);
+        }, 300);
+    };
     return Point;
 })(CheckerContainer);
 /// <reference path="BarUI.ts"/>
@@ -546,7 +553,6 @@ var Game = (function () {
                     // if no pieces here, exit
                     return;
                 }
-                point.setSelected(true);
                 var canUseDie = function (die) {
                     return (die.remainingUses > 0 &&
                         self.board.isLegalMove(self.currentPlayer, point.pointId, die.value));
@@ -564,12 +570,13 @@ var Game = (function () {
                         self.dice.die2.decrementRemainingUses();
                     }
                     self.switchPlayerIfNoValidMovesRemain();
-                    point.setSelected(false);
+                    point.touchSelected();
                     // reinspect point
                     _this.board.onPointInspected(point, false);
                     _this.board.onPointInspected(point, true);
                 }
                 else {
+                    point.setSelected(true);
                     _this.currentSelectedCheckerContainer = point;
                 }
             }

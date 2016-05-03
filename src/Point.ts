@@ -38,6 +38,14 @@ class Point extends CheckerContainer {
     }
     
     setSelected(on: boolean) {
-        this.pointUI.setSelected(on);        
+        this.pointUI.setSelected(on);
+    }
+    
+    touchSelected() {
+        let self = this;
+        self.pointUI.setSelected(true);
+        setTimeout(function() {
+            self.pointUI.setSelected(false);
+        }, 300);
     }
 }

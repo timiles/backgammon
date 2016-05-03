@@ -67,9 +67,7 @@ class Game {
                     // if no pieces here, exit
                     return;
                 }
-                
-                point.setSelected(true);
-                
+                                
                 let canUseDie = (die: Die) => {
                     return (die.remainingUses > 0 &&
                         self.board.isLegalMove(self.currentPlayer, point.pointId, die.value));
@@ -91,13 +89,14 @@ class Game {
                     
                     self.switchPlayerIfNoValidMovesRemain();
                 
-                    point.setSelected(false);
+                    point.touchSelected();
                 
                     // reinspect point
                     this.board.onPointInspected(point, false);
                     this.board.onPointInspected(point, true);
                 }
                 else {
+                    point.setSelected(true);
                     this.currentSelectedCheckerContainer = point;
                 }
             }
