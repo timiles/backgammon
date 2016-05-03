@@ -548,44 +548,44 @@ var Game = (function () {
                 }
             }
         };
-        this.board.onPointSelected = function (point, on) {
+        this.board.onPointSelected = function (checkerContainer, on) {
             if (self.currentSelectedCheckerContainer == undefined) {
-                if (point.checkers[self.currentPlayer] == 0) {
+                if (checkerContainer.checkers[self.currentPlayer] == 0) {
                     // if no pieces here, exit
                     return;
                 }
                 var canUseDie = function (die) {
                     return (die.remainingUses > 0 &&
-                        self.board.isLegalMove(self.currentPlayer, point.pointId, die.value));
+                        self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value));
                 };
                 var canUseDie1 = canUseDie(self.dice.die1);
                 var canUseDie2 = canUseDie(self.dice.die2);
                 // if can use one die but not the other, or if it's doubles, just play it
                 if ((canUseDie1 != canUseDie2) || (self.dice.die1.value === self.dice.die2.value)) {
                     if (canUseDie1) {
-                        self.board.move(self.currentPlayer, point.pointId, self.dice.die1.value);
+                        self.board.move(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value);
                         self.dice.die1.decrementRemainingUses();
                     }
                     else if (canUseDie2) {
-                        self.board.move(self.currentPlayer, point.pointId, self.dice.die2.value);
+                        self.board.move(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value);
                         self.dice.die2.decrementRemainingUses();
                     }
                     self.switchPlayerIfNoValidMovesRemain();
-                    if (point instanceof Point) {
-                        point.touchSelected();
+                    if (checkerContainer instanceof Point) {
+                        checkerContainer.touchSelected();
                     }
                     // reinspect point
-                    _this.board.onPointInspected(point, false);
-                    _this.board.onPointInspected(point, true);
+                    _this.board.onPointInspected(checkerContainer, false);
+                    _this.board.onPointInspected(checkerContainer, true);
                 }
                 else {
-                    if (point instanceof Point) {
-                        point.setSelected(true);
+                    if (checkerContainer instanceof Point) {
+                        checkerContainer.setSelected(true);
                     }
-                    _this.currentSelectedCheckerContainer = point;
+                    _this.currentSelectedCheckerContainer = checkerContainer;
                 }
             }
-            else if (point.pointId === _this.currentSelectedCheckerContainer.pointId) {
+            else if (checkerContainer.pointId === _this.currentSelectedCheckerContainer.pointId) {
                 if (_this.currentSelectedCheckerContainer instanceof Point) {
                     _this.currentSelectedCheckerContainer.setSelected(false);
                 }
@@ -593,7 +593,7 @@ var Game = (function () {
             }
             else {
                 var isUsingDie = function (die) {
-                    return (Board.getDestinationPointId(_this.currentPlayer, _this.currentSelectedCheckerContainer.pointId, die.value) === point.pointId);
+                    return (Board.getDestinationPointId(_this.currentPlayer, _this.currentSelectedCheckerContainer.pointId, die.value) === checkerContainer.pointId);
                 };
                 if (isUsingDie(self.dice.die1)) {
                     self.board.move(self.currentPlayer, _this.currentSelectedCheckerContainer.pointId, self.dice.die1.value);
@@ -613,8 +613,8 @@ var Game = (function () {
                 }
                 self.switchPlayerIfNoValidMovesRemain();
                 // reinspect point
-                _this.board.onPointInspected(point, false);
-                _this.board.onPointInspected(point, true);
+                _this.board.onPointInspected(checkerContainer, false);
+                _this.board.onPointInspected(checkerContainer, true);
             }
         };
         this.statusLogger = new StatusLogger(ui.statusUI);
