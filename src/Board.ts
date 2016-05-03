@@ -1,6 +1,7 @@
 /// <reference path="Bar.ts"/>
 /// <reference path="BoardUI.ts"/>
 /// <reference path="CheckerContainer.ts"/>
+/// <reference path="Enums.ts"/>
 /// <reference path="Home.ts"/>
 /// <reference path="Point.ts"/>
 

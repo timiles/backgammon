@@ -1,3 +1,8 @@
+var Player;
+(function (Player) {
+    Player[Player["BLACK"] = 0] = "BLACK";
+    Player[Player["RED"] = 1] = "RED";
+})(Player || (Player = {}));
 // REVIEW: invoke as extensions/prototype?
 var Utils = (function () {
     function Utils() {
@@ -10,6 +15,7 @@ var Utils = (function () {
     };
     return Utils;
 })();
+/// <reference path="Enums.ts"/>
 /// <reference path="Utils.ts"/>
 var CheckerContainerUI = (function () {
     function CheckerContainerUI(containerType, isTopSide) {
@@ -44,6 +50,7 @@ var CheckerContainerUI = (function () {
     return CheckerContainerUI;
 })();
 /// <reference path="CheckerContainerUI.ts"/>
+/// <reference path="Enums.ts"/>
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -64,6 +71,7 @@ var BarUI = (function (_super) {
     }
     return BarUI;
 })(CheckerContainerUI);
+/// <reference path="Enums.ts"/>
 var CheckerContainer = (function () {
     function CheckerContainer(pointId) {
         this.pointId = pointId;
@@ -129,6 +137,7 @@ var Point = (function (_super) {
     return Point;
 })(CheckerContainer);
 /// <reference path="BarUI.ts"/>
+/// <reference path="Enums.ts"/>
 /// <reference path="Point.ts"/>
 var Bar = (function (_super) {
     __extends(Bar, _super);
@@ -165,6 +174,7 @@ var HomeUI = (function (_super) {
     return HomeUI;
 })(CheckerContainerUI);
 /// <reference path="BarUI.ts"/>
+/// <reference path="Enums.ts"/>
 /// <reference path="HomeUI.ts"/>
 /// <reference path="PointUI.ts"/>
 /// <reference path="Utils.ts"/>
@@ -241,6 +251,7 @@ var Home = (function (_super) {
 /// <reference path="Bar.ts"/>
 /// <reference path="BoardUI.ts"/>
 /// <reference path="CheckerContainer.ts"/>
+/// <reference path="Enums.ts"/>
 /// <reference path="Home.ts"/>
 /// <reference path="Point.ts"/>
 var PointId;
@@ -400,6 +411,7 @@ var DiceUI = (function () {
 })();
 /// <reference path="Die.ts"/>
 /// <reference path="DiceUI.ts"/>
+/// <reference path="Enums.ts"/>
 var Dice = (function () {
     function Dice(diceUI) {
         this.diceUI = diceUI;
@@ -483,14 +495,10 @@ var StatusLogger = (function () {
 /// <reference path="Board.ts"/>
 /// <reference path="CheckerContainer.ts"/>
 /// <reference path="Dice.ts"/>
+/// <reference path="Enums.ts"/>
 /// <reference path="GameUI.ts"/>
 /// <reference path="PlayerIndicatorUI.ts"/>
 /// <reference path="StatusLogger.ts"/>
-var Player;
-(function (Player) {
-    Player[Player["BLACK"] = 0] = "BLACK";
-    Player[Player["RED"] = 1] = "RED";
-})(Player || (Player = {}));
 var Game = (function () {
     function Game(containerId) {
         var _this = this;

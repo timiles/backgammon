@@ -1,5 +1,6 @@
 /// <reference path="Die.ts"/>
 /// <reference path="DiceUI.ts"/>
+/// <reference path="Enums.ts"/>
 
 class Dice {
 

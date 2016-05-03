@@ -1,4 +1,5 @@
 /// <reference path="BarUI.ts"/>
+/// <reference path="Enums.ts"/>
 /// <reference path="HomeUI.ts"/>
 /// <reference path="PointUI.ts"/>
 /// <reference path="Utils.ts"/>

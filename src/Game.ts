@@ -1,11 +1,10 @@
 /// <reference path="Board.ts"/>
 /// <reference path="CheckerContainer.ts"/>
 /// <reference path="Dice.ts"/>
+/// <reference path="Enums.ts"/>
 /// <reference path="GameUI.ts"/>
 /// <reference path="PlayerIndicatorUI.ts"/>
 /// <reference path="StatusLogger.ts"/>
-
-enum Player { BLACK, RED }
 
 class Game {
     

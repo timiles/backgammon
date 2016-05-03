@@ -1,3 +1,4 @@
+/// <reference path="Enums.ts"/>
 /// <reference path="Utils.ts"/>
 
 declare var $;

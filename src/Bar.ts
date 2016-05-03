@@ -1,4 +1,5 @@
 /// <reference path="BarUI.ts"/>
+/// <reference path="Enums.ts"/>
 /// <reference path="Point.ts"/>
 
 class Bar extends CheckerContainer {

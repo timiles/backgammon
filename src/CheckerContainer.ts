@@ -1,3 +1,5 @@
+/// <reference path="Enums.ts"/>
+
 class CheckerContainer {
     
     pointId: number
