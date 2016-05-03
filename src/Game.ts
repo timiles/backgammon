@@ -106,7 +106,7 @@ class Game {
             else {
                 
                 let isUsingDie = (die: Die) => {
-                    return (Math.abs(point.pointId - this.currentSelectedCheckerContainer.pointId) === die.value);
+                    return (Board.getDestinationPointId(this.currentPlayer, this.currentSelectedCheckerContainer.pointId, die.value) === point.pointId);
                 }
 
                 if (isUsingDie(self.dice.die1)) {

@@ -52,7 +52,7 @@ class Board {
         this.checkerContainers[pointId].increment(player, count || 1);
     }
     
-    private static getDestinationPointId(player: Player, sourcePointId: number, numberOfMoves: number): number {
+    static getDestinationPointId(player: Player, sourcePointId: number, numberOfMoves: number): number {
         if (sourcePointId === PointId.BAR) {
             if (player === Player.BLACK) {
                 return numberOfMoves;

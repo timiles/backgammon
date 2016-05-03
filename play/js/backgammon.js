@@ -583,7 +583,7 @@ var Game = (function () {
             }
             else {
                 var isUsingDie = function (die) {
-                    return (Math.abs(point.pointId - _this.currentSelectedCheckerContainer.pointId) === die.value);
+                    return (Board.getDestinationPointId(_this.currentPlayer, _this.currentSelectedCheckerContainer.pointId, die.value) === point.pointId);
                 };
                 if (isUsingDie(self.dice.die1)) {
                     self.board.move(self.currentPlayer, _this.currentSelectedCheckerContainer.pointId, self.dice.die1.value);
