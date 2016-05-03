@@ -575,6 +575,12 @@ var Game = (function () {
                     _this.currentSelectedCheckerContainer = point;
                 }
             }
+            else if (point.pointId === _this.currentSelectedCheckerContainer.pointId) {
+                _this.currentSelectedCheckerContainer = undefined;
+                // reinspect point
+                _this.board.onPointInspected(point, false);
+                _this.board.onPointInspected(point, true);
+            }
             else {
                 var isUsingDie = function (die) {
                     return (Math.abs(point.pointId - _this.currentSelectedCheckerContainer.pointId) === die.value);

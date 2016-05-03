@@ -97,6 +97,12 @@ class Game {
                     this.currentSelectedCheckerContainer = point;
                 }
             }
+            else if (point.pointId === this.currentSelectedCheckerContainer.pointId) {
+                this.currentSelectedCheckerContainer = undefined;
+                // reinspect point
+                this.board.onPointInspected(point, false);
+                this.board.onPointInspected(point, true);
+            }
             else {
                 
                 let isUsingDie = (die: Die) => {
