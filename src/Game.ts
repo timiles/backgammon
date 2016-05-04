@@ -67,7 +67,7 @@ class Game {
                     // if no pieces here, exit
                     return;
                 }
-                                
+
                 let canUseDie = (die: Die) => {
                     return (die.remainingUses > 0 &&
                         self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value));
@@ -97,12 +97,13 @@ class Game {
                     this.board.onPointInspected(checkerContainer, false);
                     this.board.onPointInspected(checkerContainer, true);
                 }
-                else {
+                else if (canUseDie1 || canUseDie2) {
                     if (checkerContainer instanceof Point) {
                         (<Point> checkerContainer).setSelected(true);
                     }
                     this.currentSelectedCheckerContainer = checkerContainer;
                 }
+                // otherwise there was a legal move but this wasn't it
             }
             else if (checkerContainer.pointId === this.currentSelectedCheckerContainer.pointId) {
                 if (this.currentSelectedCheckerContainer instanceof Point) {

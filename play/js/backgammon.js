@@ -578,7 +578,7 @@ var Game = (function () {
                     _this.board.onPointInspected(checkerContainer, false);
                     _this.board.onPointInspected(checkerContainer, true);
                 }
-                else {
+                else if (canUseDie1 || canUseDie2) {
                     if (checkerContainer instanceof Point) {
                         checkerContainer.setSelected(true);
                     }
