@@ -30,7 +30,7 @@ class Game {
             if (!on) {
                 // turn off highlights if any
                 if (checkerContainer instanceof Point) {
-                    (<Point> checkerContainer).highlightSource(false);
+                    // (<Point> checkerContainer).highlightSource(false);
                 }
                 else if (checkerContainer instanceof Bar) {
                     (<Bar> checkerContainer).highlightSource(Player.BLACK, false);
@@ -52,7 +52,7 @@ class Game {
                 }
                 if (validMoveExists) {
                     if (checkerContainer instanceof Point) {
-                        (<Point> checkerContainer).highlightSource(true);
+                        // (<Point> checkerContainer).highlightSource(true);
                     }
                     else if (checkerContainer instanceof Bar) {
                         (<Bar> checkerContainer).highlightSource(this.currentPlayer, true);
@@ -81,10 +81,12 @@ class Game {
                     if (canUseDie1) {
                         self.board.move(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value);
                         self.dice.die1.decrementRemainingUses();
+                        self.evaluateBoard();                                        
                     }
                     else if (canUseDie2) {
                         self.board.move(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value);
                         self.dice.die2.decrementRemainingUses();
+                        self.evaluateBoard();                                        
                     }
                     
                     self.switchPlayerIfNoValidMovesRemain();
@@ -120,6 +122,7 @@ class Game {
                 if (isUsingDie(self.dice.die1)) {
                     self.board.move(self.currentPlayer, this.currentSelectedCheckerContainer.pointId, self.dice.die1.value);
                     self.dice.die1.decrementRemainingUses();
+                    self.evaluateBoard();                                        
                     if (this.currentSelectedCheckerContainer instanceof Point) {
                         (<Point> this.currentSelectedCheckerContainer).setSelected(false);
                     }
@@ -128,6 +131,7 @@ class Game {
                 else if (isUsingDie(self.dice.die2)) {
                     self.board.move(self.currentPlayer, this.currentSelectedCheckerContainer.pointId, self.dice.die2.value);
                     self.dice.die2.decrementRemainingUses();
+                    self.evaluateBoard();                                        
                     if (this.currentSelectedCheckerContainer instanceof Point) {
                         (<Point> this.currentSelectedCheckerContainer).setSelected(false);
                     }
@@ -150,6 +154,7 @@ class Game {
         this.logCurrentPlayer();
         
         this.dice.roll(this.currentPlayer);
+        this.evaluateBoard();
     }
     
     private checkIfValidMovesRemain(): boolean {
@@ -175,6 +180,7 @@ class Game {
             // if we're still here, 
             this.switchPlayer();
             this.dice.roll(this.currentPlayer);
+            this.evaluateBoard();
             this.switchPlayerIfNoValidMovesRemain();
         }
     }
@@ -186,6 +192,35 @@ class Game {
     switchPlayer(): void {
         this.currentPlayer = (this.currentPlayer + 1) % 2;
         this.logCurrentPlayer();
+    }
+    
+    evaluateBoard(): void {
+        let self = this;
+        for (let i = 1; i <= 24; i++) {
+            let point = <Point> this.board.checkerContainers[i];
+             if (point.checkers[this.currentPlayer] > 0) {
+                let validMoveExists = false;
+                if (self.dice.die1.remainingUses > 0) {
+                    if (self.board.isLegalMove(self.currentPlayer, i, self.dice.die1.value)) {
+                        validMoveExists = true;
+                    }
+                }
+                if (self.dice.die2.remainingUses > 0) {
+                    if (self.board.isLegalMove(self.currentPlayer, i, self.dice.die2.value)) {
+                        validMoveExists = true;
+                    }
+                }
+                if (validMoveExists) {
+                    point.setState(PointState.VALID_SOURCE);
+                }
+                else {
+                    point.setState(undefined);
+                }
+             }
+             else {
+                 point.setState(undefined);
+             }
+        }
     }
     
     logCurrentPlayer(): void {

@@ -12,6 +12,16 @@ class CheckerContainerUI {
         let side = (isTopSide ? 'top': 'bottom');
         this.containerDiv.className = `checker-container checker-container-${side} ${containerType}`;
     }
+    
+    setState(state?: PointState) {
+        // remove any class like 'state-*'
+        $(this.containerDiv).removeClass(function (index, css) {
+            return (css.match (/(^|\s)state-\S+/g) || []).join(' ');
+        });
+        if (state != undefined) {
+            $(this.containerDiv).addClass('state-' + Utils.toCssClass(PointState[state]));
+        }
+    }
 
     setCheckers(player: Player, count: number) {
         Utils.removeAllChildren(this.containerDiv);

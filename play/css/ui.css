@@ -34,7 +34,7 @@ DIV.checker-container {
     height: 110px;
     padding: 4px;
 }
-DIV.checker-container.highlight-source {
+DIV.checker-container.state-valid-source:hover {
     background: green;
     cursor: pointer;
 }
