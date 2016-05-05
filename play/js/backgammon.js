@@ -20,6 +20,12 @@ var Utils = (function () {
     Utils.toCssClass = function (s) {
         return s.toLowerCase().replace('_', '-');
     };
+    Utils.highlight = function (el) {
+        $(el).addClass('highlight');
+        setTimeout(function () {
+            $(el).addClass('highlight-end');
+        }, 0);
+    };
     return Utils;
 })();
 /// <reference path="Enums.ts"/>
@@ -458,6 +464,7 @@ var Dice = (function () {
     };
     return Dice;
 })();
+/// <reference path="Utils.ts"/>
 var StatusUI = (function () {
     function StatusUI() {
         this.containerDiv = document.createElement('div');
@@ -468,6 +475,7 @@ var StatusUI = (function () {
         statusP.innerText = s;
         this.containerDiv.appendChild(statusP);
         this.containerDiv.scrollTop = this.containerDiv.scrollHeight;
+        Utils.highlight(statusP);
     };
     return StatusUI;
 })();

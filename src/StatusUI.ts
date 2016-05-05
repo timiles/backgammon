@@ -1,3 +1,5 @@
+/// <reference path="Utils.ts"/>
+
 class StatusUI {
     
     containerDiv: HTMLDivElement;
@@ -11,5 +13,6 @@ class StatusUI {
         statusP.innerText = s;
         this.containerDiv.appendChild(statusP);
         this.containerDiv.scrollTop = this.containerDiv.scrollHeight;
+        Utils.highlight(statusP);
     }
 }

@@ -1,3 +1,5 @@
+declare var $;
+
 // REVIEW: invoke as extensions/prototype?
 class Utils {
     static removeAllChildren(element: HTMLElement): void {
@@ -9,5 +11,13 @@ class Utils {
     
     static toCssClass(s: string): string {
         return s.toLowerCase().replace('_', '-');
+    }
+    
+    static highlight(el: HTMLElement) {
+        $(el).addClass('highlight');
+        // timeout purely to allow ui to update
+        setTimeout(function() {
+            $(el).addClass('highlight-end');
+        }, 0);
     }
 }

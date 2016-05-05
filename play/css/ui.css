@@ -135,3 +135,11 @@ DIV.status-container::-webkit-scrollbar-thumb {
   background-color: darkgrey;
   outline: 1px solid slategrey;
 }
+
+.highlight {
+    text-shadow: 0px 0px 20px red;
+}
+.highlight.highlight-end {
+    transition: all 1s ease-in-out;
+    text-shadow: inherit;
+}
