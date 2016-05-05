@@ -146,13 +146,6 @@ var Point = (function (_super) {
     Point.prototype.setSelected = function (on) {
         this.pointUI.setSelected(on);
     };
-    Point.prototype.touchSelected = function () {
-        var self = this;
-        self.pointUI.setSelected(true);
-        setTimeout(function () {
-            self.pointUI.setSelected(false);
-        }, 300);
-    };
     return Point;
 })(CheckerContainer);
 /// <reference path="BarUI.ts"/>
@@ -586,9 +579,6 @@ var Game = (function () {
                         self.evaluateBoard();
                     }
                     self.switchPlayerIfNoValidMovesRemain();
-                    if (checkerContainer instanceof Point) {
-                        checkerContainer.touchSelected();
-                    }
                     // reinspect point
                     _this.board.onPointInspected(checkerContainer, false);
                     _this.board.onPointInspected(checkerContainer, true);
@@ -598,6 +588,7 @@ var Game = (function () {
                         checkerContainer.setSelected(true);
                     }
                     _this.currentSelectedCheckerContainer = checkerContainer;
+                    _this.evaluateBoard();
                 }
             }
             else if (checkerContainer.pointId === _this.currentSelectedCheckerContainer.pointId) {
@@ -675,6 +666,14 @@ var Game = (function () {
     };
     Game.prototype.evaluateBoard = function () {
         var self = this;
+        if (self.currentSelectedCheckerContainer != undefined) {
+            for (var i = 1; i <= 24; i++) {
+                if (i !== self.currentSelectedCheckerContainer.pointId) {
+                    this.board.checkerContainers[i].setState(undefined);
+                }
+            }
+            return;
+        }
         for (var i = 1; i <= 24; i++) {
             var point = this.board.checkerContainers[i];
             if (point.checkers[this.currentPlayer] > 0) {

@@ -90,10 +90,6 @@ class Game {
                     }
                     
                     self.switchPlayerIfNoValidMovesRemain();
-                
-                    if (checkerContainer instanceof Point) {
-                        (<Point> checkerContainer).touchSelected();
-                    }
                     
                     // reinspect point
                     this.board.onPointInspected(checkerContainer, false);
@@ -104,6 +100,7 @@ class Game {
                         (<Point> checkerContainer).setSelected(true);
                     }
                     this.currentSelectedCheckerContainer = checkerContainer;
+                    this.evaluateBoard();
                 }
                 // otherwise there was a legal move but this wasn't it
             }
@@ -196,6 +193,14 @@ class Game {
     
     evaluateBoard(): void {
         let self = this;
+        if (self.currentSelectedCheckerContainer != undefined) {
+            for (let i = 1; i <= 24; i++) {
+                if (i !== self.currentSelectedCheckerContainer.pointId) {
+                    (<Point> this.board.checkerContainers[i]).setState(undefined);
+                }
+            }
+            return;
+        }
         for (let i = 1; i <= 24; i++) {
             let point = <Point> this.board.checkerContainers[i];
              if (point.checkers[this.currentPlayer] > 0) {

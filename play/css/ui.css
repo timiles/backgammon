@@ -38,7 +38,8 @@ DIV.checker-container.state-valid-source:hover {
     background: green;
     cursor: pointer;
 }
-DIV.checker-container.selected {
+DIV.checker-container.state-valid-source:active,
+DIV.checker-container.state-valid-source.selected {
     background: darkgreen;
 }
 DIV.checker-container.highlight-destination {
