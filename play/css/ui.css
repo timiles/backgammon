@@ -46,6 +46,12 @@ DIV.checker-container.highlight-destination {
     background: yellow;
     cursor: pointer;
 }
+DIV.checker-container.highlight-destination:hover {
+    background: gold;    
+}
+DIV.checker-container.highlight-destination:active {
+    background: goldenrod;
+}
 DIV.bar {
     background: brown;
 }
