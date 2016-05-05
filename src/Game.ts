@@ -192,10 +192,9 @@ class Game {
     }
     
     evaluateBoard(): void {
-        let self = this;
-        if (self.currentSelectedCheckerContainer != undefined) {
+        if (this.currentSelectedCheckerContainer != undefined) {
             for (let i = 1; i <= 24; i++) {
-                if (i !== self.currentSelectedCheckerContainer.pointId) {
+                if (i !== this.currentSelectedCheckerContainer.pointId) {
                     (<Point> this.board.checkerContainers[i]).setState(undefined);
                 }
             }
@@ -205,13 +204,13 @@ class Game {
             let point = <Point> this.board.checkerContainers[i];
              if (point.checkers[this.currentPlayer] > 0) {
                 let validMoveExists = false;
-                if (self.dice.die1.remainingUses > 0) {
-                    if (self.board.isLegalMove(self.currentPlayer, i, self.dice.die1.value)) {
+                if (this.dice.die1.remainingUses > 0) {
+                    if (this.board.isLegalMove(this.currentPlayer, i, this.dice.die1.value)) {
                         validMoveExists = true;
                     }
                 }
-                if (self.dice.die2.remainingUses > 0) {
-                    if (self.board.isLegalMove(self.currentPlayer, i, self.dice.die2.value)) {
+                if (this.dice.die2.remainingUses > 0) {
+                    if (this.board.isLegalMove(this.currentPlayer, i, this.dice.die2.value)) {
                         validMoveExists = true;
                     }
                 }
