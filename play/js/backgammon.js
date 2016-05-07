@@ -22,6 +22,7 @@ var Utils = (function () {
     };
     Utils.highlight = function (el) {
         $(el).addClass('highlight');
+        // timeout purely to allow ui to update
         setTimeout(function () {
             $(el).addClass('highlight-end');
         }, 0);
@@ -60,9 +61,6 @@ var CheckerContainerUI = (function () {
                 $containerDiv.append($('<div class="checker">').addClass(className));
             }
         }
-    };
-    CheckerContainerUI.prototype.highlightSource = function (on) {
-        $(this.containerDiv).toggleClass('highlight-source', on);
     };
     CheckerContainerUI.prototype.setSelected = function (on) {
         $(this.containerDiv).toggleClass('selected', on);
@@ -178,8 +176,11 @@ var Bar = (function (_super) {
         _super.prototype.increment.call(this, player, count);
         this.barUIs[player].setCheckers(player, this.checkers[player]);
     };
-    Bar.prototype.highlightSource = function (player, on) {
-        this.barUIs[player].highlightSource(on);
+    Bar.prototype.setSelected = function (player, on) {
+        this.barUIs[player].setSelected(on);
+    };
+    Bar.prototype.setState = function (player, state) {
+        this.barUIs[player].setState(state);
     };
     return Bar;
 })(CheckerContainer);
@@ -536,8 +537,6 @@ var Game = (function () {
                 if (checkerContainer instanceof Point) {
                 }
                 else if (checkerContainer instanceof Bar) {
-                    checkerContainer.highlightSource(Player.BLACK, false);
-                    checkerContainer.highlightSource(Player.RED, false);
                 }
                 self.board.removeAllHighlights();
             }
@@ -557,7 +556,6 @@ var Game = (function () {
                     if (checkerContainer instanceof Point) {
                     }
                     else if (checkerContainer instanceof Bar) {
-                        checkerContainer.highlightSource(_this.currentPlayer, true);
                     }
                 }
             }
@@ -594,6 +592,9 @@ var Game = (function () {
                 else if (canUseDie1 || canUseDie2) {
                     if (checkerContainer instanceof Point) {
                         checkerContainer.setSelected(true);
+                    }
+                    else if (checkerContainer instanceof Bar) {
+                        checkerContainer.setSelected(_this.currentPlayer, true);
                     }
                     _this.currentSelectedCheckerContainer = checkerContainer;
                     _this.evaluateBoard();
@@ -680,6 +681,31 @@ var Game = (function () {
                 }
             }
             return;
+        }
+        {
+            var bar = this.board.checkerContainers[PointId.BAR];
+            if (bar.checkers[this.currentPlayer] > 0) {
+                var validMoveExists = false;
+                if (this.dice.die1.remainingUses > 0) {
+                    if (this.board.isLegalMove(this.currentPlayer, PointId.BAR, this.dice.die1.value)) {
+                        validMoveExists = true;
+                    }
+                }
+                if (this.dice.die2.remainingUses > 0) {
+                    if (this.board.isLegalMove(this.currentPlayer, PointId.BAR, this.dice.die2.value)) {
+                        validMoveExists = true;
+                    }
+                }
+                if (validMoveExists) {
+                    bar.setState(this.currentPlayer, PointState.VALID_SOURCE);
+                }
+                else {
+                    bar.setState(this.currentPlayer, undefined);
+                }
+            }
+            else {
+                bar.setState(this.currentPlayer, undefined);
+            }
         }
         for (var i = 1; i <= 24; i++) {
             var point = this.board.checkerContainers[i];

@@ -34,7 +34,11 @@ class Bar extends CheckerContainer {
         this.barUIs[player].setCheckers(player, this.checkers[player]);
     }
     
-    highlightSource(player: Player, on: boolean) {
-        this.barUIs[player].highlightSource(on);        
+    setSelected(player: Player, on: boolean) {
+        this.barUIs[player].setSelected(on);
+    }
+    
+    setState(player: Player, state?: PointState) {
+        this.barUIs[player].setState(state);
     }
 }

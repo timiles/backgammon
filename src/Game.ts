@@ -33,8 +33,8 @@ class Game {
                     // (<Point> checkerContainer).highlightSource(false);
                 }
                 else if (checkerContainer instanceof Bar) {
-                    (<Bar> checkerContainer).highlightSource(Player.BLACK, false);
-                    (<Bar> checkerContainer).highlightSource(Player.RED, false);
+                    // (<Bar> checkerContainer).highlightSource(Player.BLACK, false);
+                    // (<Bar> checkerContainer).highlightSource(Player.RED, false);
                 }
                 self.board.removeAllHighlights();
             }
@@ -55,7 +55,7 @@ class Game {
                         // (<Point> checkerContainer).highlightSource(true);
                     }
                     else if (checkerContainer instanceof Bar) {
-                        (<Bar> checkerContainer).highlightSource(this.currentPlayer, true);
+                        // (<Bar> checkerContainer).highlightSource(this.currentPlayer, true);
                     }
                 }
             }
@@ -98,6 +98,9 @@ class Game {
                 else if (canUseDie1 || canUseDie2) {
                     if (checkerContainer instanceof Point) {
                         (<Point> checkerContainer).setSelected(true);
+                    }
+                    else if (checkerContainer instanceof Bar) {
+                        (<Bar> checkerContainer).setSelected(this.currentPlayer, true);
                     }
                     this.currentSelectedCheckerContainer = checkerContainer;
                     this.evaluateBoard();
@@ -200,9 +203,36 @@ class Game {
             }
             return;
         }
+        
+        {
+            let bar = <Bar> this.board.checkerContainers[PointId.BAR];
+            if (bar.checkers[this.currentPlayer] > 0) {
+                let validMoveExists = false;
+                if (this.dice.die1.remainingUses > 0) {
+                    if (this.board.isLegalMove(this.currentPlayer, PointId.BAR, this.dice.die1.value)) {
+                        validMoveExists = true;
+                    }
+                }
+                if (this.dice.die2.remainingUses > 0) {
+                    if (this.board.isLegalMove(this.currentPlayer, PointId.BAR, this.dice.die2.value)) {
+                        validMoveExists = true;
+                    }
+                }
+                if (validMoveExists) {
+                    bar.setState(this.currentPlayer, PointState.VALID_SOURCE);
+                }
+                else {
+                    bar.setState(this.currentPlayer, undefined);
+                }
+             }
+             else {
+                 bar.setState(this.currentPlayer, undefined);
+             }
+        }
+        
         for (let i = 1; i <= 24; i++) {
             let point = <Point> this.board.checkerContainers[i];
-             if (point.checkers[this.currentPlayer] > 0) {
+            if (point.checkers[this.currentPlayer] > 0) {
                 let validMoveExists = false;
                 if (this.dice.die1.remainingUses > 0) {
                     if (this.board.isLegalMove(this.currentPlayer, i, this.dice.die1.value)) {

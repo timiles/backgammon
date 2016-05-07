@@ -39,10 +39,6 @@ class CheckerContainerUI {
         }
     }
     
-    highlightSource(on: boolean): void {
-        $(this.containerDiv).toggleClass('highlight-source', on);
-    }
-    
     setSelected(on: boolean): void {
         $(this.containerDiv).toggleClass('selected', on);
     }
