@@ -28,36 +28,19 @@ class Game {
             }
             
             if (!on) {
-                // turn off highlights if any
-                if (checkerContainer instanceof Point) {
-                    // (<Point> checkerContainer).highlightSource(false);
-                }
-                else if (checkerContainer instanceof Bar) {
-                    // (<Bar> checkerContainer).highlightSource(Player.BLACK, false);
-                    // (<Bar> checkerContainer).highlightSource(Player.RED, false);
-                }
                 self.board.removeAllHighlights();
             }
             else if (checkerContainer.checkers[self.currentPlayer] > 0) {
-                let validMoveExists = false;
-                if (self.dice.die1.remainingUses > 0) {
-                    if (self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value)) {
-                        validMoveExists = true;
-                    }
+                let highlightDestinationIfLegalMove = (sourcePointId: number, die: Die): void => {
+                    if (die.remainingUses > 0) {
+                        if (self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value)) {
+                            let destinationPointId = Board.getDestinationPointId(self.currentPlayer, sourcePointId, die.value);
+                            (<Point> self.board.checkerContainers[destinationPointId]).highlightDestination(true);
+                        }
+                    }    
                 }
-                if (self.dice.die2.remainingUses > 0) {
-                    if (self.board.highlightIfLegalMove(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value)) {
-                        validMoveExists = true;
-                    }
-                }
-                if (validMoveExists) {
-                    if (checkerContainer instanceof Point) {
-                        // (<Point> checkerContainer).highlightSource(true);
-                    }
-                    else if (checkerContainer instanceof Bar) {
-                        // (<Bar> checkerContainer).highlightSource(this.currentPlayer, true);
-                    }
-                }
+                highlightDestinationIfLegalMove(checkerContainer.pointId, self.dice.die1);
+                highlightDestinationIfLegalMove(checkerContainer.pointId, self.dice.die2);
             }
         };
         

@@ -120,16 +120,7 @@ class Board {
         this.increment(player, destinationPointId);
         return true;
     }
-    
-    highlightIfLegalMove(player: Player, sourcePointId: number, numberOfMoves: number): boolean {
-        if (this.isLegalMove(player, sourcePointId, numberOfMoves)) {
-            let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
-            (<Point> this.checkerContainers[destinationPointId]).highlightDestination(true);
-            return true;
-        }
-        return false;
-    }
-    
+        
     removeAllHighlights(): void {
         for (let pointId = 1; pointId <= 24; pointId++) {
             (<Point> this.checkerContainers[pointId]).highlightDestination(false);            
