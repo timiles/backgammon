@@ -13,7 +13,7 @@ class BoardUI {
     blackBarUI: BarUI;
     redBarUI: BarUI;
     
-    constructor() {
+    constructor(gameContainerId: string) {
         
         this.containerDiv = document.createElement('div');
         Utils.removeAllChildren(this.containerDiv);
@@ -27,6 +27,7 @@ class BoardUI {
             let colour = (i % 2 == 0) ? 'black' : 'red';
             let isTopSide = i >= 12;
             this.pointUIs[i] = new PointUI(colour, isTopSide);
+            this.pointUIs[i].containerDiv.id = `${gameContainerId}_point${i + 1}`;
         }
         
         this.blackBarUI = new BarUI(Player.BLACK);

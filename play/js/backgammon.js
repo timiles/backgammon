@@ -198,7 +198,7 @@ var HomeUI = (function (_super) {
 /// <reference path="PointUI.ts"/>
 /// <reference path="Utils.ts"/>
 var BoardUI = (function () {
-    function BoardUI() {
+    function BoardUI(gameContainerId) {
         this.containerDiv = document.createElement('div');
         Utils.removeAllChildren(this.containerDiv);
         this.containerDiv.className = 'board';
@@ -209,6 +209,7 @@ var BoardUI = (function () {
             var colour = (i % 2 == 0) ? 'black' : 'red';
             var isTopSide = i >= 12;
             this.pointUIs[i] = new PointUI(colour, isTopSide);
+            this.pointUIs[i].containerDiv.id = gameContainerId + "_point" + (i + 1);
         }
         this.blackBarUI = new BarUI(Player.BLACK);
         this.redBarUI = new BarUI(Player.RED);
@@ -482,7 +483,7 @@ var GameUI = (function () {
         var container = document.getElementById(containerElementId);
         container.className = 'game-container';
         Utils.removeAllChildren(container);
-        this.boardUI = new BoardUI();
+        this.boardUI = new BoardUI(containerElementId);
         this.blackDiceUI = new DiceUI(Player.BLACK);
         this.redDiceUI = new DiceUI(Player.RED);
         this.statusUI = new StatusUI();

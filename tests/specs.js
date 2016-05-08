@@ -10,8 +10,9 @@ describe('Backgammon', function () {
     });
 
     it('should initialise a standard starting board', function () {
-        expect(board.checkerContainers[24].checkers[Player.RED]).toBe(2);
-        expect(board.checkerContainers[24].checkers[Player.BLACK]).toBe(0);
+        var $point24 = $('#backgammon_point24');
+        expect($point24.children('.red').length).toBe(2);
+        expect($point24.children('.black').length).toBe(0);
     });
     
     it('should detect illegal and legal moves for Red', function () {

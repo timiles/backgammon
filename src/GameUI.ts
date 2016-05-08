@@ -16,7 +16,7 @@ class GameUI {
         container.className = 'game-container';
         Utils.removeAllChildren(container);
         
-        this.boardUI = new BoardUI();
+        this.boardUI = new BoardUI(containerElementId);
         this.blackDiceUI = new DiceUI(Player.BLACK);
         this.redDiceUI = new DiceUI(Player.RED);
         this.statusUI = new StatusUI();
