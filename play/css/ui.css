@@ -4,6 +4,12 @@ DIV.game-container {
 DIV.game-container > DIV {
     float: left;
 }
+DIV.game-container::after {
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
+}
 DIV.board {
     width: 392px;
     border: 4px solid brown;
