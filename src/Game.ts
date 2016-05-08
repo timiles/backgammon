@@ -98,28 +98,24 @@ class Game {
             }
             else {
                 
-                let isUsingDie = (die: Die) => {
-                    return (Board.getDestinationPointId(this.currentPlayer, this.currentSelectedCheckerContainer.pointId, die.value) === checkerContainer.pointId);
+                let useDieIfPossible = (die: Die): boolean => {
+                    let destinationPointId = Board.getDestinationPointId(self.currentPlayer, self.currentSelectedCheckerContainer.pointId, die.value);
+                    if (destinationPointId !== checkerContainer.pointId) {
+                        return false;
+                    }
+                    
+                    self.board.move(self.currentPlayer, self.currentSelectedCheckerContainer.pointId, die.value);
+                    die.decrementRemainingUses();
+                    if (self.currentSelectedCheckerContainer instanceof Point) {
+                        (<Point> self.currentSelectedCheckerContainer).setSelected(false);
+                    }
+                    self.currentSelectedCheckerContainer = undefined;           
+                    self.evaluateBoard();
+                    return true;
                 }
 
-                if (isUsingDie(self.dice.die1)) {
-                    self.board.move(self.currentPlayer, this.currentSelectedCheckerContainer.pointId, self.dice.die1.value);
-                    self.dice.die1.decrementRemainingUses();
-                    self.evaluateBoard();                                        
-                    if (this.currentSelectedCheckerContainer instanceof Point) {
-                        (<Point> this.currentSelectedCheckerContainer).setSelected(false);
-                    }
-                    this.currentSelectedCheckerContainer = undefined;           
-                }
-                else if (isUsingDie(self.dice.die2)) {
-                    self.board.move(self.currentPlayer, this.currentSelectedCheckerContainer.pointId, self.dice.die2.value);
-                    self.dice.die2.decrementRemainingUses();
-                    self.evaluateBoard();                                        
-                    if (this.currentSelectedCheckerContainer instanceof Point) {
-                        (<Point> this.currentSelectedCheckerContainer).setSelected(false);
-                    }
-                    this.currentSelectedCheckerContainer = undefined;           
-                }
+                // use lazy evaluation so that max one die gets used
+                useDieIfPossible(self.dice.die1) || useDieIfPossible(self.dice.die2);
 
                 self.switchPlayerIfNoValidMovesRemain();
                                 
