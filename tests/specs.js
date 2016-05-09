@@ -5,14 +5,18 @@ var board;
 describe('Backgammon', function () {
 
     beforeEach(function () {
-        var game = new Game('backgammon');
-        board = game.board;
+        
+        let ui = new GameUI('backgammon');
+        board = new Board(ui.boardUI);
+        let dice = new Dice(ui.blackDiceUI, ui.redDiceUI);
+        let statusLogger = new StatusLogger(ui.statusUI);
+
+        new Game(ui, board, dice, statusLogger);
     });
 
     it('should initialise a standard starting board', function () {
-        var $point24 = $('#backgammon_point24');
-        expect($point24.children('.red').length).toBe(2);
-        expect($point24.children('.black').length).toBe(0);
+        expect(board.checkerContainers[24].checkers[Player.RED]).toBe(2);
+        expect(board.checkerContainers[24].checkers[Player.BLACK]).toBe(0);
     });
     
     it('should detect illegal and legal moves for Red', function () {

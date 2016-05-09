@@ -514,12 +514,12 @@ var StatusLogger = (function () {
 /// <reference path="GameUI.ts"/>
 /// <reference path="StatusLogger.ts"/>
 var Game = (function () {
-    function Game(containerId) {
+    function Game(gameUI, board, dice, statusLogger) {
         var _this = this;
         var self = this;
-        var ui = new GameUI(containerId);
-        this.dice = new Dice(ui.blackDiceUI, ui.redDiceUI);
-        this.board = new Board(ui.boardUI);
+        this.board = board;
+        this.dice = dice;
+        this.statusLogger = statusLogger;
         this.board.onPointInspected = function (checkerContainer, on) {
             if (self.currentSelectedCheckerContainer != undefined) {
                 // if we're halfway a move, don't check
@@ -610,7 +610,6 @@ var Game = (function () {
                 _this.board.onPointInspected(checkerContainer, true);
             }
         };
-        this.statusLogger = new StatusLogger(ui.statusUI);
         // TODO: roll to see who starts. Assume BLACK.
         this.currentPlayer = Player.BLACK;
         this.logCurrentPlayer();
@@ -713,4 +712,19 @@ var Game = (function () {
         this.statusLogger.logInfo(Player[this.currentPlayer] + " to move");
     };
     return Game;
+})();
+/// <reference path="Board.ts"/>
+/// <reference path="Dice.ts"/>
+/// <reference path="Game.ts"/>
+/// <reference path="GameUI.ts"/>
+/// <reference path="StatusLogger.ts"/>
+var Backgammon = (function () {
+    function Backgammon(containerId) {
+        var ui = new GameUI(containerId);
+        var board = new Board(ui.boardUI);
+        var dice = new Dice(ui.blackDiceUI, ui.redDiceUI);
+        var statusLogger = new StatusLogger(ui.statusUI);
+        new Game(ui, board, dice, statusLogger);
+    }
+    return Backgammon;
 })();
