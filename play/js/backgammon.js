@@ -408,7 +408,7 @@ var DiceRollGenerator = (function () {
 var DiceUI = (function () {
     function DiceUI(player) {
         this.containerDiv = document.createElement('div');
-        this.containerDiv.className = "dice-container dice-container-" + Player[player];
+        this.containerDiv.className = "dice-container dice-container-" + Player[player].toLowerCase();
     }
     DiceUI.prototype.setDiceRolls = function (die1, die2) {
         var _this = this;
