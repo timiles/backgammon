@@ -1,24 +1,24 @@
 /// <reference path="Die.ts"/>
+/// <reference path="DiceRollGenerator.ts"/>
 /// <reference path="DiceUI.ts"/>
 /// <reference path="Enums.ts"/>
 
 class Dice {
 
+    diceRollGenerator: CanGenerateDiceRoll;
     die1: Die;
     die2: Die;
     diceUIs: Array<DiceUI>;
-    constructor(blackDiceUI: DiceUI, redDiceUI: DiceUI) {
+    constructor(diceRollGenerator: CanGenerateDiceRoll, blackDiceUI: DiceUI, redDiceUI: DiceUI) {
+        this.diceRollGenerator = diceRollGenerator;
         this.diceUIs = new Array<DiceUI>();
         this.diceUIs[Player.BLACK] = blackDiceUI;
         this.diceUIs[Player.RED] = redDiceUI;
     }
 
-    private static generateDie(): number {
-        return Math.floor(Math.random() * 6) + 1;        
-    }
     roll(player: Player): void {
-        this.die1 = new Die();
-        this.die2 = new Die();
+        this.die1 = new Die(this.diceRollGenerator.generateDiceRoll());
+        this.die2 = new Die(this.diceRollGenerator.generateDiceRoll());
         let isDouble = (this.die1.value === this.die2.value);
         
         if (isDouble) {

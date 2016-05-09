@@ -3,8 +3,8 @@ class Die {
     remainingUses: number;
     onChange: (d: Die) => void;
     
-    constructor() {
-        this.value = Math.floor(Math.random() * 6) + 1;
+    constructor(value: number) {
+        this.value = value;
         this.remainingUses = 1;
     }
     

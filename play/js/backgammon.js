@@ -383,8 +383,8 @@ var Board = (function () {
     return Board;
 })();
 var Die = (function () {
-    function Die() {
-        this.value = Math.floor(Math.random() * 6) + 1;
+    function Die(value) {
+        this.value = value;
         this.remainingUses = 1;
     }
     Die.prototype.decrementRemainingUses = function () {
@@ -394,6 +394,14 @@ var Die = (function () {
         }
     };
     return Die;
+})();
+var DiceRollGenerator = (function () {
+    function DiceRollGenerator() {
+    }
+    DiceRollGenerator.prototype.generateDiceRoll = function () {
+        return Math.floor(Math.random() * 6) + 1;
+    };
+    return DiceRollGenerator;
 })();
 /// <reference path="Die.ts" />
 /// <reference path="Enums.ts"/>
@@ -432,20 +440,19 @@ var DiceUI = (function () {
     return DiceUI;
 })();
 /// <reference path="Die.ts"/>
+/// <reference path="DiceRollGenerator.ts"/>
 /// <reference path="DiceUI.ts"/>
 /// <reference path="Enums.ts"/>
 var Dice = (function () {
-    function Dice(blackDiceUI, redDiceUI) {
+    function Dice(diceRollGenerator, blackDiceUI, redDiceUI) {
+        this.diceRollGenerator = diceRollGenerator;
         this.diceUIs = new Array();
         this.diceUIs[Player.BLACK] = blackDiceUI;
         this.diceUIs[Player.RED] = redDiceUI;
     }
-    Dice.generateDie = function () {
-        return Math.floor(Math.random() * 6) + 1;
-    };
     Dice.prototype.roll = function (player) {
-        this.die1 = new Die();
-        this.die2 = new Die();
+        this.die1 = new Die(this.diceRollGenerator.generateDiceRoll());
+        this.die2 = new Die(this.diceRollGenerator.generateDiceRoll());
         var isDouble = (this.die1.value === this.die2.value);
         if (isDouble) {
             this.die1.remainingUses = 2;
@@ -715,6 +722,7 @@ var Game = (function () {
 })();
 /// <reference path="Board.ts"/>
 /// <reference path="Dice.ts"/>
+/// <reference path="DiceRollGenerator.ts"/>
 /// <reference path="Game.ts"/>
 /// <reference path="GameUI.ts"/>
 /// <reference path="StatusLogger.ts"/>
@@ -722,7 +730,7 @@ var Backgammon = (function () {
     function Backgammon(containerId) {
         var ui = new GameUI(containerId);
         var board = new Board(ui.boardUI);
-        var dice = new Dice(ui.blackDiceUI, ui.redDiceUI);
+        var dice = new Dice(new DiceRollGenerator(), ui.blackDiceUI, ui.redDiceUI);
         var statusLogger = new StatusLogger(ui.statusUI);
         new Game(ui, board, dice, statusLogger);
     }

@@ -8,7 +8,7 @@ describe('UI', function () {
         
         let ui = new GameUI('backgammon');
         board = new Board(ui.boardUI);
-        let dice = new Dice(ui.blackDiceUI, ui.redDiceUI);
+        let dice = new Dice(new DiceRollGenerator(), ui.blackDiceUI, ui.redDiceUI);
         let statusLogger = new StatusLogger(ui.statusUI);
 
         new Game(ui, board, dice, statusLogger);
