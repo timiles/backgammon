@@ -42,4 +42,8 @@ class CheckerContainerUI {
     setSelected(on: boolean): void {
         $(this.containerDiv).toggleClass('selected', on);
     }
+    
+    highlightDestination(on: boolean): void {
+        $(this.containerDiv).toggleClass('highlight-destination', on);
+    }
 }

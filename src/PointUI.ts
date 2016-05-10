@@ -19,8 +19,4 @@ class PointUI extends CheckerContainerUI {
         this.containerDiv.onmouseover = () => { self.onInspected(true); };
         this.containerDiv.onmouseout = () => { self.onInspected(false); };
     }
-    
-    highlightDestination(on: boolean): void {
-        $(this.containerDiv).toggleClass('highlight-destination', on);
-    }
 }

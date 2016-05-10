@@ -35,7 +35,12 @@ class Game {
                     if (die.remainingUses > 0) {
                         if (self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value)) {
                             let destinationPointId = Board.getDestinationPointId(self.currentPlayer, sourcePointId, die.value);
-                            (<Point> self.board.checkerContainers[destinationPointId]).highlightDestination(true);
+                            if (destinationPointId === PointId.HOME) {
+                                (<Home> self.board.checkerContainers[destinationPointId]).highlightDestination(self.currentPlayer, true);
+                            }
+                            else {
+                                (<Point> self.board.checkerContainers[destinationPointId]).highlightDestination(true);
+                            }
                         }
                     }    
                 }

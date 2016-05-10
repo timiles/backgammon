@@ -20,7 +20,9 @@ class BoardUI {
         this.containerDiv.className = 'board';
         
         this.blackHomeUI = new HomeUI(Player.BLACK);
+        this.blackHomeUI.containerDiv.id = `${gameContainerId}_blackhome`;
         this.redHomeUI = new HomeUI(Player.RED);
+        this.redHomeUI.containerDiv.id = `${gameContainerId}_redhome`;
         
         this.pointUIs = new Array<PointUI>(24);
         for (let i = 0; i < this.pointUIs.length; i++) {

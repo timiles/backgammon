@@ -65,6 +65,9 @@ var CheckerContainerUI = (function () {
     CheckerContainerUI.prototype.setSelected = function (on) {
         $(this.containerDiv).toggleClass('selected', on);
     };
+    CheckerContainerUI.prototype.highlightDestination = function (on) {
+        $(this.containerDiv).toggleClass('highlight-destination', on);
+    };
     return CheckerContainerUI;
 })();
 /// <reference path="CheckerContainerUI.ts"/>
@@ -116,9 +119,6 @@ var PointUI = (function (_super) {
         this.containerDiv.onmouseover = function () { self.onInspected(true); };
         this.containerDiv.onmouseout = function () { self.onInspected(false); };
     }
-    PointUI.prototype.highlightDestination = function (on) {
-        $(this.containerDiv).toggleClass('highlight-destination', on);
-    };
     return PointUI;
 })(CheckerContainerUI);
 /// <reference path="CheckerContainer.ts"/>
@@ -203,7 +203,9 @@ var BoardUI = (function () {
         Utils.removeAllChildren(this.containerDiv);
         this.containerDiv.className = 'board';
         this.blackHomeUI = new HomeUI(Player.BLACK);
+        this.blackHomeUI.containerDiv.id = gameContainerId + "_blackhome";
         this.redHomeUI = new HomeUI(Player.RED);
+        this.redHomeUI.containerDiv.id = gameContainerId + "_redhome";
         this.pointUIs = new Array(24);
         for (var i = 0; i < this.pointUIs.length; i++) {
             var colour = (i % 2 == 0) ? 'black' : 'red';
@@ -265,6 +267,9 @@ var Home = (function (_super) {
     Home.prototype.increment = function (player) {
         _super.prototype.increment.call(this, player, 1);
         this.homeUIs[player].setCheckers(player, this.checkers[player]);
+    };
+    Home.prototype.highlightDestination = function (player, on) {
+        this.homeUIs[player].highlightDestination(on);
     };
     return Home;
 })(CheckerContainer);
@@ -540,7 +545,12 @@ var Game = (function () {
                     if (die.remainingUses > 0) {
                         if (self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value)) {
                             var destinationPointId = Board.getDestinationPointId(self.currentPlayer, sourcePointId, die.value);
-                            self.board.checkerContainers[destinationPointId].highlightDestination(true);
+                            if (destinationPointId === PointId.HOME) {
+                                self.board.checkerContainers[destinationPointId].highlightDestination(self.currentPlayer, true);
+                            }
+                            else {
+                                self.board.checkerContainers[destinationPointId].highlightDestination(true);
+                            }
                         }
                     }
                 };
