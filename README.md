@@ -2,7 +2,8 @@
 Backgammon game implemented in TypeScript with pure HTML/CSS UI.
 
 [Click here to play](http://timiles.github.io/backgammon/play/)
-[Jasmine test suite](http://timiles.github.io/backgammon/tests/SpecRunner.html)
+
+[Click here to run Jasmine test suite](http://timiles.github.io/backgammon/tests/SpecRunner.html)
 
 # TODO
 - [x] board layout in HTML/CSS
