@@ -6,11 +6,20 @@ declare var $;
 class CheckerContainerUI {
     
     containerDiv: HTMLDivElement;
-    
+   
+    isSelected: boolean;
+    onSelected: (on: boolean) => void;
+
     constructor(containerType: string, isTopSide: boolean) {
         this.containerDiv = document.createElement('div');
         let side = (isTopSide ? 'top': 'bottom');
         this.containerDiv.className = `checker-container checker-container-${side} ${containerType}`;
+        
+        let self = this;
+        this.containerDiv.onclick = () => {
+            self.isSelected = !self.isSelected;
+            self.onSelected(self.isSelected);
+        };
     }
     
     setState(state?: PointState) {

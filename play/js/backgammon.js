@@ -36,6 +36,11 @@ var CheckerContainerUI = (function () {
         this.containerDiv = document.createElement('div');
         var side = (isTopSide ? 'top' : 'bottom');
         this.containerDiv.className = "checker-container checker-container-" + side + " " + containerType;
+        var self = this;
+        this.containerDiv.onclick = function () {
+            self.isSelected = !self.isSelected;
+            self.onSelected(self.isSelected);
+        };
     }
     CheckerContainerUI.prototype.setState = function (state) {
         // remove any class like 'state-*'
@@ -112,10 +117,6 @@ var PointUI = (function (_super) {
     function PointUI(colour, isTopSide) {
         _super.call(this, "point-" + colour, isTopSide);
         var self = this;
-        this.containerDiv.onclick = function () {
-            self.isSelected = !self.isSelected;
-            self.onSelected(self.isSelected);
-        };
         this.containerDiv.onmouseover = function () { self.onInspected(true); };
         this.containerDiv.onmouseout = function () { self.onInspected(false); };
     }
@@ -258,10 +259,13 @@ var BoardUI = (function () {
 /// <reference path="HomeUI.ts"/>
 var Home = (function (_super) {
     __extends(Home, _super);
-    function Home(blackHomeUI, redHomeUI) {
+    function Home(blackHomeUI, redHomeUI, onSelected) {
         _super.call(this, PointId.HOME);
         this.homeUIs = new Array(2);
+        var self = this;
+        blackHomeUI.onSelected = function (on) { onSelected(self, on); };
         this.homeUIs[Player.BLACK] = blackHomeUI;
+        redHomeUI.onSelected = function (on) { onSelected(self, on); };
         this.homeUIs[Player.RED] = redHomeUI;
     }
     Home.prototype.increment = function (player) {
@@ -299,7 +303,7 @@ var Board = (function () {
             }
         };
         this.checkerContainers = new Array(26);
-        this.checkerContainers[PointId.HOME] = new Home(this.boardUI.blackHomeUI, this.boardUI.redHomeUI);
+        this.checkerContainers[PointId.HOME] = new Home(this.boardUI.blackHomeUI, this.boardUI.redHomeUI, onPointSelected);
         for (var i = 1; i < 25; i++) {
             this.checkerContainers[i] = new Point(this.boardUI.pointUIs[i - 1], i, onPointInspected, onPointSelected);
         }

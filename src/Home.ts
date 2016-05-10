@@ -4,12 +4,17 @@
 class Home extends CheckerContainer {
     homeUIs: Array<HomeUI>;
     
-    constructor(blackHomeUI: HomeUI, redHomeUI: HomeUI) {
+    constructor(blackHomeUI: HomeUI, redHomeUI: HomeUI, onSelected: (home: Home, on: boolean) => void) {
         super(PointId.HOME);
         
         this.homeUIs = new Array<HomeUI>(2);
+        let self = this;
+        
+        blackHomeUI.onSelected = (on: boolean) => { onSelected(self, on); };
         this.homeUIs[Player.BLACK] = blackHomeUI;
-        this.homeUIs[Player.RED] = redHomeUI;
+
+        redHomeUI.onSelected = (on: boolean) => { onSelected(self, on); };
+        this.homeUIs[Player.RED] = redHomeUI;        
     }
     
     increment(player: Player): void {

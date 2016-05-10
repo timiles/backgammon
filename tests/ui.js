@@ -115,4 +115,19 @@ describe('UI: home board', function () {
         expect($('#backgammon_blackhome').hasClass('highlight-destination')).toBe(false);
     });
 
+    it('should bear off home when selecting checker then selecting home', function () {
+        
+        game.board.onPointInspected(game.board.checkerContainers[19], true);
+        $('#backgammon_point19').click();
+        game.board.onPointInspected(game.board.checkerContainers[19], false);
+
+        expect($('#backgammon_point19').hasClass('state-valid-source')).toBe(true);
+        expect($('#backgammon_point23').hasClass('highlight-destination')).toBe(true);
+        expect($('#backgammon_blackhome').hasClass('highlight-destination')).toBe(true);
+        
+        $('#backgammon_blackhome').click();
+        expect($('#backgammon_blackhome').children('.black').length).toBe(1);
+        expect($('#backgammon_point23').hasClass('highlight-destination')).toBe(false);
+        expect($('#backgammon_blackhome').hasClass('highlight-destination')).toBe(false);
+    });
 });
