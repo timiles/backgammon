@@ -107,9 +107,12 @@ describe('UI: home board', function () {
     it('should highlight home when inspecting checker that can bear off', function () {
         
         game.board.onPointInspected(game.board.checkerContainers[19], true);
-
         expect($('#backgammon_point23').hasClass('highlight-destination')).toBe(true);
         expect($('#backgammon_blackhome').hasClass('highlight-destination')).toBe(true);
+        
+        game.board.onPointInspected(game.board.checkerContainers[19], false);
+        expect($('#backgammon_point23').hasClass('highlight-destination')).toBe(false);
+        expect($('#backgammon_blackhome').hasClass('highlight-destination')).toBe(false);
     });
 
 });

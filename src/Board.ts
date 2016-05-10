@@ -125,5 +125,7 @@ class Board {
         for (let pointId = 1; pointId <= 24; pointId++) {
             (<Point> this.checkerContainers[pointId]).highlightDestination(false);
         }
+        (<Home> this.checkerContainers[PointId.HOME]).highlightDestination(Player.BLACK, false);
+        (<Home> this.checkerContainers[PointId.HOME]).highlightDestination(Player.RED, false);
     }
 }

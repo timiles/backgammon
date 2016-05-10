@@ -384,6 +384,8 @@ var Board = (function () {
         for (var pointId = 1; pointId <= 24; pointId++) {
             this.checkerContainers[pointId].highlightDestination(false);
         }
+        this.checkerContainers[PointId.HOME].highlightDestination(Player.BLACK, false);
+        this.checkerContainers[PointId.HOME].highlightDestination(Player.RED, false);
     };
     return Board;
 })();
