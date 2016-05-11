@@ -127,7 +127,9 @@ describe('UI: home board', function () {
         
         $('#backgammon_blackhome').click();
         expect($('#backgammon_blackhome').children('.black').length).toBe(1);
-        expect($('#backgammon_point23').hasClass('highlight-destination')).toBe(false);
         expect($('#backgammon_blackhome').hasClass('highlight-destination')).toBe(false);
+        for (var i = 1; i <= 24; i++) {
+            expect($('#backgammon_point' + i).hasClass('highlight-destination')).toBe(false, 'Point ' + i + ' is not valid destination');
+        }
     });
 });

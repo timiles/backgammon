@@ -30,7 +30,7 @@ class Game {
             if (!on) {
                 self.board.removeAllHighlights();
             }
-            else if (checkerContainer.checkers[self.currentPlayer] > 0) {
+            else if (!(checkerContainer instanceof Home) && checkerContainer.checkers[self.currentPlayer] > 0) {
                 let highlightDestinationIfLegalMove = (sourcePointId: number, die: Die): void => {
                     if (die.remainingUses > 0) {
                         if (self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value)) {
@@ -102,7 +102,7 @@ class Game {
                 this.currentSelectedCheckerContainer = undefined;
             }
             else {
-                
+
                 let useDieIfPossible = (die: Die): boolean => {
                     let destinationPointId = Board.getDestinationPointId(self.currentPlayer, self.currentSelectedCheckerContainer.pointId, die.value);
                     if (destinationPointId !== checkerContainer.pointId) {

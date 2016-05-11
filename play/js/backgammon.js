@@ -546,7 +546,7 @@ var Game = (function () {
             if (!on) {
                 self.board.removeAllHighlights();
             }
-            else if (checkerContainer.checkers[self.currentPlayer] > 0) {
+            else if (!(checkerContainer instanceof Home) && checkerContainer.checkers[self.currentPlayer] > 0) {
                 var highlightDestinationIfLegalMove = function (sourcePointId, die) {
                     if (die.remainingUses > 0) {
                         if (self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value)) {
