@@ -9,9 +9,11 @@ describe('Backgammon', function () {
         let ui = new GameUI('backgammon');
         board = new Board(ui.boardUI);
         let dice = new Dice(new DiceRollGenerator(), ui.blackDiceUI, ui.redDiceUI);
+        dice.roll(Player.BLACK);
+        
         let statusLogger = new StatusLogger(ui.statusUI);
 
-        new Game(ui, board, dice, statusLogger);
+        new Game(ui, board, dice, statusLogger, Player.BLACK);
     });
 
     it('should initialise a standard starting board', function () {

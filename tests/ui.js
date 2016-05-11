@@ -12,7 +12,7 @@ let FakeDiceRollGenerator = (function () {
     FakeDiceRollGenerator.prototype.generateDiceRoll = function () {
         var nextRoll = diceRolls[sequenceIndex];
         sequenceIndex = ++sequenceIndex % diceRolls.length;
-        return diceRolls[sequenceIndex];
+        return nextRoll;
     };
     return FakeDiceRollGenerator;
 })();
@@ -27,9 +27,11 @@ describe('UI: starting board', function () {
         fakeDiceRollGenerator = new FakeDiceRollGenerator([5, 5]);
 
         let dice = new Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
+        dice.roll(Player.BLACK);
+        
         let statusLogger = new StatusLogger(ui.statusUI);
 
-        game = new Game(ui, board, dice, statusLogger);
+        game = new Game(ui, board, dice, statusLogger, Player.BLACK);
     });
 
     it('should initialise points as expected', function () {
@@ -99,9 +101,11 @@ describe('UI: home board', function () {
         fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
 
         let dice = new Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
+        dice.roll(Player.BLACK);
+        
         let statusLogger = new StatusLogger(ui.statusUI);
 
-        game = new Game(ui, board, dice, statusLogger);
+        game = new Game(ui, board, dice, statusLogger, Player.BLACK);
     });
 
     it('should highlight home when inspecting checker that can bear off', function () {

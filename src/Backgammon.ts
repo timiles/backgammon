@@ -14,6 +14,8 @@ class Backgammon {
         let dice = new Dice(new DiceRollGenerator(), ui.blackDiceUI, ui.redDiceUI);
         let statusLogger = new StatusLogger(ui.statusUI);
 
-        new Game(ui, board, dice, statusLogger);
+        dice.rollToStart(statusLogger, (successfulPlayer: Player) => {
+            new Game(ui, board, dice, statusLogger, successfulPlayer);
+        });
     }
 }

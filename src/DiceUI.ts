@@ -12,6 +12,11 @@ class DiceUI {
         this.containerDiv.className = `dice-container dice-container-${Player[player].toLowerCase()}`;
     }
     
+    setStartingDiceRoll(die: Die) {
+        Utils.removeAllChildren(this.containerDiv);
+        this.containerDiv.appendChild(DiceUI.createDie(die));
+    }
+    
     setDiceRolls(die1: Die, die2: Die) {
         this.die1 = die1;
         this.die1.onChange = () => { this.redraw(); };

@@ -14,12 +14,15 @@ class Game {
     currentPlayer: Player;
     currentSelectedCheckerContainer: CheckerContainer;
     
-    constructor(gameUI: GameUI, board: Board, dice: Dice, statusLogger: StatusLogger) {
+    constructor(gameUI: GameUI, board: Board, dice: Dice, statusLogger: StatusLogger, currentPlayer: Player) {
         let self = this;
 
-        this.board = board;        
-        this.dice = dice;
-        this.statusLogger = statusLogger;
+        self.board = board;        
+        self.dice = dice;
+        self.statusLogger = statusLogger;
+        self.currentPlayer = currentPlayer;
+        self.logCurrentPlayer();
+        self.evaluateBoard();
         
         this.board.onPointInspected = (checkerContainer: CheckerContainer, on: boolean) => {
             if (self.currentSelectedCheckerContainer != undefined) {
@@ -128,15 +131,8 @@ class Game {
                 this.board.onPointInspected(checkerContainer, false);
                 this.board.onPointInspected(checkerContainer, true);
             }
-        };
+        };       
         
-        
-        // TODO: roll to see who starts. Assume BLACK.
-        this.currentPlayer = Player.BLACK;
-        this.logCurrentPlayer();
-        
-        this.dice.roll(this.currentPlayer);
-        this.evaluateBoard();
     }
     
     private checkIfValidMovesRemain(): boolean {

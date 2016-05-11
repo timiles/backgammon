@@ -421,6 +421,10 @@ var DiceUI = (function () {
         this.containerDiv = document.createElement('div');
         this.containerDiv.className = "dice-container dice-container-" + Player[player].toLowerCase();
     }
+    DiceUI.prototype.setStartingDiceRoll = function (die) {
+        Utils.removeAllChildren(this.containerDiv);
+        this.containerDiv.appendChild(DiceUI.createDie(die));
+    };
     DiceUI.prototype.setDiceRolls = function (die1, die2) {
         var _this = this;
         this.die1 = die1;
@@ -450,32 +454,6 @@ var DiceUI = (function () {
     };
     return DiceUI;
 })();
-/// <reference path="Die.ts"/>
-/// <reference path="DiceRollGenerator.ts"/>
-/// <reference path="DiceUI.ts"/>
-/// <reference path="Enums.ts"/>
-var Dice = (function () {
-    function Dice(diceRollGenerator, blackDiceUI, redDiceUI) {
-        this.diceRollGenerator = diceRollGenerator;
-        this.diceUIs = new Array();
-        this.diceUIs[Player.BLACK] = blackDiceUI;
-        this.diceUIs[Player.RED] = redDiceUI;
-    }
-    Dice.prototype.roll = function (player) {
-        this.die1 = new Die(this.diceRollGenerator.generateDiceRoll());
-        this.die2 = new Die(this.diceRollGenerator.generateDiceRoll());
-        var isDouble = (this.die1.value === this.die2.value);
-        if (isDouble) {
-            this.die1.remainingUses = 2;
-            this.die2.remainingUses = 2;
-        }
-        this.diceUIs[player].setDiceRolls(this.die1, this.die2);
-        this.diceUIs[player].setActive(true);
-        var otherPlayer = player === Player.BLACK ? Player.RED : Player.BLACK;
-        this.diceUIs[otherPlayer].setActive(false);
-    };
-    return Dice;
-})();
 /// <reference path="Utils.ts"/>
 var StatusUI = (function () {
     function StatusUI() {
@@ -490,6 +468,67 @@ var StatusUI = (function () {
         Utils.highlight(statusP);
     };
     return StatusUI;
+})();
+/// <reference path="StatusUI.ts"/>
+var StatusLogger = (function () {
+    function StatusLogger(statusUI) {
+        this.statusUI = statusUI;
+    }
+    StatusLogger.prototype.logInfo = function (s) {
+        this.statusUI.setStatus(s);
+    };
+    return StatusLogger;
+})();
+/// <reference path="Die.ts"/>
+/// <reference path="DiceRollGenerator.ts"/>
+/// <reference path="DiceUI.ts"/>
+/// <reference path="Enums.ts"/>
+/// <reference path="StatusLogger.ts"/>
+var Dice = (function () {
+    function Dice(diceRollGenerator, blackDiceUI, redDiceUI) {
+        this.diceRollGenerator = diceRollGenerator;
+        this.diceUIs = new Array();
+        this.diceUIs[Player.BLACK] = blackDiceUI;
+        this.diceUIs[Player.RED] = redDiceUI;
+    }
+    Dice.prototype.rollToStart = function (statusLogger, onSuccess) {
+        var self = this;
+        var die1 = new Die(this.diceRollGenerator.generateDiceRoll());
+        var die2 = new Die(this.diceRollGenerator.generateDiceRoll());
+        this.diceUIs[Player.BLACK].setStartingDiceRoll(die1);
+        this.diceUIs[Player.RED].setStartingDiceRoll(die2);
+        statusLogger.logInfo("BLACK rolls " + die1.value);
+        statusLogger.logInfo("RED rolls " + die2.value);
+        if (die1.value === die2.value) {
+            statusLogger.logInfo('DRAW! Roll again');
+            setTimeout(function () { self.rollToStart(statusLogger, onSuccess); }, 1000);
+        }
+        else {
+            var successfulPlayer = die1.value > die2.value ? Player.BLACK : Player.RED;
+            statusLogger.logInfo(Player[successfulPlayer] + " wins the starting roll");
+            setTimeout(function () {
+                self.die1 = die1;
+                self.die2 = die2;
+                self.diceUIs[successfulPlayer].setDiceRolls(die1, die2);
+                self.diceUIs[successfulPlayer].setActive(true);
+                onSuccess(successfulPlayer);
+            }, 1000);
+        }
+    };
+    Dice.prototype.roll = function (player) {
+        this.die1 = new Die(this.diceRollGenerator.generateDiceRoll());
+        this.die2 = new Die(this.diceRollGenerator.generateDiceRoll());
+        var isDouble = (this.die1.value === this.die2.value);
+        if (isDouble) {
+            this.die1.remainingUses = 2;
+            this.die2.remainingUses = 2;
+        }
+        this.diceUIs[player].setDiceRolls(this.die1, this.die2);
+        this.diceUIs[player].setActive(true);
+        var otherPlayer = player === Player.BLACK ? Player.RED : Player.BLACK;
+        this.diceUIs[otherPlayer].setActive(false);
+    };
+    return Dice;
 })();
 /// <reference path="BoardUI.ts"/>
 /// <reference path="DiceUI.ts"/>
@@ -515,16 +554,6 @@ var GameUI = (function () {
     }
     return GameUI;
 })();
-/// <reference path="StatusUI.ts"/>
-var StatusLogger = (function () {
-    function StatusLogger(statusUI) {
-        this.statusUI = statusUI;
-    }
-    StatusLogger.prototype.logInfo = function (s) {
-        this.statusUI.setStatus(s);
-    };
-    return StatusLogger;
-})();
 /// <reference path="Board.ts"/>
 /// <reference path="CheckerContainer.ts"/>
 /// <reference path="Dice.ts"/>
@@ -532,12 +561,15 @@ var StatusLogger = (function () {
 /// <reference path="GameUI.ts"/>
 /// <reference path="StatusLogger.ts"/>
 var Game = (function () {
-    function Game(gameUI, board, dice, statusLogger) {
+    function Game(gameUI, board, dice, statusLogger, currentPlayer) {
         var _this = this;
         var self = this;
-        this.board = board;
-        this.dice = dice;
-        this.statusLogger = statusLogger;
+        self.board = board;
+        self.dice = dice;
+        self.statusLogger = statusLogger;
+        self.currentPlayer = currentPlayer;
+        self.logCurrentPlayer();
+        self.evaluateBoard();
         this.board.onPointInspected = function (checkerContainer, on) {
             if (self.currentSelectedCheckerContainer != undefined) {
                 // if we're halfway a move, don't check
@@ -633,11 +665,6 @@ var Game = (function () {
                 _this.board.onPointInspected(checkerContainer, true);
             }
         };
-        // TODO: roll to see who starts. Assume BLACK.
-        this.currentPlayer = Player.BLACK;
-        this.logCurrentPlayer();
-        this.dice.roll(this.currentPlayer);
-        this.evaluateBoard();
     }
     Game.prototype.checkIfValidMovesRemain = function () {
         var _this = this;
@@ -748,7 +775,9 @@ var Backgammon = (function () {
         var board = new Board(ui.boardUI);
         var dice = new Dice(new DiceRollGenerator(), ui.blackDiceUI, ui.redDiceUI);
         var statusLogger = new StatusLogger(ui.statusUI);
-        new Game(ui, board, dice, statusLogger);
+        dice.rollToStart(statusLogger, function (successfulPlayer) {
+            new Game(ui, board, dice, statusLogger, successfulPlayer);
+        });
     }
     return Backgammon;
 })();
