@@ -11,5 +11,7 @@ Backgammon game implemented in TypeScript with pure HTML/CSS UI.
 - [x] game logic: legal moves
 - [ ] game logic: endgame detection
 - [ ] game logic: major refactor
+- [ ] mobile UX: alternative to hover for inspect
+- [ ] autoplay mode on/off toggle
 - [ ] doubling cube
 - [ ] computer player
