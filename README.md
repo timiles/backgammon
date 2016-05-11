@@ -10,5 +10,6 @@ Backgammon game implemented in TypeScript with pure HTML/CSS UI.
 - [x] game logic: roll dice to start
 - [x] game logic: legal moves
 - [ ] game logic: endgame detection
+- [ ] game logic: major refactor
 - [ ] doubling cube
 - [ ] computer player
