@@ -324,19 +324,31 @@ var Board = (function () {
         this.checkerContainers[pointId].increment(player, count || 1);
     };
     Board.getDestinationPointId = function (player, sourcePointId, numberOfMoves) {
-        if (sourcePointId === PointId.BAR) {
-            if (player === Player.BLACK) {
-                return numberOfMoves;
+        switch (player) {
+            case Player.BLACK: {
+                if (sourcePointId === PointId.BAR) {
+                    return numberOfMoves;
+                }
+                var destinationPointId = sourcePointId + numberOfMoves;
+                if (destinationPointId > 24) {
+                    // bearing off
+                    return PointId.HOME;
+                }
+                return destinationPointId;
             }
-            else {
-                return 25 - numberOfMoves;
+            case Player.RED: {
+                if (sourcePointId === PointId.BAR) {
+                    return PointId.BAR - numberOfMoves;
+                }
+                var destinationPointId = sourcePointId - numberOfMoves;
+                if (destinationPointId < 1) {
+                    // bearing off
+                    return PointId.HOME;
+                }
+                return destinationPointId;
             }
+            default: throw "Unknown player: " + player;
         }
-        var direction = player == Player.BLACK ? 1 : -1;
-        var destinationPointId = sourcePointId + (direction * numberOfMoves);
-        if (destinationPointId > 24 || destinationPointId < 0)
-            return 0; // when bearing off to home
-        return destinationPointId;
     };
     Board.prototype.isLegalMove = function (player, sourcePointId, numberOfMoves) {
         // case: there is no counter to move: fail
@@ -350,13 +362,27 @@ var Board = (function () {
             return false;
         }
         // case: bearing off
+        var direction = (player === Player.BLACK) ? 1 : -1;
         var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
-        if (destinationPointId == 0) {
-            // check that there are no pieces outside of home board. (BAR has already been checked above)
-            var pointIdOutsideOfHomeBoard = (player === Player.BLACK) ? 1 : 7;
-            var totalPointsOutsideOfHomeBoard = 18;
-            for (var offset = 0; offset < totalPointsOutsideOfHomeBoard; offset++) {
-                if (this.checkerContainers[pointIdOutsideOfHomeBoard + offset].checkers[player] > 0) {
+        if (destinationPointId === PointId.HOME) {
+            // check that there are no checkers outside of home board. (BAR has already been checked above)
+            var startingPointOfOuterBoard = (player === Player.BLACK) ? 1 : 24;
+            var totalPointsOfOuterBoard = 18;
+            for (var offset = 0; offset < totalPointsOfOuterBoard; offset++) {
+                if (this.checkerContainers[startingPointOfOuterBoard + (direction * offset)].checkers[player] > 0) {
+                    return false;
+                }
+            }
+            // check that there are no checkers more deserving of this dice roll
+            var actualDestinationPointId = sourcePointId + (direction * numberOfMoves);
+            // if it's dead on, we're fine.
+            if (actualDestinationPointId === 0 || actualDestinationPointId === 25) {
+                return true;
+            }
+            var startingPointOfHomeBoard = (player === Player.BLACK) ? 18 : 6;
+            for (var homeBoardPointId = startingPointOfHomeBoard; homeBoardPointId !== sourcePointId; homeBoardPointId += direction) {
+                if (this.checkerContainers[homeBoardPointId].checkers[player] > 0) {
+                    // if we find a checker on a further out point, sourcePointId is not valid
                     return false;
                 }
             }

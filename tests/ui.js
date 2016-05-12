@@ -108,6 +108,14 @@ describe('UI: home board', function () {
         game = new Game(ui, board, dice, statusLogger, Player.BLACK);
     });
 
+    it('should enforce maximum possible dice use when bearing off', function () {
+        
+        expect($('#backgammon_point19').hasClass('state-valid-source')).toBe(true);
+        expect($('#backgammon_point21').hasClass('state-valid-source')).toBe(true);
+        expect($('#backgammon_point22').hasClass('state-valid-source')).toBe(false, 'should use 6 or 4');
+        expect($('#backgammon_point23').hasClass('state-valid-source')).toBe(false, 'should use 6 or 4');
+    });
+    
     it('should highlight home when inspecting checker that can bear off', function () {
         
         game.board.onPointInspected(game.board.checkerContainers[19], true);

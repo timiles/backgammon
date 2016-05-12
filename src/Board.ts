@@ -53,18 +53,34 @@ class Board {
     }
     
     static getDestinationPointId(player: Player, sourcePointId: number, numberOfMoves: number): number {
-        if (sourcePointId === PointId.BAR) {
-            if (player === Player.BLACK) {
-                return numberOfMoves;
+        switch (player) {
+            case Player.BLACK: {
+                if (sourcePointId === PointId.BAR) {
+                    return numberOfMoves;
+                }
+
+                let destinationPointId = sourcePointId + numberOfMoves;
+                if (destinationPointId > 24) {
+                     // bearing off
+                     return PointId.HOME;
+                }
+                return destinationPointId;
+
             }
-            else {
-                return 25 - numberOfMoves;
+            case Player.RED: {
+                if (sourcePointId === PointId.BAR) {
+                    return PointId.BAR - numberOfMoves;
+                }
+                
+                let destinationPointId = sourcePointId - numberOfMoves;
+                if (destinationPointId < 1) {
+                     // bearing off
+                     return PointId.HOME;
+                }
+                return destinationPointId;
             }
+            default: throw `Unknown player: ${player}`;
         }
-        let direction = player == Player.BLACK ? 1 : -1;
-        var destinationPointId = sourcePointId + (direction * numberOfMoves);
-        if (destinationPointId > 24 || destinationPointId < 0) return 0; // when bearing off to home
-        return destinationPointId;
     }
     
     isLegalMove(player: Player, sourcePointId: number, numberOfMoves: number): boolean {
@@ -82,13 +98,29 @@ class Board {
         }
 
         // case: bearing off
+        const direction = (player === Player.BLACK) ? 1 : -1;
         let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
-        if (destinationPointId == 0) {
-            // check that there are no pieces outside of home board. (BAR has already been checked above)
-            const pointIdOutsideOfHomeBoard = (player === Player.BLACK) ? 1 : 7;
-            const totalPointsOutsideOfHomeBoard = 18;
-            for (var offset = 0; offset < totalPointsOutsideOfHomeBoard; offset++) {
-                if (this.checkerContainers[pointIdOutsideOfHomeBoard + offset].checkers[player] > 0) {
+        if (destinationPointId === PointId.HOME) {
+            // check that there are no checkers outside of home board. (BAR has already been checked above)
+            const startingPointOfOuterBoard = (player === Player.BLACK) ? 1 : 24;
+            const totalPointsOfOuterBoard = 18;
+            for (let offset = 0; offset < totalPointsOfOuterBoard; offset++) {
+                if (this.checkerContainers[startingPointOfOuterBoard + (direction * offset)].checkers[player] > 0) {
+                    return false;
+                }
+            }
+            
+            // check that there are no checkers more deserving of this dice roll
+            let actualDestinationPointId = sourcePointId + (direction * numberOfMoves);
+            // if it's dead on, we're fine.
+            if (actualDestinationPointId === 0 || actualDestinationPointId === 25) {
+                return true;
+            }
+            
+            const startingPointOfHomeBoard = (player === Player.BLACK) ? 18 : 6;
+            for (let homeBoardPointId = startingPointOfHomeBoard; homeBoardPointId !== sourcePointId; homeBoardPointId += direction) {
+                if (this.checkerContainers[homeBoardPointId].checkers[player] > 0) {
+                    // if we find a checker on a further out point, sourcePointId is not valid
                     return false;
                 }
             }

@@ -156,9 +156,11 @@ describe('Backgammon', function () {
         expect(board.move(Player.BLACK, 19, 6)).toBe(true);
         expect(board.move(Player.BLACK, 19, 6)).toBe(true);
         expect(board.move(Player.BLACK, 19, 6)).toBe(true);
-        expect(board.move(Player.BLACK, 23, 6)).toBe(true);
-        expect(board.move(Player.BLACK, 23, 6)).toBe(true);
-        expect(board.move(Player.BLACK, 23, 6)).toBe(true);
+        // leave one checker on 19
+        // 23s now have to be dead hits to bear off
+        expect(board.move(Player.BLACK, 23, 2)).toBe(true);
+        expect(board.move(Player.BLACK, 23, 2)).toBe(true);
+        expect(board.move(Player.BLACK, 23, 2)).toBe(true);
 
         // now Red hits Black onto the bar
         expect(board.move(Player.RED, 24, 5)).toBe(true);
