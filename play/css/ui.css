@@ -72,7 +72,7 @@ DIV.home.checker-container-top {
 DIV.home.checker-container-bottom {
     border-right: 4px solid brown;
 }
-DIV.checker-container-bottom {
+DIV.checker-container-bottom, DIV.checker-container-bottom > DIV {
     -moz-transform:rotate(180deg);
     -webkit-transform:rotate(180deg);
     -ms-transform:rotate(180deg);
