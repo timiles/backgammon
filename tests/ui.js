@@ -144,4 +144,18 @@ describe('UI: home board', function () {
             expect($('#backgammon_point' + i).hasClass('highlight-destination')).toBe(false, 'Point ' + i + ' is not valid destination');
         }
     });
+    
+    it('should bear off automatically when selecting furthest checker and both dice exceed required pip count', function () {
+        
+        game.board.move(Player.BLACK, 19, 4);
+        game.board.move(Player.BLACK, 19, 4);
+        game.board.move(Player.BLACK, 19, 4);
+        game.board.move(Player.BLACK, 19, 4);
+        game.board.move(Player.BLACK, 19, 4);
+
+        $('#backgammon_point21').click();
+
+        expect($('#backgammon_blackhome').children('.black').length).toBe(1);
+        
+    });
 });

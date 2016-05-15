@@ -59,16 +59,24 @@ class Game {
                     return;
                 }
 
-                let canUseDie = (die: Die) => {
+                let canUseDie = (die: Die): boolean => {
                     return (die.remainingUses > 0 &&
+                        self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value));
+                }
+                
+                let canBearOff = (die: Die): boolean => {
+                    return (die.remainingUses > 0 &&
+                        Board.getDestinationPointId(self.currentPlayer, checkerContainer.pointId, die.value) === PointId.HOME &&
                         self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value));
                 }
 
                 let canUseDie1 = canUseDie(self.dice.die1);
                 let canUseDie2 = canUseDie(self.dice.die2);
 
-                // if can use one die but not the other, or if it's doubles, just play it
-                if ((canUseDie1 != canUseDie2) || (self.dice.die1.value === self.dice.die2.value)) {
+                // if can use one die but not the other, or if it's doubles, or if both bear off home, just play it
+                if ((canUseDie1 != canUseDie2) || 
+                    (self.dice.die1.value === self.dice.die2.value) ||
+                    (canBearOff(self.dice.die1) && canBearOff(self.dice.die2))) {
                     if (canUseDie1) {
                         self.board.move(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value);
                         self.dice.die1.decrementRemainingUses();
