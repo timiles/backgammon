@@ -8,12 +8,11 @@ class Home extends CheckerContainer {
         super(PointId.HOME);
         
         this.homeUIs = new Array<HomeUI>(2);
-        let self = this;
         
-        blackHomeUI.onSelected = (on: boolean) => { onSelected(self, on); };
+        blackHomeUI.onSelected = (on: boolean) => { onSelected(this, on); };
         this.homeUIs[Player.BLACK] = blackHomeUI;
 
-        redHomeUI.onSelected = (on: boolean) => { onSelected(self, on); };
+        redHomeUI.onSelected = (on: boolean) => { onSelected(this, on); };
         this.homeUIs[Player.RED] = redHomeUI;        
     }
     

@@ -9,8 +9,7 @@ class PointUI extends CheckerContainerUI {
     constructor(colour: string, isTopSide: boolean) {
         super(`point-${colour}`, isTopSide);
 
-        let self = this;
-        this.containerDiv.onmouseover = () => { self.onInspected(true); };
-        this.containerDiv.onmouseout = () => { self.onInspected(false); };
+        this.containerDiv.onmouseover = () => { this.onInspected(true); };
+        this.containerDiv.onmouseout = () => { this.onInspected(false); };
     }
 }

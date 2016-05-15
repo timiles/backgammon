@@ -19,8 +19,6 @@ class Dice {
 
     rollToStart(statusLogger: StatusLogger, onSuccess: (successfulPlayer: Player) => void) {
         
-        let self = this;
-        
         let die1 = new Die(this.diceRollGenerator.generateDiceRoll());
         let die2 = new Die(this.diceRollGenerator.generateDiceRoll());
         this.diceUIs[Player.BLACK].setStartingDiceRoll(die1);
@@ -31,16 +29,16 @@ class Dice {
 
         if (die1.value === die2.value) {
             statusLogger.logInfo('DRAW! Roll again');
-            setTimeout(() => { self.rollToStart(statusLogger, onSuccess); }, 1000);
+            setTimeout(() => { this.rollToStart(statusLogger, onSuccess); }, 1000);
         }
         else {
             let successfulPlayer = die1.value > die2.value ? Player.BLACK : Player.RED;
             statusLogger.logInfo(`${Player[successfulPlayer]} wins the starting roll`);
             setTimeout(() => {
-                self.die1 = die1;
-                self.die2 = die2;
-                self.diceUIs[successfulPlayer].setDiceRolls(die1, die2);
-                self.diceUIs[successfulPlayer].setActive(true);
+                this.die1 = die1;
+                this.die2 = die2;
+                this.diceUIs[successfulPlayer].setDiceRolls(die1, die2);
+                this.diceUIs[successfulPlayer].setActive(true);
                 onSuccess(successfulPlayer);
             }, 1000);
         }    

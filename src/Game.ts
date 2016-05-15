@@ -15,80 +15,79 @@ class Game {
     currentSelectedCheckerContainer: CheckerContainer;
     
     constructor(gameUI: GameUI, board: Board, dice: Dice, statusLogger: StatusLogger, currentPlayer: Player) {
-        let self = this;
 
-        self.board = board;        
-        self.dice = dice;
-        self.statusLogger = statusLogger;
-        self.currentPlayer = currentPlayer;
-        self.logCurrentPlayer();
-        self.evaluateBoard();
+        this.board = board;        
+        this.dice = dice;
+        this.statusLogger = statusLogger;
+        this.currentPlayer = currentPlayer;
+        this.logCurrentPlayer();
+        this.evaluateBoard();
         
         this.board.onPointInspected = (checkerContainer: CheckerContainer, on: boolean) => {
-            if (self.currentSelectedCheckerContainer != undefined) {
+            if (this.currentSelectedCheckerContainer != undefined) {
                 // if we're halfway a move, don't check
                 return;
             }
             
             if (!on) {
-                self.board.removeAllHighlights();
+                this.board.removeAllHighlights();
             }
-            else if (!(checkerContainer instanceof Home) && checkerContainer.checkers[self.currentPlayer] > 0) {
+            else if (!(checkerContainer instanceof Home) && checkerContainer.checkers[this.currentPlayer] > 0) {
                 let highlightDestinationIfLegalMove = (sourcePointId: number, die: Die): void => {
                     if (die.remainingUses > 0) {
-                        if (self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value)) {
-                            let destinationPointId = Board.getDestinationPointId(self.currentPlayer, sourcePointId, die.value);
+                        if (this.board.isLegalMove(this.currentPlayer, checkerContainer.pointId, die.value)) {
+                            let destinationPointId = Board.getDestinationPointId(this.currentPlayer, sourcePointId, die.value);
                             if (destinationPointId === PointId.HOME) {
-                                (<Home> self.board.checkerContainers[destinationPointId]).highlightDestination(self.currentPlayer, true);
+                                (<Home> this.board.checkerContainers[destinationPointId]).highlightDestination(this.currentPlayer, true);
                             }
                             else {
-                                (<Point> self.board.checkerContainers[destinationPointId]).highlightDestination(true);
+                                (<Point> this.board.checkerContainers[destinationPointId]).highlightDestination(true);
                             }
                         }
                     }    
                 }
-                highlightDestinationIfLegalMove(checkerContainer.pointId, self.dice.die1);
-                highlightDestinationIfLegalMove(checkerContainer.pointId, self.dice.die2);
+                highlightDestinationIfLegalMove(checkerContainer.pointId, this.dice.die1);
+                highlightDestinationIfLegalMove(checkerContainer.pointId, this.dice.die2);
             }
         };
         
         this.board.onPointSelected = (checkerContainer: CheckerContainer, on: boolean) => {
-            if (self.currentSelectedCheckerContainer == undefined) {
-                if (checkerContainer.checkers[self.currentPlayer] == 0) {
+            if (this.currentSelectedCheckerContainer == undefined) {
+                if (checkerContainer.checkers[this.currentPlayer] == 0) {
                     // if no pieces here, exit
                     return;
                 }
 
                 let canUseDie = (die: Die): boolean => {
                     return (die.remainingUses > 0 &&
-                        self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value));
+                        this.board.isLegalMove(this.currentPlayer, checkerContainer.pointId, die.value));
                 }
                 
                 let canBearOff = (die: Die): boolean => {
                     return (die.remainingUses > 0 &&
-                        Board.getDestinationPointId(self.currentPlayer, checkerContainer.pointId, die.value) === PointId.HOME &&
-                        self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value));
+                        Board.getDestinationPointId(this.currentPlayer, checkerContainer.pointId, die.value) === PointId.HOME &&
+                        this.board.isLegalMove(this.currentPlayer, checkerContainer.pointId, die.value));
                 }
 
-                let canUseDie1 = canUseDie(self.dice.die1);
-                let canUseDie2 = canUseDie(self.dice.die2);
+                let canUseDie1 = canUseDie(this.dice.die1);
+                let canUseDie2 = canUseDie(this.dice.die2);
 
                 // if can use one die but not the other, or if it's doubles, or if both bear off home, just play it
                 if ((canUseDie1 != canUseDie2) || 
-                    (self.dice.die1.value === self.dice.die2.value) ||
-                    (canBearOff(self.dice.die1) && canBearOff(self.dice.die2))) {
+                    (this.dice.die1.value === this.dice.die2.value) ||
+                    (canBearOff(this.dice.die1) && canBearOff(this.dice.die2))) {
                     if (canUseDie1) {
-                        self.board.move(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value);
-                        self.dice.die1.decrementRemainingUses();
-                        self.evaluateBoard();                                        
+                        this.board.move(this.currentPlayer, checkerContainer.pointId, this.dice.die1.value);
+                        this.dice.die1.decrementRemainingUses();
+                        this.evaluateBoard();                                        
                     }
                     else if (canUseDie2) {
-                        self.board.move(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value);
-                        self.dice.die2.decrementRemainingUses();
-                        self.evaluateBoard();                                        
+                        this.board.move(this.currentPlayer, checkerContainer.pointId, this.dice.die2.value);
+                        this.dice.die2.decrementRemainingUses();
+                        this.evaluateBoard();                                        
                     }
                     
-                    self.switchPlayerIfNoValidMovesRemain();
+                    this.switchPlayerIfNoValidMovesRemain();
                     
                     // reinspect point
                     this.board.onPointInspected(checkerContainer, false);
@@ -115,25 +114,25 @@ class Game {
             else {
 
                 let useDieIfPossible = (die: Die): boolean => {
-                    let destinationPointId = Board.getDestinationPointId(self.currentPlayer, self.currentSelectedCheckerContainer.pointId, die.value);
+                    let destinationPointId = Board.getDestinationPointId(this.currentPlayer, this.currentSelectedCheckerContainer.pointId, die.value);
                     if (destinationPointId !== checkerContainer.pointId) {
                         return false;
                     }
                     
-                    self.board.move(self.currentPlayer, self.currentSelectedCheckerContainer.pointId, die.value);
+                    this.board.move(this.currentPlayer, this.currentSelectedCheckerContainer.pointId, die.value);
                     die.decrementRemainingUses();
-                    if (self.currentSelectedCheckerContainer instanceof Point) {
-                        (<Point> self.currentSelectedCheckerContainer).setSelected(false);
+                    if (this.currentSelectedCheckerContainer instanceof Point) {
+                        (<Point> this.currentSelectedCheckerContainer).setSelected(false);
                     }
-                    self.currentSelectedCheckerContainer = undefined;           
-                    self.evaluateBoard();
+                    this.currentSelectedCheckerContainer = undefined;           
+                    this.evaluateBoard();
                     return true;
                 }
 
                 // use lazy evaluation so that max one die gets used
-                useDieIfPossible(self.dice.die1) || useDieIfPossible(self.dice.die2);
+                useDieIfPossible(this.dice.die1) || useDieIfPossible(this.dice.die2);
 
-                self.switchPlayerIfNoValidMovesRemain();
+                this.switchPlayerIfNoValidMovesRemain();
                                 
                 // reinspect point
                 this.board.onPointInspected(checkerContainer, false);

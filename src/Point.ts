@@ -12,11 +12,10 @@ class Point extends CheckerContainer {
         onSelected: (point: Point, on: boolean) => void) {
         super(pointId);
         
-        let self = this;
         this.pointId = pointId;
         this.pointUI = pointUI;
-        this.pointUI.onInspected = (on: boolean) => { onInspected(self, on); };
-        this.pointUI.onSelected = (on: boolean) => { onSelected(self, on); };
+        this.pointUI.onInspected = (on: boolean) => { onInspected(this, on); };
+        this.pointUI.onSelected = (on: boolean) => { onSelected(this, on); };
     }
     
     decrement(player: Player): void {

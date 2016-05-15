@@ -33,13 +33,13 @@ var Utils = (function () {
 /// <reference path="Utils.ts"/>
 var CheckerContainerUI = (function () {
     function CheckerContainerUI(containerType, isTopSide) {
+        var _this = this;
         this.containerDiv = document.createElement('div');
         var side = (isTopSide ? 'top' : 'bottom');
         this.containerDiv.className = "checker-container checker-container-" + side + " " + containerType;
-        var self = this;
         this.containerDiv.onclick = function () {
-            self.isSelected = !self.isSelected;
-            self.onSelected(self.isSelected);
+            _this.isSelected = !_this.isSelected;
+            _this.onSelected(_this.isSelected);
         };
     }
     CheckerContainerUI.prototype.setState = function (state) {
@@ -86,13 +86,13 @@ var __extends = (this && this.__extends) || function (d, b) {
 var BarUI = (function (_super) {
     __extends(BarUI, _super);
     function BarUI(player) {
+        var _this = this;
         _super.call(this, 'bar', player === Player.RED);
-        var self = this;
-        this.containerDiv.onmouseover = function () { self.onInspected(true); };
-        this.containerDiv.onmouseout = function () { self.onInspected(false); };
+        this.containerDiv.onmouseover = function () { _this.onInspected(true); };
+        this.containerDiv.onmouseout = function () { _this.onInspected(false); };
         this.containerDiv.onclick = function () {
-            self.isSelected = !self.isSelected;
-            self.onSelected(self.isSelected);
+            _this.isSelected = !_this.isSelected;
+            _this.onSelected(_this.isSelected);
         };
     }
     return BarUI;
@@ -115,10 +115,10 @@ var CheckerContainer = (function () {
 var PointUI = (function (_super) {
     __extends(PointUI, _super);
     function PointUI(colour, isTopSide) {
+        var _this = this;
         _super.call(this, "point-" + colour, isTopSide);
-        var self = this;
-        this.containerDiv.onmouseover = function () { self.onInspected(true); };
-        this.containerDiv.onmouseout = function () { self.onInspected(false); };
+        this.containerDiv.onmouseover = function () { _this.onInspected(true); };
+        this.containerDiv.onmouseout = function () { _this.onInspected(false); };
     }
     return PointUI;
 })(CheckerContainerUI);
@@ -127,12 +127,12 @@ var PointUI = (function (_super) {
 var Point = (function (_super) {
     __extends(Point, _super);
     function Point(pointUI, pointId, onInspected, onSelected) {
+        var _this = this;
         _super.call(this, pointId);
-        var self = this;
         this.pointId = pointId;
         this.pointUI = pointUI;
-        this.pointUI.onInspected = function (on) { onInspected(self, on); };
-        this.pointUI.onSelected = function (on) { onSelected(self, on); };
+        this.pointUI.onInspected = function (on) { onInspected(_this, on); };
+        this.pointUI.onSelected = function (on) { onSelected(_this, on); };
     }
     Point.prototype.decrement = function (player) {
         _super.prototype.decrement.call(this, player);
@@ -159,12 +159,12 @@ var Point = (function (_super) {
 var Bar = (function (_super) {
     __extends(Bar, _super);
     function Bar(blackBarUI, redBarUI, onInspected, onSelected) {
+        var _this = this;
         _super.call(this, PointId.BAR);
-        var self = this;
-        blackBarUI.onInspected = function (on) { onInspected(self, on); };
-        blackBarUI.onSelected = function (on) { onSelected(self, on); };
-        redBarUI.onInspected = function (on) { onInspected(self, on); };
-        redBarUI.onSelected = function (on) { onSelected(self, on); };
+        blackBarUI.onInspected = function (on) { onInspected(_this, on); };
+        blackBarUI.onSelected = function (on) { onSelected(_this, on); };
+        redBarUI.onInspected = function (on) { onInspected(_this, on); };
+        redBarUI.onSelected = function (on) { onSelected(_this, on); };
         this.barUIs = new Array(2);
         this.barUIs[Player.BLACK] = blackBarUI;
         this.barUIs[Player.RED] = redBarUI;
@@ -260,12 +260,12 @@ var BoardUI = (function () {
 var Home = (function (_super) {
     __extends(Home, _super);
     function Home(blackHomeUI, redHomeUI, onSelected) {
+        var _this = this;
         _super.call(this, PointId.HOME);
         this.homeUIs = new Array(2);
-        var self = this;
-        blackHomeUI.onSelected = function (on) { onSelected(self, on); };
+        blackHomeUI.onSelected = function (on) { onSelected(_this, on); };
         this.homeUIs[Player.BLACK] = blackHomeUI;
-        redHomeUI.onSelected = function (on) { onSelected(self, on); };
+        redHomeUI.onSelected = function (on) { onSelected(_this, on); };
         this.homeUIs[Player.RED] = redHomeUI;
     }
     Home.prototype.increment = function (player) {
@@ -518,7 +518,7 @@ var Dice = (function () {
         this.diceUIs[Player.RED] = redDiceUI;
     }
     Dice.prototype.rollToStart = function (statusLogger, onSuccess) {
-        var self = this;
+        var _this = this;
         var die1 = new Die(this.diceRollGenerator.generateDiceRoll());
         var die2 = new Die(this.diceRollGenerator.generateDiceRoll());
         this.diceUIs[Player.BLACK].setStartingDiceRoll(die1);
@@ -527,16 +527,16 @@ var Dice = (function () {
         statusLogger.logInfo("RED rolls " + die2.value);
         if (die1.value === die2.value) {
             statusLogger.logInfo('DRAW! Roll again');
-            setTimeout(function () { self.rollToStart(statusLogger, onSuccess); }, 1000);
+            setTimeout(function () { _this.rollToStart(statusLogger, onSuccess); }, 1000);
         }
         else {
             var successfulPlayer = die1.value > die2.value ? Player.BLACK : Player.RED;
             statusLogger.logInfo(Player[successfulPlayer] + " wins the starting roll");
             setTimeout(function () {
-                self.die1 = die1;
-                self.die2 = die2;
-                self.diceUIs[successfulPlayer].setDiceRolls(die1, die2);
-                self.diceUIs[successfulPlayer].setActive(true);
+                _this.die1 = die1;
+                _this.die2 = die2;
+                _this.diceUIs[successfulPlayer].setDiceRolls(die1, die2);
+                _this.diceUIs[successfulPlayer].setActive(true);
                 onSuccess(successfulPlayer);
             }, 1000);
         }
@@ -589,71 +589,70 @@ var GameUI = (function () {
 var Game = (function () {
     function Game(gameUI, board, dice, statusLogger, currentPlayer) {
         var _this = this;
-        var self = this;
-        self.board = board;
-        self.dice = dice;
-        self.statusLogger = statusLogger;
-        self.currentPlayer = currentPlayer;
-        self.logCurrentPlayer();
-        self.evaluateBoard();
+        this.board = board;
+        this.dice = dice;
+        this.statusLogger = statusLogger;
+        this.currentPlayer = currentPlayer;
+        this.logCurrentPlayer();
+        this.evaluateBoard();
         this.board.onPointInspected = function (checkerContainer, on) {
-            if (self.currentSelectedCheckerContainer != undefined) {
+            if (_this.currentSelectedCheckerContainer != undefined) {
                 // if we're halfway a move, don't check
                 return;
             }
             if (!on) {
-                self.board.removeAllHighlights();
+                _this.board.removeAllHighlights();
             }
-            else if (!(checkerContainer instanceof Home) && checkerContainer.checkers[self.currentPlayer] > 0) {
+            else if (!(checkerContainer instanceof Home) && checkerContainer.checkers[_this.currentPlayer] > 0) {
                 var highlightDestinationIfLegalMove = function (sourcePointId, die) {
                     if (die.remainingUses > 0) {
-                        if (self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value)) {
-                            var destinationPointId = Board.getDestinationPointId(self.currentPlayer, sourcePointId, die.value);
+                        if (_this.board.isLegalMove(_this.currentPlayer, checkerContainer.pointId, die.value)) {
+                            var destinationPointId = Board.getDestinationPointId(_this.currentPlayer, sourcePointId, die.value);
                             if (destinationPointId === PointId.HOME) {
-                                self.board.checkerContainers[destinationPointId].highlightDestination(self.currentPlayer, true);
+                                _this.board.checkerContainers[destinationPointId].highlightDestination(_this.currentPlayer, true);
                             }
                             else {
-                                self.board.checkerContainers[destinationPointId].highlightDestination(true);
+                                _this.board.checkerContainers[destinationPointId].highlightDestination(true);
                             }
                         }
                     }
                 };
-                highlightDestinationIfLegalMove(checkerContainer.pointId, self.dice.die1);
-                highlightDestinationIfLegalMove(checkerContainer.pointId, self.dice.die2);
+                highlightDestinationIfLegalMove(checkerContainer.pointId, _this.dice.die1);
+                highlightDestinationIfLegalMove(checkerContainer.pointId, _this.dice.die2);
             }
         };
         this.board.onPointSelected = function (checkerContainer, on) {
-            if (self.currentSelectedCheckerContainer == undefined) {
-                if (checkerContainer.checkers[self.currentPlayer] == 0) {
+            if (_this.currentSelectedCheckerContainer == undefined) {
+                if (checkerContainer.checkers[_this.currentPlayer] == 0) {
                     // if no pieces here, exit
                     return;
                 }
                 var canUseDie = function (die) {
                     return (die.remainingUses > 0 &&
-                        self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value));
+                        _this.board.isLegalMove(_this.currentPlayer, checkerContainer.pointId, die.value));
                 };
                 var canBearOff = function (die) {
                     return (die.remainingUses > 0 &&
-                        Board.getDestinationPointId(self.currentPlayer, checkerContainer.pointId, die.value) === PointId.HOME &&
-                        self.board.isLegalMove(self.currentPlayer, checkerContainer.pointId, die.value));
+                        Board.getDestinationPointId(_this.currentPlayer, checkerContainer.pointId, die.value) === PointId.HOME &&
+                        _this.board.isLegalMove(_this.currentPlayer, checkerContainer.pointId, die.value));
                 };
-                var canUseDie1 = canUseDie(self.dice.die1);
-                var canUseDie2 = canUseDie(self.dice.die2);
+                var canUseDie1 = canUseDie(_this.dice.die1);
+                var canUseDie2 = canUseDie(_this.dice.die2);
                 // if can use one die but not the other, or if it's doubles, or if both bear off home, just play it
                 if ((canUseDie1 != canUseDie2) ||
-                    (self.dice.die1.value === self.dice.die2.value) ||
-                    (canBearOff(self.dice.die1) && canBearOff(self.dice.die2))) {
+                    (_this.dice.die1.value === _this.dice.die2.value) ||
+                    (canBearOff(_this.dice.die1) && canBearOff(_this.dice.die2))) {
                     if (canUseDie1) {
-                        self.board.move(self.currentPlayer, checkerContainer.pointId, self.dice.die1.value);
-                        self.dice.die1.decrementRemainingUses();
-                        self.evaluateBoard();
+                        _this.board.move(_this.currentPlayer, checkerContainer.pointId, _this.dice.die1.value);
+                        _this.dice.die1.decrementRemainingUses();
+                        _this.evaluateBoard();
                     }
                     else if (canUseDie2) {
-                        self.board.move(self.currentPlayer, checkerContainer.pointId, self.dice.die2.value);
-                        self.dice.die2.decrementRemainingUses();
-                        self.evaluateBoard();
+                        _this.board.move(_this.currentPlayer, checkerContainer.pointId, _this.dice.die2.value);
+                        _this.dice.die2.decrementRemainingUses();
+                        _this.evaluateBoard();
                     }
-                    self.switchPlayerIfNoValidMovesRemain();
+                    _this.switchPlayerIfNoValidMovesRemain();
                     // reinspect point
                     _this.board.onPointInspected(checkerContainer, false);
                     _this.board.onPointInspected(checkerContainer, true);
@@ -677,22 +676,22 @@ var Game = (function () {
             }
             else {
                 var useDieIfPossible = function (die) {
-                    var destinationPointId = Board.getDestinationPointId(self.currentPlayer, self.currentSelectedCheckerContainer.pointId, die.value);
+                    var destinationPointId = Board.getDestinationPointId(_this.currentPlayer, _this.currentSelectedCheckerContainer.pointId, die.value);
                     if (destinationPointId !== checkerContainer.pointId) {
                         return false;
                     }
-                    self.board.move(self.currentPlayer, self.currentSelectedCheckerContainer.pointId, die.value);
+                    _this.board.move(_this.currentPlayer, _this.currentSelectedCheckerContainer.pointId, die.value);
                     die.decrementRemainingUses();
-                    if (self.currentSelectedCheckerContainer instanceof Point) {
-                        self.currentSelectedCheckerContainer.setSelected(false);
+                    if (_this.currentSelectedCheckerContainer instanceof Point) {
+                        _this.currentSelectedCheckerContainer.setSelected(false);
                     }
-                    self.currentSelectedCheckerContainer = undefined;
-                    self.evaluateBoard();
+                    _this.currentSelectedCheckerContainer = undefined;
+                    _this.evaluateBoard();
                     return true;
                 };
                 // use lazy evaluation so that max one die gets used
-                useDieIfPossible(self.dice.die1) || useDieIfPossible(self.dice.die2);
-                self.switchPlayerIfNoValidMovesRemain();
+                useDieIfPossible(_this.dice.die1) || useDieIfPossible(_this.dice.die2);
+                _this.switchPlayerIfNoValidMovesRemain();
                 // reinspect point
                 _this.board.onPointInspected(checkerContainer, false);
                 _this.board.onPointInspected(checkerContainer, true);

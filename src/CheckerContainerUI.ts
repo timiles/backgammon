@@ -15,10 +15,9 @@ class CheckerContainerUI {
         let side = (isTopSide ? 'top': 'bottom');
         this.containerDiv.className = `checker-container checker-container-${side} ${containerType}`;
         
-        let self = this;
         this.containerDiv.onclick = () => {
-            self.isSelected = !self.isSelected;
-            self.onSelected(self.isSelected);
+            this.isSelected = !this.isSelected;
+            this.onSelected(this.isSelected);
         };
     }
     
