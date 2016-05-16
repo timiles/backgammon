@@ -31,23 +31,15 @@ class Game {
             
             if (!on) {
                 this.board.removeAllHighlights();
+                return;
             }
-            else if (!(checkerContainer instanceof Home) && checkerContainer.checkers[this.currentPlayer] > 0) {
-                let highlightDestinationIfLegalMove = (sourcePointId: number, die: Die): void => {
+            
+            if (!(checkerContainer instanceof Home) && (checkerContainer.checkers[this.currentPlayer] > 0)) {
+                for (let die of [this.dice.die1, this.dice.die2]) {
                     if (die.remainingUses > 0) {
-                        if (this.board.isLegalMove(this.currentPlayer, checkerContainer.pointId, die.value)) {
-                            let destinationPointId = Board.getDestinationPointId(this.currentPlayer, sourcePointId, die.value);
-                            if (destinationPointId === PointId.HOME) {
-                                (<Home> this.board.checkerContainers[destinationPointId]).highlightDestination(this.currentPlayer, true);
-                            }
-                            else {
-                                (<Point> this.board.checkerContainers[destinationPointId]).highlightDestination(true);
-                            }
-                        }
-                    }    
+                        this.board.highlightDestinationIfLegalMove(this.currentPlayer, checkerContainer.pointId, die.value);
+                    }
                 }
-                highlightDestinationIfLegalMove(checkerContainer.pointId, this.dice.die1);
-                highlightDestinationIfLegalMove(checkerContainer.pointId, this.dice.die2);
             }
         };
         

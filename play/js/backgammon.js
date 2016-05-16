@@ -410,6 +410,17 @@ var Board = (function () {
         this.increment(player, destinationPointId);
         return true;
     };
+    Board.prototype.highlightDestinationIfLegalMove = function (player, sourcePointId, numberOfMoves) {
+        if (this.isLegalMove(player, sourcePointId, numberOfMoves)) {
+            var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
+            if (destinationPointId === PointId.HOME) {
+                this.checkerContainers[PointId.HOME].highlightDestination(player, true);
+            }
+            else {
+                this.checkerContainers[destinationPointId].highlightDestination(true);
+            }
+        }
+    };
     Board.prototype.removeAllHighlights = function () {
         for (var pointId = 1; pointId <= 24; pointId++) {
             this.checkerContainers[pointId].highlightDestination(false);
@@ -602,23 +613,15 @@ var Game = (function () {
             }
             if (!on) {
                 _this.board.removeAllHighlights();
+                return;
             }
-            else if (!(checkerContainer instanceof Home) && checkerContainer.checkers[_this.currentPlayer] > 0) {
-                var highlightDestinationIfLegalMove = function (sourcePointId, die) {
+            if (!(checkerContainer instanceof Home) && (checkerContainer.checkers[_this.currentPlayer] > 0)) {
+                for (var _i = 0, _a = [_this.dice.die1, _this.dice.die2]; _i < _a.length; _i++) {
+                    var die = _a[_i];
                     if (die.remainingUses > 0) {
-                        if (_this.board.isLegalMove(_this.currentPlayer, checkerContainer.pointId, die.value)) {
-                            var destinationPointId = Board.getDestinationPointId(_this.currentPlayer, sourcePointId, die.value);
-                            if (destinationPointId === PointId.HOME) {
-                                _this.board.checkerContainers[destinationPointId].highlightDestination(_this.currentPlayer, true);
-                            }
-                            else {
-                                _this.board.checkerContainers[destinationPointId].highlightDestination(true);
-                            }
-                        }
+                        _this.board.highlightDestinationIfLegalMove(_this.currentPlayer, checkerContainer.pointId, die.value);
                     }
-                };
-                highlightDestinationIfLegalMove(checkerContainer.pointId, _this.dice.die1);
-                highlightDestinationIfLegalMove(checkerContainer.pointId, _this.dice.die2);
+                }
             }
         };
         this.board.onPointSelected = function (checkerContainer, on) {
