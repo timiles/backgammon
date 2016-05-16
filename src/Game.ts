@@ -186,57 +186,22 @@ class Game {
             return;
         }
         
-        {
-            let bar = <Bar> this.board.checkerContainers[PointId.BAR];
-            if (bar.checkers[this.currentPlayer] > 0) {
-                let validMoveExists = false;
-                if (this.dice.die1.remainingUses > 0) {
-                    if (this.board.isLegalMove(this.currentPlayer, PointId.BAR, this.dice.die1.value)) {
-                        validMoveExists = true;
+        let getPointState = (pointId: number): PointState => {
+            if (this.board.checkerContainers[pointId].checkers[this.currentPlayer] > 0) {
+                for (let die of [this.dice.die1, this.dice.die2]) {
+                    if ((die.remainingUses > 0) &&
+                        (this.board.isLegalMove(this.currentPlayer, pointId, die.value))) {
+                            return PointState.VALID_SOURCE;
                     }
                 }
-                if (this.dice.die2.remainingUses > 0) {
-                    if (this.board.isLegalMove(this.currentPlayer, PointId.BAR, this.dice.die2.value)) {
-                        validMoveExists = true;
-                    }
-                }
-                if (validMoveExists) {
-                    bar.setState(this.currentPlayer, PointState.VALID_SOURCE);
-                }
-                else {
-                    bar.setState(this.currentPlayer, undefined);
-                }
-             }
-             else {
-                 bar.setState(this.currentPlayer, undefined);
-             }
-        }
-        
+            }
+            return undefined;
+        };
+
+        (<Bar> this.board.checkerContainers[PointId.BAR]).setState(this.currentPlayer, getPointState(PointId.BAR));
         for (let i = 1; i <= 24; i++) {
-            let point = <Point> this.board.checkerContainers[i];
-            if (point.checkers[this.currentPlayer] > 0) {
-                let validMoveExists = false;
-                if (this.dice.die1.remainingUses > 0) {
-                    if (this.board.isLegalMove(this.currentPlayer, i, this.dice.die1.value)) {
-                        validMoveExists = true;
-                    }
-                }
-                if (this.dice.die2.remainingUses > 0) {
-                    if (this.board.isLegalMove(this.currentPlayer, i, this.dice.die2.value)) {
-                        validMoveExists = true;
-                    }
-                }
-                if (validMoveExists) {
-                    point.setState(PointState.VALID_SOURCE);
-                }
-                else {
-                    point.setState(undefined);
-                }
-             }
-             else {
-                 point.setState(undefined);
-             }
-        }
+            (<Point> this.board.checkerContainers[i]).setState(getPointState(i));
+        }        
     }
     
     logCurrentPlayer(): void {

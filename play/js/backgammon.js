@@ -739,6 +739,7 @@ var Game = (function () {
         this.logCurrentPlayer();
     };
     Game.prototype.evaluateBoard = function () {
+        var _this = this;
         if (this.currentSelectedCheckerContainer != undefined) {
             for (var i = 1; i <= 24; i++) {
                 if (i !== this.currentSelectedCheckerContainer.pointId) {
@@ -747,55 +748,21 @@ var Game = (function () {
             }
             return;
         }
-        {
-            var bar = this.board.checkerContainers[PointId.BAR];
-            if (bar.checkers[this.currentPlayer] > 0) {
-                var validMoveExists = false;
-                if (this.dice.die1.remainingUses > 0) {
-                    if (this.board.isLegalMove(this.currentPlayer, PointId.BAR, this.dice.die1.value)) {
-                        validMoveExists = true;
+        var getPointState = function (pointId) {
+            if (_this.board.checkerContainers[pointId].checkers[_this.currentPlayer] > 0) {
+                for (var _i = 0, _a = [_this.dice.die1, _this.dice.die2]; _i < _a.length; _i++) {
+                    var die = _a[_i];
+                    if ((die.remainingUses > 0) &&
+                        (_this.board.isLegalMove(_this.currentPlayer, pointId, die.value))) {
+                        return PointState.VALID_SOURCE;
                     }
                 }
-                if (this.dice.die2.remainingUses > 0) {
-                    if (this.board.isLegalMove(this.currentPlayer, PointId.BAR, this.dice.die2.value)) {
-                        validMoveExists = true;
-                    }
-                }
-                if (validMoveExists) {
-                    bar.setState(this.currentPlayer, PointState.VALID_SOURCE);
-                }
-                else {
-                    bar.setState(this.currentPlayer, undefined);
-                }
             }
-            else {
-                bar.setState(this.currentPlayer, undefined);
-            }
-        }
+            return undefined;
+        };
+        this.board.checkerContainers[PointId.BAR].setState(this.currentPlayer, getPointState(PointId.BAR));
         for (var i = 1; i <= 24; i++) {
-            var point = this.board.checkerContainers[i];
-            if (point.checkers[this.currentPlayer] > 0) {
-                var validMoveExists = false;
-                if (this.dice.die1.remainingUses > 0) {
-                    if (this.board.isLegalMove(this.currentPlayer, i, this.dice.die1.value)) {
-                        validMoveExists = true;
-                    }
-                }
-                if (this.dice.die2.remainingUses > 0) {
-                    if (this.board.isLegalMove(this.currentPlayer, i, this.dice.die2.value)) {
-                        validMoveExists = true;
-                    }
-                }
-                if (validMoveExists) {
-                    point.setState(PointState.VALID_SOURCE);
-                }
-                else {
-                    point.setState(undefined);
-                }
-            }
-            else {
-                point.setState(undefined);
-            }
+            this.board.checkerContainers[i].setState(getPointState(i));
         }
     };
     Game.prototype.logCurrentPlayer = function () {
