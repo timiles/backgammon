@@ -676,6 +676,7 @@ var Game = (function () {
                     _this.currentSelectedCheckerContainer.setSelected(false);
                 }
                 _this.currentSelectedCheckerContainer = undefined;
+                _this.evaluateBoard();
             }
             else {
                 var useDieIfPossible = function (die) {

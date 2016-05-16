@@ -102,6 +102,7 @@ class Game {
                     (<Point> this.currentSelectedCheckerContainer).setSelected(false);
                 }
                 this.currentSelectedCheckerContainer = undefined;
+                this.evaluateBoard();
             }
             else {
 

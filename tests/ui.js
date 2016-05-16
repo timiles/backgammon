@@ -80,6 +80,41 @@ describe('UI: starting board', function () {
 
 });
 
+
+describe('UI: game play', function () {
+
+    beforeEach(function () {
+        
+        let ui = new GameUI('backgammon');
+        let board = new Board(ui.boardUI);
+        
+        fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
+
+        let dice = new Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
+        dice.roll(Player.BLACK);
+        
+        let statusLogger = new StatusLogger(ui.statusUI);
+
+        game = new Game(ui, board, dice, statusLogger, Player.BLACK);
+    });
+
+    it('should re-highlight sources after checker is selected then deselected', function () {
+        expect($('#backgammon_point1').hasClass('state-valid-source')).toBe(true);
+        expect($('#backgammon_point12').hasClass('state-valid-source')).toBe(true);
+        expect($('#backgammon_point17').hasClass('state-valid-source')).toBe(true);
+        expect($('#backgammon_point19').hasClass('state-valid-source')).toBe(true);
+
+        $('#backgammon_point1').click();
+        $('#backgammon_point1').click();
+        
+        expect($('#backgammon_point1').hasClass('state-valid-source')).toBe(true);
+        expect($('#backgammon_point12').hasClass('state-valid-source')).toBe(true);
+        expect($('#backgammon_point17').hasClass('state-valid-source')).toBe(true);
+        expect($('#backgammon_point19').hasClass('state-valid-source')).toBe(true);
+    });
+
+});
+
 describe('UI: home board', function () {
 
     beforeEach(function () {
