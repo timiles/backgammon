@@ -161,6 +161,10 @@ class Game {
     }
     
     private switchPlayerIfNoValidMovesRemain(): void {
+        if (this.board.checkerContainers[PointId.HOME].checkers[this.currentPlayer] === 15) {
+            this.statusLogger.logInfo(`${Player[this.currentPlayer]} WINS!`);
+            return;
+        }
         if (!this.checkIfValidMovesRemain()) {
             // if we're still here, 
             this.switchPlayer();

@@ -715,6 +715,10 @@ var Game = (function () {
         return false;
     };
     Game.prototype.switchPlayerIfNoValidMovesRemain = function () {
+        if (this.board.checkerContainers[PointId.HOME].checkers[this.currentPlayer] === 15) {
+            this.statusLogger.logInfo(Player[this.currentPlayer] + " WINS!");
+            return;
+        }
         if (!this.checkIfValidMovesRemain()) {
             // if we're still here, 
             this.switchPlayer();
