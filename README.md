@@ -7,9 +7,7 @@ Backgammon game implemented in TypeScript with pure HTML/CSS UI.
 
 # TODO
 - [x] board layout in HTML/CSS
-- [x] game logic: roll dice to start
-- [x] game logic: legal moves
-- [ ] game logic: endgame detection
+- [x] game logic: roll dice to start; play by turns; detect winner
 - [ ] game logic: major refactor
 - [ ] mobile UX: alternative to hover for inspect
 - [ ] autoplay mode on/off toggle
