@@ -153,23 +153,23 @@ class Board {
         return true;
     }
         
-    highlightDestinationIfLegalMove(player: Player, sourcePointId: number, numberOfMoves: number): void {
+    checkIfValidDestination(player: Player, sourcePointId: number, numberOfMoves: number): void {
         if (this.isLegalMove(player, sourcePointId, numberOfMoves)) {
             let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
             if (destinationPointId === PointId.HOME) {
-                (<Home> this.checkerContainers[PointId.HOME]).highlightDestination(player, true);
+                (<Home> this.checkerContainers[PointId.HOME]).setValidDestination(player, true);
             }
             else {
-                (<Point> this.checkerContainers[destinationPointId]).highlightDestination(true);
+                (<Point> this.checkerContainers[destinationPointId]).setValidDestination(true);
             }
         }
     }
     
     removeAllHighlights(): void {
         for (let pointId = 1; pointId <= 24; pointId++) {
-            (<Point> this.checkerContainers[pointId]).highlightDestination(false);
+            (<Point> this.checkerContainers[pointId]).setValidDestination(false);
         }
-        (<Home> this.checkerContainers[PointId.HOME]).highlightDestination(Player.BLACK, false);
-        (<Home> this.checkerContainers[PointId.HOME]).highlightDestination(Player.RED, false);
+        (<Home> this.checkerContainers[PointId.HOME]).setValidDestination(Player.BLACK, false);
+        (<Home> this.checkerContainers[PointId.HOME]).setValidDestination(Player.RED, false);
     }
 }

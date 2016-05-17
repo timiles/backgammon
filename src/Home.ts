@@ -21,7 +21,7 @@ class Home extends CheckerContainer {
         this.homeUIs[player].setCheckers(player, this.checkers[player]);
     }
     
-    highlightDestination(player: Player, on: boolean) {
-        this.homeUIs[player].highlightDestination(on);
+    setValidDestination(player: Player, on: boolean) {
+        this.homeUIs[player].setValidDestination(on);
     }
 }

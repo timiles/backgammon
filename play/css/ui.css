@@ -48,14 +48,14 @@ DIV.checker-container.valid-source:active,
 DIV.checker-container.valid-source.selected {
     background: darkgreen;
 }
-DIV.checker-container.highlight-destination {
+DIV.checker-container.valid-destination {
     background: yellow;
     cursor: pointer;
 }
-DIV.checker-container.highlight-destination:hover {
+DIV.checker-container.valid-destination:hover {
     background: gold;    
 }
-DIV.checker-container.highlight-destination:active {
+DIV.checker-container.valid-destination:active {
     background: goldenrod;
 }
 DIV.bar {

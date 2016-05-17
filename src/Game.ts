@@ -37,7 +37,7 @@ class Game {
             if (!(checkerContainer instanceof Home) && (checkerContainer.checkers[this.currentPlayer] > 0)) {
                 for (let die of [this.dice.die1, this.dice.die2]) {
                     if (die.remainingUses > 0) {
-                        this.board.highlightDestinationIfLegalMove(this.currentPlayer, checkerContainer.pointId, die.value);
+                        this.board.checkIfValidDestination(this.currentPlayer, checkerContainer.pointId, die.value);
                     }
                 }
             }

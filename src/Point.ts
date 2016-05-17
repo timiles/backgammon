@@ -28,8 +28,8 @@ class Point extends CheckerContainer {
         this.pointUI.setCheckers(player, this.checkers[player]);
     }
     
-    highlightDestination(on: boolean) {
-        this.pointUI.highlightDestination(on);
+    setValidDestination(on: boolean) {
+        this.pointUI.setValidDestination(on);
     }
     
     setValidSource(on: boolean) {

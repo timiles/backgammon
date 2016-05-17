@@ -45,7 +45,7 @@ class CheckerContainerUI {
         $(this.containerDiv).toggleClass('valid-source', on);
     }
     
-    highlightDestination(on: boolean): void {
-        $(this.containerDiv).toggleClass('highlight-destination', on);
+    setValidDestination(on: boolean): void {
+        $(this.containerDiv).toggleClass('valid-destination', on);
     }
 }

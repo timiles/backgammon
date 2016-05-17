@@ -154,12 +154,12 @@ describe('UI: home board', function () {
     it('should highlight home when inspecting checker that can bear off', function () {
         
         game.board.onPointInspected(game.board.checkerContainers[19], true);
-        expect($('#backgammon_point23').hasClass('highlight-destination')).toBe(true);
-        expect($('#backgammon_blackhome').hasClass('highlight-destination')).toBe(true);
+        expect($('#backgammon_point23').hasClass('valid-destination')).toBe(true);
+        expect($('#backgammon_blackhome').hasClass('valid-destination')).toBe(true);
         
         game.board.onPointInspected(game.board.checkerContainers[19], false);
-        expect($('#backgammon_point23').hasClass('highlight-destination')).toBe(false);
-        expect($('#backgammon_blackhome').hasClass('highlight-destination')).toBe(false);
+        expect($('#backgammon_point23').hasClass('valid-destination')).toBe(false);
+        expect($('#backgammon_blackhome').hasClass('valid-destination')).toBe(false);
     });
 
     it('should bear off home when selecting checker then selecting home', function () {
@@ -169,14 +169,14 @@ describe('UI: home board', function () {
         game.board.onPointInspected(game.board.checkerContainers[19], false);
 
         expect($('#backgammon_point19').hasClass('valid-source')).toBe(true);
-        expect($('#backgammon_point23').hasClass('highlight-destination')).toBe(true);
-        expect($('#backgammon_blackhome').hasClass('highlight-destination')).toBe(true);
+        expect($('#backgammon_point23').hasClass('valid-destination')).toBe(true);
+        expect($('#backgammon_blackhome').hasClass('valid-destination')).toBe(true);
         
         $('#backgammon_blackhome').click();
         expect($('#backgammon_blackhome').children('.black').length).toBe(1);
-        expect($('#backgammon_blackhome').hasClass('highlight-destination')).toBe(false);
+        expect($('#backgammon_blackhome').hasClass('valid-destination')).toBe(false);
         for (var i = 1; i <= 24; i++) {
-            expect($('#backgammon_point' + i).hasClass('highlight-destination')).toBe(false, 'Point ' + i + ' is not valid destination');
+            expect($('#backgammon_point' + i).hasClass('valid-destination')).toBe(false, 'Point ' + i + ' is not valid destination');
         }
     });
     

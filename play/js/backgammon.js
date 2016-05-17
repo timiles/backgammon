@@ -57,8 +57,8 @@ var CheckerContainerUI = (function () {
     CheckerContainerUI.prototype.setValidSource = function (on) {
         $(this.containerDiv).toggleClass('valid-source', on);
     };
-    CheckerContainerUI.prototype.highlightDestination = function (on) {
-        $(this.containerDiv).toggleClass('highlight-destination', on);
+    CheckerContainerUI.prototype.setValidDestination = function (on) {
+        $(this.containerDiv).toggleClass('valid-destination', on);
     };
     return CheckerContainerUI;
 })();
@@ -129,8 +129,8 @@ var Point = (function (_super) {
         _super.prototype.increment.call(this, player, count);
         this.pointUI.setCheckers(player, this.checkers[player]);
     };
-    Point.prototype.highlightDestination = function (on) {
-        this.pointUI.highlightDestination(on);
+    Point.prototype.setValidDestination = function (on) {
+        this.pointUI.setValidDestination(on);
     };
     Point.prototype.setValidSource = function (on) {
         this.pointUI.setValidSource(on);
@@ -259,8 +259,8 @@ var Home = (function (_super) {
         _super.prototype.increment.call(this, player, 1);
         this.homeUIs[player].setCheckers(player, this.checkers[player]);
     };
-    Home.prototype.highlightDestination = function (player, on) {
-        this.homeUIs[player].highlightDestination(on);
+    Home.prototype.setValidDestination = function (player, on) {
+        this.homeUIs[player].setValidDestination(on);
     };
     return Home;
 })(CheckerContainer);
@@ -397,23 +397,23 @@ var Board = (function () {
         this.increment(player, destinationPointId);
         return true;
     };
-    Board.prototype.highlightDestinationIfLegalMove = function (player, sourcePointId, numberOfMoves) {
+    Board.prototype.checkIfValidDestination = function (player, sourcePointId, numberOfMoves) {
         if (this.isLegalMove(player, sourcePointId, numberOfMoves)) {
             var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
             if (destinationPointId === PointId.HOME) {
-                this.checkerContainers[PointId.HOME].highlightDestination(player, true);
+                this.checkerContainers[PointId.HOME].setValidDestination(player, true);
             }
             else {
-                this.checkerContainers[destinationPointId].highlightDestination(true);
+                this.checkerContainers[destinationPointId].setValidDestination(true);
             }
         }
     };
     Board.prototype.removeAllHighlights = function () {
         for (var pointId = 1; pointId <= 24; pointId++) {
-            this.checkerContainers[pointId].highlightDestination(false);
+            this.checkerContainers[pointId].setValidDestination(false);
         }
-        this.checkerContainers[PointId.HOME].highlightDestination(Player.BLACK, false);
-        this.checkerContainers[PointId.HOME].highlightDestination(Player.RED, false);
+        this.checkerContainers[PointId.HOME].setValidDestination(Player.BLACK, false);
+        this.checkerContainers[PointId.HOME].setValidDestination(Player.RED, false);
     };
     return Board;
 })();
@@ -606,7 +606,7 @@ var Game = (function () {
                 for (var _i = 0, _a = [_this.dice.die1, _this.dice.die2]; _i < _a.length; _i++) {
                     var die = _a[_i];
                     if (die.remainingUses > 0) {
-                        _this.board.highlightDestinationIfLegalMove(_this.currentPlayer, checkerContainer.pointId, die.value);
+                        _this.board.checkIfValidDestination(_this.currentPlayer, checkerContainer.pointId, die.value);
                     }
                 }
             }
