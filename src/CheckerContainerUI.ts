@@ -6,19 +6,14 @@ declare var $;
 class CheckerContainerUI {
     
     containerDiv: HTMLDivElement;
-   
-    isSelected: boolean;
-    onSelected: (on: boolean) => void;
+    onSelected: () => void;
 
     constructor(containerType: string, isTopSide: boolean) {
         this.containerDiv = document.createElement('div');
         let side = (isTopSide ? 'top': 'bottom');
         this.containerDiv.className = `checker-container checker-container-${side} ${containerType}`;
         
-        this.containerDiv.onclick = () => {
-            this.isSelected = !this.isSelected;
-            this.onSelected(this.isSelected);
-        };
+        this.containerDiv.onclick = () => { this.onSelected(); };
     }
     
     setCheckers(player: Player, count: number) {

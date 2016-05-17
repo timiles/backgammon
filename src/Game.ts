@@ -43,7 +43,7 @@ class Game {
             }
         };
         
-        this.board.onPointSelected = (checkerContainer: CheckerContainer, on: boolean) => {
+        this.board.onPointSelected = (checkerContainer: CheckerContainer) => {
             if (this.currentSelectedCheckerContainer == undefined) {
                 if (checkerContainer.checkers[this.currentPlayer] == 0) {
                     // if no pieces here, exit

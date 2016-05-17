@@ -9,13 +9,13 @@ class Bar extends CheckerContainer {
         blackBarUI: BarUI,
         redBarUI: BarUI,
         onInspected: (bar: Bar, on: boolean) => void,
-        onSelected: (bar: Bar, on: boolean) => void) {
+        onSelected: (bar: Bar) => void) {
         super(PointId.BAR);
         
         blackBarUI.onInspected = (on: boolean) => { onInspected(this, on); };
-        blackBarUI.onSelected = (on: boolean) => { onSelected(this, on); };
+        blackBarUI.onSelected = () => { onSelected(this); };
         redBarUI.onInspected = (on: boolean) => { onInspected(this, on); };
-        redBarUI.onSelected = (on: boolean) => { onSelected(this, on); };
+        redBarUI.onSelected = () => { onSelected(this); };
         
         this.barUIs = new Array<BarUI>(2);
         this.barUIs[Player.BLACK] = blackBarUI;

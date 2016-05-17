@@ -30,10 +30,7 @@ var CheckerContainerUI = (function () {
         this.containerDiv = document.createElement('div');
         var side = (isTopSide ? 'top' : 'bottom');
         this.containerDiv.className = "checker-container checker-container-" + side + " " + containerType;
-        this.containerDiv.onclick = function () {
-            _this.isSelected = !_this.isSelected;
-            _this.onSelected(_this.isSelected);
-        };
+        this.containerDiv.onclick = function () { _this.onSelected(); };
     }
     CheckerContainerUI.prototype.setCheckers = function (player, count) {
         Utils.removeAllChildren(this.containerDiv);
@@ -77,10 +74,6 @@ var BarUI = (function (_super) {
         _super.call(this, 'bar', player === Player.RED);
         this.containerDiv.onmouseover = function () { _this.onInspected(true); };
         this.containerDiv.onmouseout = function () { _this.onInspected(false); };
-        this.containerDiv.onclick = function () {
-            _this.isSelected = !_this.isSelected;
-            _this.onSelected(_this.isSelected);
-        };
     }
     return BarUI;
 })(CheckerContainerUI);
@@ -119,7 +112,7 @@ var Point = (function (_super) {
         this.pointId = pointId;
         this.pointUI = pointUI;
         this.pointUI.onInspected = function (on) { onInspected(_this, on); };
-        this.pointUI.onSelected = function (on) { onSelected(_this, on); };
+        this.pointUI.onSelected = function () { onSelected(_this); };
     }
     Point.prototype.decrement = function (player) {
         _super.prototype.decrement.call(this, player);
@@ -149,9 +142,9 @@ var Bar = (function (_super) {
         var _this = this;
         _super.call(this, PointId.BAR);
         blackBarUI.onInspected = function (on) { onInspected(_this, on); };
-        blackBarUI.onSelected = function (on) { onSelected(_this, on); };
+        blackBarUI.onSelected = function () { onSelected(_this); };
         redBarUI.onInspected = function (on) { onInspected(_this, on); };
-        redBarUI.onSelected = function (on) { onSelected(_this, on); };
+        redBarUI.onSelected = function () { onSelected(_this); };
         this.barUIs = new Array(2);
         this.barUIs[Player.BLACK] = blackBarUI;
         this.barUIs[Player.RED] = redBarUI;
@@ -250,9 +243,9 @@ var Home = (function (_super) {
         var _this = this;
         _super.call(this, PointId.HOME);
         this.homeUIs = new Array(2);
-        blackHomeUI.onSelected = function (on) { onSelected(_this, on); };
+        blackHomeUI.onSelected = function () { onSelected(_this); };
         this.homeUIs[Player.BLACK] = blackHomeUI;
-        redHomeUI.onSelected = function (on) { onSelected(_this, on); };
+        redHomeUI.onSelected = function () { onSelected(_this); };
         this.homeUIs[Player.RED] = redHomeUI;
     }
     Home.prototype.increment = function (player) {
@@ -284,9 +277,9 @@ var Board = (function () {
                 _this.onPointInspected(checkerContainer, on);
             }
         };
-        var onPointSelected = function (checkerContainer, on) {
+        var onPointSelected = function (checkerContainer) {
             if (_this.onPointSelected) {
-                _this.onPointSelected(checkerContainer, on);
+                _this.onPointSelected(checkerContainer);
             }
         };
         this.checkerContainers = new Array(26);
@@ -611,7 +604,7 @@ var Game = (function () {
                 }
             }
         };
-        this.board.onPointSelected = function (checkerContainer, on) {
+        this.board.onPointSelected = function (checkerContainer) {
             if (_this.currentSelectedCheckerContainer == undefined) {
                 if (checkerContainer.checkers[_this.currentPlayer] == 0) {
                     // if no pieces here, exit

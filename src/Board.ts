@@ -11,7 +11,7 @@ class Board {
 
     checkerContainers: Array<CheckerContainer>;
     onPointInspected: (checkerContainer: CheckerContainer, on: boolean) => void;
-    onPointSelected: (checkerContainer: CheckerContainer, on: boolean) => void;
+    onPointSelected: (checkerContainer: CheckerContainer) => void;
     boardUI: BoardUI;
         
     constructor(boardUI: BoardUI) {
@@ -22,9 +22,9 @@ class Board {
                 this.onPointInspected(checkerContainer, on);
             }
         }
-        let onPointSelected = (checkerContainer: CheckerContainer, on: boolean) => {
+        let onPointSelected = (checkerContainer: CheckerContainer) => {
             if (this.onPointSelected) {
-                this.onPointSelected(checkerContainer, on);
+                this.onPointSelected(checkerContainer);
             }
         }
         this.checkerContainers = new Array(26);
