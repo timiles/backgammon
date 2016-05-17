@@ -21,16 +21,6 @@ class CheckerContainerUI {
         };
     }
     
-    setState(state?: PointState) {
-        // remove any class like 'state-*'
-        $(this.containerDiv).removeClass(function (index, css) {
-            return (css.match (/(^|\s)state-\S+/g) || []).join(' ');
-        });
-        if (state != undefined) {
-            $(this.containerDiv).addClass('state-' + Utils.toCssClass(PointState[state]));
-        }
-    }
-
     setCheckers(player: Player, count: number) {
         Utils.removeAllChildren(this.containerDiv);
 
@@ -49,6 +39,10 @@ class CheckerContainerUI {
     
     setSelected(on: boolean): void {
         $(this.containerDiv).toggleClass('selected', on);
+    }
+
+    setValidSource(on: boolean): void {
+        $(this.containerDiv).toggleClass('valid-source', on);
     }
     
     highlightDestination(on: boolean): void {

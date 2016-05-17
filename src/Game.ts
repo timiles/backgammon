@@ -180,27 +180,27 @@ class Game {
         if (this.currentSelectedCheckerContainer != undefined) {
             for (let i = 1; i <= 24; i++) {
                 if (i !== this.currentSelectedCheckerContainer.pointId) {
-                    (<Point> this.board.checkerContainers[i]).setState(undefined);
+                    (<Point> this.board.checkerContainers[i]).setValidSource(false);
                 }
             }
             return;
         }
         
-        let getPointState = (pointId: number): PointState => {
+        let isValidSource = (pointId: number): boolean => {
             if (this.board.checkerContainers[pointId].checkers[this.currentPlayer] > 0) {
                 for (let die of [this.dice.die1, this.dice.die2]) {
                     if ((die.remainingUses > 0) &&
                         (this.board.isLegalMove(this.currentPlayer, pointId, die.value))) {
-                            return PointState.VALID_SOURCE;
+                            return true;
                     }
                 }
             }
-            return undefined;
+            return false;
         };
 
-        (<Bar> this.board.checkerContainers[PointId.BAR]).setState(this.currentPlayer, getPointState(PointId.BAR));
+        (<Bar> this.board.checkerContainers[PointId.BAR]).setValidSource(this.currentPlayer, isValidSource(PointId.BAR));
         for (let i = 1; i <= 24; i++) {
-            (<Point> this.board.checkerContainers[i]).setState(getPointState(i));
+            (<Point> this.board.checkerContainers[i]).setValidSource(isValidSource(i));
         }        
     }
     

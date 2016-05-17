@@ -47,34 +47,34 @@ describe('UI: starting board', function () {
 
     it('should highlight valid sources', function () {
         // black: true where move is possible
-        expect($('#backgammon_point1').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point12').hasClass('state-valid-source')).toBe(true);
-        expect($('#backgammon_point17').hasClass('state-valid-source')).toBe(true);
-        expect($('#backgammon_point19').hasClass('state-valid-source')).toBe(false);
+        expect($('#backgammon_point1').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point12').hasClass('valid-source')).toBe(true);
+        expect($('#backgammon_point17').hasClass('valid-source')).toBe(true);
+        expect($('#backgammon_point19').hasClass('valid-source')).toBe(false);
         
         // red: none true
-        expect($('#backgammon_point6').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point8').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point13').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point24').hasClass('state-valid-source')).toBe(false);
+        expect($('#backgammon_point6').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point8').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point13').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point24').hasClass('valid-source')).toBe(false);
 
         // rest of the board: none true
-        expect($('#backgammon_point2').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point3').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point4').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point5').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point7').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point9').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point10').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point11').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point14').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point15').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point16').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point18').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point20').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point21').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point22').hasClass('state-valid-source')).toBe(false);
-        expect($('#backgammon_point23').hasClass('state-valid-source')).toBe(false);
+        expect($('#backgammon_point2').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point3').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point4').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point5').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point7').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point9').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point10').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point11').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point14').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point15').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point16').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point18').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point20').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point21').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point22').hasClass('valid-source')).toBe(false);
+        expect($('#backgammon_point23').hasClass('valid-source')).toBe(false);
         
     });
 
@@ -99,18 +99,18 @@ describe('UI: game play', function () {
     });
 
     it('should re-highlight sources after checker is selected then deselected', function () {
-        expect($('#backgammon_point1').hasClass('state-valid-source')).toBe(true);
-        expect($('#backgammon_point12').hasClass('state-valid-source')).toBe(true);
-        expect($('#backgammon_point17').hasClass('state-valid-source')).toBe(true);
-        expect($('#backgammon_point19').hasClass('state-valid-source')).toBe(true);
+        expect($('#backgammon_point1').hasClass('valid-source')).toBe(true);
+        expect($('#backgammon_point12').hasClass('valid-source')).toBe(true);
+        expect($('#backgammon_point17').hasClass('valid-source')).toBe(true);
+        expect($('#backgammon_point19').hasClass('valid-source')).toBe(true);
 
         $('#backgammon_point1').click();
         $('#backgammon_point1').click();
         
-        expect($('#backgammon_point1').hasClass('state-valid-source')).toBe(true);
-        expect($('#backgammon_point12').hasClass('state-valid-source')).toBe(true);
-        expect($('#backgammon_point17').hasClass('state-valid-source')).toBe(true);
-        expect($('#backgammon_point19').hasClass('state-valid-source')).toBe(true);
+        expect($('#backgammon_point1').hasClass('valid-source')).toBe(true);
+        expect($('#backgammon_point12').hasClass('valid-source')).toBe(true);
+        expect($('#backgammon_point17').hasClass('valid-source')).toBe(true);
+        expect($('#backgammon_point19').hasClass('valid-source')).toBe(true);
     });
 
 });
@@ -145,10 +145,10 @@ describe('UI: home board', function () {
 
     it('should enforce maximum possible dice use when bearing off', function () {
         
-        expect($('#backgammon_point19').hasClass('state-valid-source')).toBe(true);
-        expect($('#backgammon_point21').hasClass('state-valid-source')).toBe(true);
-        expect($('#backgammon_point22').hasClass('state-valid-source')).toBe(false, 'should use 6 or 4');
-        expect($('#backgammon_point23').hasClass('state-valid-source')).toBe(false, 'should use 6 or 4');
+        expect($('#backgammon_point19').hasClass('valid-source')).toBe(true);
+        expect($('#backgammon_point21').hasClass('valid-source')).toBe(true);
+        expect($('#backgammon_point22').hasClass('valid-source')).toBe(false, 'should use 6 or 4');
+        expect($('#backgammon_point23').hasClass('valid-source')).toBe(false, 'should use 6 or 4');
     });
     
     it('should highlight home when inspecting checker that can bear off', function () {
@@ -168,7 +168,7 @@ describe('UI: home board', function () {
         $('#backgammon_point19').click();
         game.board.onPointInspected(game.board.checkerContainers[19], false);
 
-        expect($('#backgammon_point19').hasClass('state-valid-source')).toBe(true);
+        expect($('#backgammon_point19').hasClass('valid-source')).toBe(true);
         expect($('#backgammon_point23').hasClass('highlight-destination')).toBe(true);
         expect($('#backgammon_blackhome').hasClass('highlight-destination')).toBe(true);
         

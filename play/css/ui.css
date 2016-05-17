@@ -40,12 +40,12 @@ DIV.checker-container {
     height: 110px;
     padding: 4px;
 }
-DIV.checker-container.state-valid-source:hover {
+DIV.checker-container.valid-source:hover {
     background: green;
     cursor: pointer;
 }
-DIV.checker-container.state-valid-source:active,
-DIV.checker-container.state-valid-source.selected {
+DIV.checker-container.valid-source:active,
+DIV.checker-container.valid-source.selected {
     background: darkgreen;
 }
 DIV.checker-container.highlight-destination {

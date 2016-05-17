@@ -3,10 +3,6 @@ var Player;
     Player[Player["BLACK"] = 0] = "BLACK";
     Player[Player["RED"] = 1] = "RED";
 })(Player || (Player = {}));
-var PointState;
-(function (PointState) {
-    PointState[PointState["VALID_SOURCE"] = 0] = "VALID_SOURCE";
-})(PointState || (PointState = {}));
 // REVIEW: invoke as extensions/prototype?
 var Utils = (function () {
     function Utils() {
@@ -16,9 +12,6 @@ var Utils = (function () {
         while (element.lastChild) {
             element.removeChild(element.lastChild);
         }
-    };
-    Utils.toCssClass = function (s) {
-        return s.toLowerCase().replace('_', '-');
     };
     Utils.highlight = function (el) {
         $(el).addClass('highlight');
@@ -42,15 +35,6 @@ var CheckerContainerUI = (function () {
             _this.onSelected(_this.isSelected);
         };
     }
-    CheckerContainerUI.prototype.setState = function (state) {
-        // remove any class like 'state-*'
-        $(this.containerDiv).removeClass(function (index, css) {
-            return (css.match(/(^|\s)state-\S+/g) || []).join(' ');
-        });
-        if (state != undefined) {
-            $(this.containerDiv).addClass('state-' + Utils.toCssClass(PointState[state]));
-        }
-    };
     CheckerContainerUI.prototype.setCheckers = function (player, count) {
         Utils.removeAllChildren(this.containerDiv);
         var $containerDiv = $(this.containerDiv);
@@ -69,6 +53,9 @@ var CheckerContainerUI = (function () {
     };
     CheckerContainerUI.prototype.setSelected = function (on) {
         $(this.containerDiv).toggleClass('selected', on);
+    };
+    CheckerContainerUI.prototype.setValidSource = function (on) {
+        $(this.containerDiv).toggleClass('valid-source', on);
     };
     CheckerContainerUI.prototype.highlightDestination = function (on) {
         $(this.containerDiv).toggleClass('highlight-destination', on);
@@ -145,8 +132,8 @@ var Point = (function (_super) {
     Point.prototype.highlightDestination = function (on) {
         this.pointUI.highlightDestination(on);
     };
-    Point.prototype.setState = function (state) {
-        this.pointUI.setState(state);
+    Point.prototype.setValidSource = function (on) {
+        this.pointUI.setValidSource(on);
     };
     Point.prototype.setSelected = function (on) {
         this.pointUI.setSelected(on);
@@ -180,8 +167,8 @@ var Bar = (function (_super) {
     Bar.prototype.setSelected = function (player, on) {
         this.barUIs[player].setSelected(on);
     };
-    Bar.prototype.setState = function (player, state) {
-        this.barUIs[player].setState(state);
+    Bar.prototype.setValidSource = function (player, on) {
+        this.barUIs[player].setValidSource(on);
     };
     return Bar;
 })(CheckerContainer);
@@ -743,26 +730,26 @@ var Game = (function () {
         if (this.currentSelectedCheckerContainer != undefined) {
             for (var i = 1; i <= 24; i++) {
                 if (i !== this.currentSelectedCheckerContainer.pointId) {
-                    this.board.checkerContainers[i].setState(undefined);
+                    this.board.checkerContainers[i].setValidSource(false);
                 }
             }
             return;
         }
-        var getPointState = function (pointId) {
+        var isValidSource = function (pointId) {
             if (_this.board.checkerContainers[pointId].checkers[_this.currentPlayer] > 0) {
                 for (var _i = 0, _a = [_this.dice.die1, _this.dice.die2]; _i < _a.length; _i++) {
                     var die = _a[_i];
                     if ((die.remainingUses > 0) &&
                         (_this.board.isLegalMove(_this.currentPlayer, pointId, die.value))) {
-                        return PointState.VALID_SOURCE;
+                        return true;
                     }
                 }
             }
-            return undefined;
+            return false;
         };
-        this.board.checkerContainers[PointId.BAR].setState(this.currentPlayer, getPointState(PointId.BAR));
+        this.board.checkerContainers[PointId.BAR].setValidSource(this.currentPlayer, isValidSource(PointId.BAR));
         for (var i = 1; i <= 24; i++) {
-            this.board.checkerContainers[i].setState(getPointState(i));
+            this.board.checkerContainers[i].setValidSource(isValidSource(i));
         }
     };
     Game.prototype.logCurrentPlayer = function () {

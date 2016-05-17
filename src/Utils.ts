@@ -8,11 +8,7 @@ class Utils {
             element.removeChild(element.lastChild);
         }
     }
-    
-    static toCssClass(s: string): string {
-        return s.toLowerCase().replace('_', '-');
-    }
-    
+        
     static highlight(el: HTMLElement) {
         $(el).addClass('highlight');
         // timeout purely to allow ui to update
