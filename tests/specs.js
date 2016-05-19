@@ -1,5 +1,6 @@
 'use strict';
 
+var game;
 var board;
 
 describe('Backgammon', function () {
@@ -13,7 +14,7 @@ describe('Backgammon', function () {
         
         let statusLogger = new StatusLogger(ui.statusUI);
 
-        new Game(ui, board, dice, statusLogger, Player.BLACK);
+        game = new Game(ui, board, dice, statusLogger, Player.BLACK);
     });
 
     it('should initialise a standard starting board', function () {
