@@ -144,7 +144,8 @@ class Board {
         }
         let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
         let otherPlayer = Game.getOtherPlayer(player);
-        if (this.checkerContainers[destinationPointId].checkers[otherPlayer] == 1) {
+        if (destinationPointId !== PointId.HOME &&
+            this.checkerContainers[destinationPointId].checkers[otherPlayer] == 1) {
             this.decrement(otherPlayer, destinationPointId);
             this.increment(otherPlayer, PointId.BAR);
         }
