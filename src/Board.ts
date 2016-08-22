@@ -34,27 +34,27 @@ class Board {
         }
         this.checkerContainers[PointId.BAR] = new Bar(this.boardUI.blackBarUI, this.boardUI.redBarUI, onPointInspected, onPointSelected);
         
-        this.increment(Player.RED, 24, 2);
-        this.increment(Player.BLACK, 1, 2);
-        this.increment(Player.RED, 6, 5);
-        this.increment(Player.BLACK, 19, 5);
-        this.increment(Player.RED, 8, 3);
-        this.increment(Player.BLACK, 17, 3);
-        this.increment(Player.RED, 13, 5);
-        this.increment(Player.BLACK, 12, 5);
+        this.increment(PlayerId.RED, 24, 2);
+        this.increment(PlayerId.BLACK, 1, 2);
+        this.increment(PlayerId.RED, 6, 5);
+        this.increment(PlayerId.BLACK, 19, 5);
+        this.increment(PlayerId.RED, 8, 3);
+        this.increment(PlayerId.BLACK, 17, 3);
+        this.increment(PlayerId.RED, 13, 5);
+        this.increment(PlayerId.BLACK, 12, 5);
     }
     
-    decrement(player: Player, pointId: number): void {
+    decrement(player: PlayerId, pointId: number): void {
         this.checkerContainers[pointId].decrement(player);
     }
         
-    increment(player: Player, pointId: number, count?: number): void {
+    increment(player: PlayerId, pointId: number, count?: number): void {
         this.checkerContainers[pointId].increment(player, count || 1);
     }
     
-    static getDestinationPointId(player: Player, sourcePointId: number, numberOfMoves: number): number {
+    static getDestinationPointId(player: PlayerId, sourcePointId: number, numberOfMoves: number): number {
         switch (player) {
-            case Player.BLACK: {
+            case PlayerId.BLACK: {
                 if (sourcePointId === PointId.BAR) {
                     return numberOfMoves;
                 }
@@ -67,7 +67,7 @@ class Board {
                 return destinationPointId;
 
             }
-            case Player.RED: {
+            case PlayerId.RED: {
                 if (sourcePointId === PointId.BAR) {
                     return PointId.BAR - numberOfMoves;
                 }
@@ -83,7 +83,7 @@ class Board {
         }
     }
     
-    isLegalMove(player: Player, sourcePointId: number, numberOfMoves: number): boolean {
+    isLegalMove(player: PlayerId, sourcePointId: number, numberOfMoves: number): boolean {
         
         // case: there is no counter to move: fail
         if (this.checkerContainers[sourcePointId].checkers[player] == 0) {
@@ -98,11 +98,11 @@ class Board {
         }
 
         // case: bearing off
-        const direction = (player === Player.BLACK) ? 1 : -1;
+        const direction = (player === PlayerId.BLACK) ? 1 : -1;
         let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
         if (destinationPointId === PointId.HOME) {
             // check that there are no checkers outside of home board. (BAR has already been checked above)
-            const startingPointOfOuterBoard = (player === Player.BLACK) ? 1 : 24;
+            const startingPointOfOuterBoard = (player === PlayerId.BLACK) ? 1 : 24;
             const totalPointsOfOuterBoard = 18;
             for (let offset = 0; offset < totalPointsOfOuterBoard; offset++) {
                 if (this.checkerContainers[startingPointOfOuterBoard + (direction * offset)].checkers[player] > 0) {
@@ -117,7 +117,7 @@ class Board {
                 return true;
             }
             
-            const startingPointOfHomeBoard = (player === Player.BLACK) ? 18 : 6;
+            const startingPointOfHomeBoard = (player === PlayerId.BLACK) ? 18 : 6;
             for (let homeBoardPointId = startingPointOfHomeBoard; homeBoardPointId !== sourcePointId; homeBoardPointId += direction) {
                 if (this.checkerContainers[homeBoardPointId].checkers[player] > 0) {
                     // if we find a checker on a further out point, sourcePointId is not valid
@@ -138,7 +138,7 @@ class Board {
         return true;
     }
     
-    move(player: Player, sourcePointId: number, numberOfMoves: number): boolean {
+    move(player: PlayerId, sourcePointId: number, numberOfMoves: number): boolean {
         if (!this.isLegalMove(player, sourcePointId, numberOfMoves)) {
             return false;
         }
@@ -154,7 +154,7 @@ class Board {
         return true;
     }
         
-    checkIfValidDestination(player: Player, sourcePointId: number, numberOfMoves: number): void {
+    checkIfValidDestination(player: PlayerId, sourcePointId: number, numberOfMoves: number): void {
         if (this.isLegalMove(player, sourcePointId, numberOfMoves)) {
             let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
             if (destinationPointId === PointId.HOME) {
@@ -170,7 +170,7 @@ class Board {
         for (let pointId = 1; pointId <= 24; pointId++) {
             (<Point> this.checkerContainers[pointId]).setValidDestination(false);
         }
-        (<Home> this.checkerContainers[PointId.HOME]).setValidDestination(Player.BLACK, false);
-        (<Home> this.checkerContainers[PointId.HOME]).setValidDestination(Player.RED, false);
+        (<Home> this.checkerContainers[PointId.HOME]).setValidDestination(PlayerId.BLACK, false);
+        (<Home> this.checkerContainers[PointId.HOME]).setValidDestination(PlayerId.RED, false);
     }
 }

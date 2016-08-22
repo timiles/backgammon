@@ -27,11 +27,11 @@ describe('UI: starting board', function () {
         fakeDiceRollGenerator = new FakeDiceRollGenerator([5, 5]);
 
         let dice = new Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
-        dice.roll(Player.BLACK);
+        dice.roll(PlayerId.BLACK);
         
         let statusLogger = new StatusLogger(ui.statusUI);
 
-        game = new Game(ui, board, dice, statusLogger, Player.BLACK);
+        game = new Game(ui, board, dice, statusLogger, PlayerId.BLACK);
     });
 
     it('should initialise points as expected', function () {
@@ -91,11 +91,11 @@ describe('UI: game play', function () {
         fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
 
         let dice = new Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
-        dice.roll(Player.BLACK);
+        dice.roll(PlayerId.BLACK);
         
         let statusLogger = new StatusLogger(ui.statusUI);
 
-        game = new Game(ui, board, dice, statusLogger, Player.BLACK);
+        game = new Game(ui, board, dice, statusLogger, PlayerId.BLACK);
     });
 
     it('should re-highlight sources after checker is selected then deselected', function () {
@@ -122,25 +122,25 @@ describe('UI: home board', function () {
         let ui = new GameUI('backgammon');
         let board = new Board(ui.boardUI);
         
-        board.move(Player.BLACK, 1, 22);
-        board.move(Player.BLACK, 1, 22);
-        board.move(Player.BLACK, 12, 9);
-        board.move(Player.BLACK, 12, 9);
-        board.move(Player.BLACK, 12, 9);
-        board.move(Player.BLACK, 12, 9);
-        board.move(Player.BLACK, 12, 9);
-        board.move(Player.BLACK, 17, 5);
-        board.move(Player.BLACK, 17, 5);
-        board.move(Player.BLACK, 17, 5);
+        board.move(PlayerId.BLACK, 1, 22);
+        board.move(PlayerId.BLACK, 1, 22);
+        board.move(PlayerId.BLACK, 12, 9);
+        board.move(PlayerId.BLACK, 12, 9);
+        board.move(PlayerId.BLACK, 12, 9);
+        board.move(PlayerId.BLACK, 12, 9);
+        board.move(PlayerId.BLACK, 12, 9);
+        board.move(PlayerId.BLACK, 17, 5);
+        board.move(PlayerId.BLACK, 17, 5);
+        board.move(PlayerId.BLACK, 17, 5);
         
         fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
 
         let dice = new Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
-        dice.roll(Player.BLACK);
+        dice.roll(PlayerId.BLACK);
         
         let statusLogger = new StatusLogger(ui.statusUI);
 
-        game = new Game(ui, board, dice, statusLogger, Player.BLACK);
+        game = new Game(ui, board, dice, statusLogger, PlayerId.BLACK);
     });
 
     it('should enforce maximum possible dice use when bearing off', function () {
@@ -182,11 +182,11 @@ describe('UI: home board', function () {
     
     it('should bear off automatically when selecting furthest checker and both dice exceed required pip count', function () {
         
-        game.board.move(Player.BLACK, 19, 4);
-        game.board.move(Player.BLACK, 19, 4);
-        game.board.move(Player.BLACK, 19, 4);
-        game.board.move(Player.BLACK, 19, 4);
-        game.board.move(Player.BLACK, 19, 4);
+        game.board.move(PlayerId.BLACK, 19, 4);
+        game.board.move(PlayerId.BLACK, 19, 4);
+        game.board.move(PlayerId.BLACK, 19, 4);
+        game.board.move(PlayerId.BLACK, 19, 4);
+        game.board.move(PlayerId.BLACK, 19, 4);
 
         $('#backgammon_point21').click();
 

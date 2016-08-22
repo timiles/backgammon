@@ -11,10 +11,10 @@ class Game {
     dice: Dice;
     statusLogger: StatusLogger;
     
-    currentPlayer: Player;
+    currentPlayer: PlayerId;
     currentSelectedCheckerContainer: CheckerContainer;
     
-    constructor(gameUI: GameUI, board: Board, dice: Dice, statusLogger: StatusLogger, currentPlayer: Player) {
+    constructor(gameUI: GameUI, board: Board, dice: Dice, statusLogger: StatusLogger, currentPlayer: PlayerId) {
 
         this.board = board;        
         this.dice = dice;
@@ -155,7 +155,7 @@ class Game {
     
     private switchPlayerIfNoValidMovesRemain(): void {
         if (this.board.checkerContainers[PointId.HOME].checkers[this.currentPlayer] === 15) {
-            this.statusLogger.logInfo(`${Player[this.currentPlayer]} WINS!`);
+            this.statusLogger.logInfo(`${PlayerId[this.currentPlayer]} WINS!`);
             return;
         }
         if (!this.checkIfValidMovesRemain()) {
@@ -167,8 +167,8 @@ class Game {
         }
     }
  
-    static getOtherPlayer(player: Player): Player {
-        return player === Player.BLACK ? Player.RED : Player.BLACK;
+    static getOtherPlayer(player: PlayerId): PlayerId {
+        return player === PlayerId.BLACK ? PlayerId.RED : PlayerId.BLACK;
     }
         
     switchPlayer(): void {
@@ -205,6 +205,6 @@ class Game {
     }
     
     logCurrentPlayer(): void {
-        this.statusLogger.logInfo(`${Player[this.currentPlayer]} to move`);
+        this.statusLogger.logInfo(`${PlayerId[this.currentPlayer]} to move`);
     }
 }

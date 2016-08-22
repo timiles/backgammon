@@ -13,16 +13,16 @@ class Dice {
     constructor(diceRollGenerator: CanGenerateDiceRoll, blackDiceUI: DiceUI, redDiceUI: DiceUI) {
         this.diceRollGenerator = diceRollGenerator;
         this.diceUIs = new Array<DiceUI>();
-        this.diceUIs[Player.BLACK] = blackDiceUI;
-        this.diceUIs[Player.RED] = redDiceUI;
+        this.diceUIs[PlayerId.BLACK] = blackDiceUI;
+        this.diceUIs[PlayerId.RED] = redDiceUI;
     }
 
-    rollToStart(statusLogger: StatusLogger, onSuccess: (successfulPlayer: Player) => void) {
+    rollToStart(statusLogger: StatusLogger, onSuccess: (successfulPlayer: PlayerId) => void) {
         
         let die1 = new Die(this.diceRollGenerator.generateDiceRoll());
         let die2 = new Die(this.diceRollGenerator.generateDiceRoll());
-        this.diceUIs[Player.BLACK].setStartingDiceRoll(die1);
-        this.diceUIs[Player.RED].setStartingDiceRoll(die2);
+        this.diceUIs[PlayerId.BLACK].setStartingDiceRoll(die1);
+        this.diceUIs[PlayerId.RED].setStartingDiceRoll(die2);
 
         statusLogger.logInfo(`BLACK rolls ${die1.value}`);
         statusLogger.logInfo(`RED rolls ${die2.value}`);
@@ -32,8 +32,8 @@ class Dice {
             setTimeout(() => { this.rollToStart(statusLogger, onSuccess); }, 1000);
         }
         else {
-            let successfulPlayer = die1.value > die2.value ? Player.BLACK : Player.RED;
-            statusLogger.logInfo(`${Player[successfulPlayer]} wins the starting roll`);
+            let successfulPlayer = die1.value > die2.value ? PlayerId.BLACK : PlayerId.RED;
+            statusLogger.logInfo(`${PlayerId[successfulPlayer]} wins the starting roll`);
             setTimeout(() => {
                 this.die1 = die1;
                 this.die2 = die2;
@@ -44,7 +44,7 @@ class Dice {
         }    
     }
     
-    roll(player: Player): void {
+    roll(player: PlayerId): void {
         this.die1 = new Die(this.diceRollGenerator.generateDiceRoll());
         this.die2 = new Die(this.diceRollGenerator.generateDiceRoll());
         let isDouble = (this.die1.value === this.die2.value);
@@ -56,7 +56,7 @@ class Dice {
         
         this.diceUIs[player].setDiceRolls(this.die1, this.die2);
         this.diceUIs[player].setActive(true);
-        let otherPlayer = player === Player.BLACK ? Player.RED : Player.BLACK;
+        let otherPlayer = player === PlayerId.BLACK ? PlayerId.RED : PlayerId.BLACK;
         this.diceUIs[otherPlayer].setActive(false);
     }
 }

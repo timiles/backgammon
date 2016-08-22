@@ -18,12 +18,12 @@ class Point extends CheckerContainer {
         this.pointUI.onSelected = () => { onSelected(this); };
     }
     
-    decrement(player: Player): void {
+    decrement(player: PlayerId): void {
         super.decrement(player);
         this.pointUI.setCheckers(player, this.checkers[player]);
     }
     
-    increment(player: Player, count: number): void {
+    increment(player: PlayerId, count: number): void {
         super.increment(player, count);
         this.pointUI.setCheckers(player, this.checkers[player]);
     }

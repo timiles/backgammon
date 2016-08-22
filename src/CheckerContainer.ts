@@ -10,11 +10,11 @@ class CheckerContainer {
         this.checkers = [0, 0];
     }
     
-    decrement(player: Player): void {
+    decrement(player: PlayerId): void {
         this.checkers[player]--;
     }
     
-    increment(player: Player, count: number): void {
+    increment(player: PlayerId, count: number): void {
         this.checkers[player] += count;
     }
 }

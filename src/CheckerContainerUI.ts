@@ -16,11 +16,11 @@ class CheckerContainerUI {
         this.containerDiv.onclick = () => { this.onSelected(); };
     }
     
-    setCheckers(player: Player, count: number) {
+    setCheckers(player: PlayerId, count: number) {
         Utils.removeAllChildren(this.containerDiv);
 
         let $containerDiv = $(this.containerDiv);
-        let className = Player[player].toLowerCase();
+        let className = PlayerId[player].toLowerCase();
         for (let i = 1; i <= count; i++) {
             if (i > 5) {
                 $('.checker-total', $containerDiv).text(count);

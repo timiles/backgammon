@@ -19,9 +19,9 @@ class BoardUI {
         Utils.removeAllChildren(this.containerDiv);
         this.containerDiv.className = 'board';
         
-        this.blackHomeUI = new HomeUI(Player.BLACK);
+        this.blackHomeUI = new HomeUI(PlayerId.BLACK);
         this.blackHomeUI.containerDiv.id = `${gameContainerId}_blackhome`;
-        this.redHomeUI = new HomeUI(Player.RED);
+        this.redHomeUI = new HomeUI(PlayerId.RED);
         this.redHomeUI.containerDiv.id = `${gameContainerId}_redhome`;
         
         this.pointUIs = new Array<PointUI>(24);
@@ -32,8 +32,8 @@ class BoardUI {
             this.pointUIs[i].containerDiv.id = `${gameContainerId}_point${i + 1}`;
         }
         
-        this.blackBarUI = new BarUI(Player.BLACK);
-        this.redBarUI = new BarUI(Player.RED);
+        this.blackBarUI = new BarUI(PlayerId.BLACK);
+        this.redBarUI = new BarUI(PlayerId.RED);
 
         // append all elements in the correct order
         this.containerDiv.appendChild(this.pointUIs[12].containerDiv);

@@ -1,8 +1,8 @@
-var Player;
-(function (Player) {
-    Player[Player["BLACK"] = 0] = "BLACK";
-    Player[Player["RED"] = 1] = "RED";
-})(Player || (Player = {}));
+var PlayerId;
+(function (PlayerId) {
+    PlayerId[PlayerId["BLACK"] = 0] = "BLACK";
+    PlayerId[PlayerId["RED"] = 1] = "RED";
+})(PlayerId || (PlayerId = {}));
 // REVIEW: invoke as extensions/prototype?
 var Utils = (function () {
     function Utils() {
@@ -35,7 +35,7 @@ var CheckerContainerUI = (function () {
     CheckerContainerUI.prototype.setCheckers = function (player, count) {
         Utils.removeAllChildren(this.containerDiv);
         var $containerDiv = $(this.containerDiv);
-        var className = Player[player].toLowerCase();
+        var className = PlayerId[player].toLowerCase();
         for (var i = 1; i <= count; i++) {
             if (i > 5) {
                 $('.checker-total', $containerDiv).text(count);
@@ -71,7 +71,7 @@ var BarUI = (function (_super) {
     __extends(BarUI, _super);
     function BarUI(player) {
         var _this = this;
-        _super.call(this, 'bar', player === Player.RED);
+        _super.call(this, 'bar', player === PlayerId.RED);
         this.containerDiv.onmouseover = function () { _this.onInspected(true); };
         this.containerDiv.onmouseout = function () { _this.onInspected(false); };
     }
@@ -146,8 +146,8 @@ var Bar = (function (_super) {
         redBarUI.onInspected = function (on) { onInspected(_this, on); };
         redBarUI.onSelected = function () { onSelected(_this); };
         this.barUIs = new Array(2);
-        this.barUIs[Player.BLACK] = blackBarUI;
-        this.barUIs[Player.RED] = redBarUI;
+        this.barUIs[PlayerId.BLACK] = blackBarUI;
+        this.barUIs[PlayerId.RED] = redBarUI;
     }
     Bar.prototype.decrement = function (player) {
         _super.prototype.decrement.call(this, player);
@@ -169,7 +169,7 @@ var Bar = (function (_super) {
 var HomeUI = (function (_super) {
     __extends(HomeUI, _super);
     function HomeUI(player) {
-        _super.call(this, 'home', player === Player.BLACK);
+        _super.call(this, 'home', player === PlayerId.BLACK);
     }
     return HomeUI;
 })(CheckerContainerUI);
@@ -183,9 +183,9 @@ var BoardUI = (function () {
         this.containerDiv = document.createElement('div');
         Utils.removeAllChildren(this.containerDiv);
         this.containerDiv.className = 'board';
-        this.blackHomeUI = new HomeUI(Player.BLACK);
+        this.blackHomeUI = new HomeUI(PlayerId.BLACK);
         this.blackHomeUI.containerDiv.id = gameContainerId + "_blackhome";
-        this.redHomeUI = new HomeUI(Player.RED);
+        this.redHomeUI = new HomeUI(PlayerId.RED);
         this.redHomeUI.containerDiv.id = gameContainerId + "_redhome";
         this.pointUIs = new Array(24);
         for (var i = 0; i < this.pointUIs.length; i++) {
@@ -194,8 +194,8 @@ var BoardUI = (function () {
             this.pointUIs[i] = new PointUI(colour, isTopSide);
             this.pointUIs[i].containerDiv.id = gameContainerId + "_point" + (i + 1);
         }
-        this.blackBarUI = new BarUI(Player.BLACK);
-        this.redBarUI = new BarUI(Player.RED);
+        this.blackBarUI = new BarUI(PlayerId.BLACK);
+        this.redBarUI = new BarUI(PlayerId.RED);
         // append all elements in the correct order
         this.containerDiv.appendChild(this.pointUIs[12].containerDiv);
         this.containerDiv.appendChild(this.pointUIs[13].containerDiv);
@@ -244,9 +244,9 @@ var Home = (function (_super) {
         _super.call(this, PointId.HOME);
         this.homeUIs = new Array(2);
         blackHomeUI.onSelected = function () { onSelected(_this); };
-        this.homeUIs[Player.BLACK] = blackHomeUI;
+        this.homeUIs[PlayerId.BLACK] = blackHomeUI;
         redHomeUI.onSelected = function () { onSelected(_this); };
-        this.homeUIs[Player.RED] = redHomeUI;
+        this.homeUIs[PlayerId.RED] = redHomeUI;
     }
     Home.prototype.increment = function (player) {
         _super.prototype.increment.call(this, player, 1);
@@ -288,14 +288,14 @@ var Board = (function () {
             this.checkerContainers[i] = new Point(this.boardUI.pointUIs[i - 1], i, onPointInspected, onPointSelected);
         }
         this.checkerContainers[PointId.BAR] = new Bar(this.boardUI.blackBarUI, this.boardUI.redBarUI, onPointInspected, onPointSelected);
-        this.increment(Player.RED, 24, 2);
-        this.increment(Player.BLACK, 1, 2);
-        this.increment(Player.RED, 6, 5);
-        this.increment(Player.BLACK, 19, 5);
-        this.increment(Player.RED, 8, 3);
-        this.increment(Player.BLACK, 17, 3);
-        this.increment(Player.RED, 13, 5);
-        this.increment(Player.BLACK, 12, 5);
+        this.increment(PlayerId.RED, 24, 2);
+        this.increment(PlayerId.BLACK, 1, 2);
+        this.increment(PlayerId.RED, 6, 5);
+        this.increment(PlayerId.BLACK, 19, 5);
+        this.increment(PlayerId.RED, 8, 3);
+        this.increment(PlayerId.BLACK, 17, 3);
+        this.increment(PlayerId.RED, 13, 5);
+        this.increment(PlayerId.BLACK, 12, 5);
     }
     Board.prototype.decrement = function (player, pointId) {
         this.checkerContainers[pointId].decrement(player);
@@ -305,7 +305,7 @@ var Board = (function () {
     };
     Board.getDestinationPointId = function (player, sourcePointId, numberOfMoves) {
         switch (player) {
-            case Player.BLACK: {
+            case PlayerId.BLACK: {
                 if (sourcePointId === PointId.BAR) {
                     return numberOfMoves;
                 }
@@ -316,7 +316,7 @@ var Board = (function () {
                 }
                 return destinationPointId;
             }
-            case Player.RED: {
+            case PlayerId.RED: {
                 if (sourcePointId === PointId.BAR) {
                     return PointId.BAR - numberOfMoves;
                 }
@@ -342,11 +342,11 @@ var Board = (function () {
             return false;
         }
         // case: bearing off
-        var direction = (player === Player.BLACK) ? 1 : -1;
+        var direction = (player === PlayerId.BLACK) ? 1 : -1;
         var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
         if (destinationPointId === PointId.HOME) {
             // check that there are no checkers outside of home board. (BAR has already been checked above)
-            var startingPointOfOuterBoard = (player === Player.BLACK) ? 1 : 24;
+            var startingPointOfOuterBoard = (player === PlayerId.BLACK) ? 1 : 24;
             var totalPointsOfOuterBoard = 18;
             for (var offset = 0; offset < totalPointsOfOuterBoard; offset++) {
                 if (this.checkerContainers[startingPointOfOuterBoard + (direction * offset)].checkers[player] > 0) {
@@ -359,7 +359,7 @@ var Board = (function () {
             if (actualDestinationPointId === 0 || actualDestinationPointId === 25) {
                 return true;
             }
-            var startingPointOfHomeBoard = (player === Player.BLACK) ? 18 : 6;
+            var startingPointOfHomeBoard = (player === PlayerId.BLACK) ? 18 : 6;
             for (var homeBoardPointId = startingPointOfHomeBoard; homeBoardPointId !== sourcePointId; homeBoardPointId += direction) {
                 if (this.checkerContainers[homeBoardPointId].checkers[player] > 0) {
                     // if we find a checker on a further out point, sourcePointId is not valid
@@ -406,8 +406,8 @@ var Board = (function () {
         for (var pointId = 1; pointId <= 24; pointId++) {
             this.checkerContainers[pointId].setValidDestination(false);
         }
-        this.checkerContainers[PointId.HOME].setValidDestination(Player.BLACK, false);
-        this.checkerContainers[PointId.HOME].setValidDestination(Player.RED, false);
+        this.checkerContainers[PointId.HOME].setValidDestination(PlayerId.BLACK, false);
+        this.checkerContainers[PointId.HOME].setValidDestination(PlayerId.RED, false);
     };
     return Board;
 })();
@@ -437,7 +437,7 @@ var DiceRollGenerator = (function () {
 var DiceUI = (function () {
     function DiceUI(player) {
         this.containerDiv = document.createElement('div');
-        this.containerDiv.className = "dice-container dice-container-" + Player[player].toLowerCase();
+        this.containerDiv.className = "dice-container dice-container-" + PlayerId[player].toLowerCase();
     }
     DiceUI.prototype.setStartingDiceRoll = function (die) {
         Utils.removeAllChildren(this.containerDiv);
@@ -506,15 +506,15 @@ var Dice = (function () {
     function Dice(diceRollGenerator, blackDiceUI, redDiceUI) {
         this.diceRollGenerator = diceRollGenerator;
         this.diceUIs = new Array();
-        this.diceUIs[Player.BLACK] = blackDiceUI;
-        this.diceUIs[Player.RED] = redDiceUI;
+        this.diceUIs[PlayerId.BLACK] = blackDiceUI;
+        this.diceUIs[PlayerId.RED] = redDiceUI;
     }
     Dice.prototype.rollToStart = function (statusLogger, onSuccess) {
         var _this = this;
         var die1 = new Die(this.diceRollGenerator.generateDiceRoll());
         var die2 = new Die(this.diceRollGenerator.generateDiceRoll());
-        this.diceUIs[Player.BLACK].setStartingDiceRoll(die1);
-        this.diceUIs[Player.RED].setStartingDiceRoll(die2);
+        this.diceUIs[PlayerId.BLACK].setStartingDiceRoll(die1);
+        this.diceUIs[PlayerId.RED].setStartingDiceRoll(die2);
         statusLogger.logInfo("BLACK rolls " + die1.value);
         statusLogger.logInfo("RED rolls " + die2.value);
         if (die1.value === die2.value) {
@@ -522,8 +522,8 @@ var Dice = (function () {
             setTimeout(function () { _this.rollToStart(statusLogger, onSuccess); }, 1000);
         }
         else {
-            var successfulPlayer = die1.value > die2.value ? Player.BLACK : Player.RED;
-            statusLogger.logInfo(Player[successfulPlayer] + " wins the starting roll");
+            var successfulPlayer = die1.value > die2.value ? PlayerId.BLACK : PlayerId.RED;
+            statusLogger.logInfo(PlayerId[successfulPlayer] + " wins the starting roll");
             setTimeout(function () {
                 _this.die1 = die1;
                 _this.die2 = die2;
@@ -543,7 +543,7 @@ var Dice = (function () {
         }
         this.diceUIs[player].setDiceRolls(this.die1, this.die2);
         this.diceUIs[player].setActive(true);
-        var otherPlayer = player === Player.BLACK ? Player.RED : Player.BLACK;
+        var otherPlayer = player === PlayerId.BLACK ? PlayerId.RED : PlayerId.BLACK;
         this.diceUIs[otherPlayer].setActive(false);
     };
     return Dice;
@@ -559,8 +559,8 @@ var GameUI = (function () {
         container.className = 'game-container';
         Utils.removeAllChildren(container);
         this.boardUI = new BoardUI(containerElementId);
-        this.blackDiceUI = new DiceUI(Player.BLACK);
-        this.redDiceUI = new DiceUI(Player.RED);
+        this.blackDiceUI = new DiceUI(PlayerId.BLACK);
+        this.redDiceUI = new DiceUI(PlayerId.RED);
         this.statusUI = new StatusUI();
         container.appendChild(this.boardUI.containerDiv);
         var sideContainer = document.createElement('div');
@@ -701,7 +701,7 @@ var Game = (function () {
     };
     Game.prototype.switchPlayerIfNoValidMovesRemain = function () {
         if (this.board.checkerContainers[PointId.HOME].checkers[this.currentPlayer] === 15) {
-            this.statusLogger.logInfo(Player[this.currentPlayer] + " WINS!");
+            this.statusLogger.logInfo(PlayerId[this.currentPlayer] + " WINS!");
             return;
         }
         if (!this.checkIfValidMovesRemain()) {
@@ -713,7 +713,7 @@ var Game = (function () {
         }
     };
     Game.getOtherPlayer = function (player) {
-        return player === Player.BLACK ? Player.RED : Player.BLACK;
+        return player === PlayerId.BLACK ? PlayerId.RED : PlayerId.BLACK;
     };
     Game.prototype.switchPlayer = function () {
         this.currentPlayer = (this.currentPlayer + 1) % 2;
@@ -747,7 +747,7 @@ var Game = (function () {
         }
     };
     Game.prototype.logCurrentPlayer = function () {
-        this.statusLogger.logInfo(Player[this.currentPlayer] + " to move");
+        this.statusLogger.logInfo(PlayerId[this.currentPlayer] + " to move");
     };
     return Game;
 })();

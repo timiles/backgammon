@@ -18,25 +18,25 @@ class Bar extends CheckerContainer {
         redBarUI.onSelected = () => { onSelected(this); };
         
         this.barUIs = new Array<BarUI>(2);
-        this.barUIs[Player.BLACK] = blackBarUI;
-        this.barUIs[Player.RED] = redBarUI;
+        this.barUIs[PlayerId.BLACK] = blackBarUI;
+        this.barUIs[PlayerId.RED] = redBarUI;
     }
     
-    decrement(player: Player): void {
+    decrement(player: PlayerId): void {
         super.decrement(player);
         this.barUIs[player].setCheckers(player, this.checkers[player]);
     }
     
-    increment(player: Player, count: number): void {
+    increment(player: PlayerId, count: number): void {
         super.increment(player, count);
         this.barUIs[player].setCheckers(player, this.checkers[player]);
     }
     
-    setSelected(player: Player, on: boolean) {
+    setSelected(player: PlayerId, on: boolean) {
         this.barUIs[player].setSelected(on);
     }
     
-    setValidSource(player: Player, on: boolean) {
+    setValidSource(player: PlayerId, on: boolean) {
         this.barUIs[player].setValidSource(on);
     }
 }

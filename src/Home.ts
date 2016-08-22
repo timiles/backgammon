@@ -10,18 +10,18 @@ class Home extends CheckerContainer {
         this.homeUIs = new Array<HomeUI>(2);
         
         blackHomeUI.onSelected = () => { onSelected(this); };
-        this.homeUIs[Player.BLACK] = blackHomeUI;
+        this.homeUIs[PlayerId.BLACK] = blackHomeUI;
 
         redHomeUI.onSelected = () => { onSelected(this); };
-        this.homeUIs[Player.RED] = redHomeUI;        
+        this.homeUIs[PlayerId.RED] = redHomeUI;        
     }
     
-    increment(player: Player): void {
+    increment(player: PlayerId): void {
         super.increment(player, 1);
         this.homeUIs[player].setCheckers(player, this.checkers[player]);
     }
     
-    setValidDestination(player: Player, on: boolean) {
+    setValidDestination(player: PlayerId, on: boolean) {
         this.homeUIs[player].setValidDestination(on);
     }
 }

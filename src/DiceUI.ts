@@ -7,9 +7,9 @@ class DiceUI {
     die1: Die;
     die2: Die;
     
-    constructor(player: Player) {        
+    constructor(player: PlayerId) {        
         this.containerDiv = document.createElement('div');
-        this.containerDiv.className = `dice-container dice-container-${Player[player].toLowerCase()}`;
+        this.containerDiv.className = `dice-container dice-container-${PlayerId[player].toLowerCase()}`;
     }
     
     setStartingDiceRoll(die: Die) {

@@ -1,1 +1,1 @@
-enum Player { BLACK, RED }
+enum PlayerId { BLACK, RED }
