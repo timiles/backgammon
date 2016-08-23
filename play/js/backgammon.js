@@ -236,24 +236,21 @@ var BoardUI = (function () {
     return BoardUI;
 })();
 /// <reference path="CheckerContainer.ts"/>
-/// <reference path="HomeUI.ts"/>
 var Home = (function (_super) {
     __extends(Home, _super);
-    function Home(blackHomeUI, redHomeUI, onSelected) {
-        var _this = this;
+    function Home() {
         _super.call(this, PointId.HOME);
-        this.homeUIs = new Array(2);
-        blackHomeUI.onSelected = function () { onSelected(_this); };
-        this.homeUIs[PlayerId.BLACK] = blackHomeUI;
-        redHomeUI.onSelected = function () { onSelected(_this); };
-        this.homeUIs[PlayerId.RED] = redHomeUI;
     }
-    Home.prototype.increment = function (player) {
-        _super.prototype.increment.call(this, player, 1);
-        this.homeUIs[player].setCheckers(player, this.checkers[player]);
+    Home.prototype.increment = function (playerId) {
+        _super.prototype.increment.call(this, playerId, 1);
+        if (this.onIncrement) {
+            this.onIncrement(playerId, this.checkers[playerId]);
+        }
     };
-    Home.prototype.setValidDestination = function (player, on) {
-        this.homeUIs[player].setValidDestination(on);
+    Home.prototype.setValidDestination = function (playerId, on) {
+        if (this.onSetValidDestination) {
+            this.onSetValidDestination(playerId, on);
+        }
     };
     return Home;
 })(CheckerContainer);
@@ -283,7 +280,19 @@ var Board = (function () {
             }
         };
         this.checkerContainers = new Array(26);
-        this.checkerContainers[PointId.HOME] = new Home(this.boardUI.blackHomeUI, this.boardUI.redHomeUI, onPointSelected);
+        var homeUIs = new Array(2);
+        homeUIs[PlayerId.BLACK] = this.boardUI.blackHomeUI;
+        homeUIs[PlayerId.RED] = this.boardUI.redHomeUI;
+        var home = new Home();
+        this.boardUI.blackHomeUI.onSelected = function () { return onPointSelected(home); };
+        this.boardUI.redHomeUI.onSelected = function () { return onPointSelected(home); };
+        home.onIncrement = function (playerId, count) {
+            homeUIs[playerId].setCheckers(playerId, count);
+        };
+        home.onSetValidDestination = function (playerId, on) {
+            homeUIs[playerId].setValidDestination(on);
+        };
+        this.checkerContainers[PointId.HOME] = home;
         for (var i = 1; i < 25; i++) {
             this.checkerContainers[i] = new Point(this.boardUI.pointUIs[i - 1], i, onPointInspected, onPointSelected);
         }

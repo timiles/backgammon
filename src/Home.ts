@@ -1,27 +1,24 @@
 /// <reference path="CheckerContainer.ts"/>
-/// <reference path="HomeUI.ts"/>
 
 class Home extends CheckerContainer {
-    homeUIs: Array<HomeUI>;
-    
-    constructor(blackHomeUI: HomeUI, redHomeUI: HomeUI, onSelected: (home: Home) => void) {
-        super(PointId.HOME);
-        
-        this.homeUIs = new Array<HomeUI>(2);
-        
-        blackHomeUI.onSelected = () => { onSelected(this); };
-        this.homeUIs[PlayerId.BLACK] = blackHomeUI;
 
-        redHomeUI.onSelected = () => { onSelected(this); };
-        this.homeUIs[PlayerId.RED] = redHomeUI;        
+    onIncrement: (PlayerId, number) => void;
+    onSetValidDestination: (PlayerId, boolean) => void;
+
+    constructor() {
+        super(PointId.HOME);
     }
-    
-    increment(player: PlayerId): void {
-        super.increment(player, 1);
-        this.homeUIs[player].setCheckers(player, this.checkers[player]);
+
+    increment(playerId: PlayerId): void {
+        super.increment(playerId, 1);
+        if (this.onIncrement) {
+            this.onIncrement(playerId, this.checkers[playerId]);
+        }
     }
-    
-    setValidDestination(player: PlayerId, on: boolean) {
-        this.homeUIs[player].setValidDestination(on);
+
+    setValidDestination(playerId: PlayerId, on: boolean) {
+        if (this.onSetValidDestination) {
+            this.onSetValidDestination(playerId, on);
+        }
     }
 }

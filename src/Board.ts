@@ -28,7 +28,23 @@ class Board {
             }
         }
         this.checkerContainers = new Array(26);
-        this.checkerContainers[PointId.HOME] = new Home(this.boardUI.blackHomeUI, this.boardUI.redHomeUI, onPointSelected);
+
+        let homeUIs = new Array<HomeUI>(2);
+        homeUIs[PlayerId.BLACK] = this.boardUI.blackHomeUI;
+        homeUIs[PlayerId.RED] = this.boardUI.redHomeUI;        
+        let home = new Home();
+        this.boardUI.blackHomeUI.onSelected = () => onPointSelected(home);
+        this.boardUI.redHomeUI.onSelected = () => onPointSelected(home);
+        
+        home.onIncrement = (playerId: PlayerId, count: number) => {
+            homeUIs[playerId].setCheckers(playerId, count);            
+        };
+        home.onSetValidDestination = (playerId: PlayerId, on: boolean) => {
+            homeUIs[playerId].setValidDestination(on);
+        }
+        this.checkerContainers[PointId.HOME] = home;
+
+
         for (let i = 1; i < 25; i++) {
             this.checkerContainers[i] = new Point(this.boardUI.pointUIs[i-1], i, onPointInspected, onPointSelected);
         }
