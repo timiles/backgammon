@@ -13,7 +13,7 @@ class Board {
     onPointInspected: (checkerContainer: CheckerContainer, on: boolean) => void;
     onPointSelected: (checkerContainer: CheckerContainer) => void;
     boardUI: BoardUI;
-        
+
     constructor(boardUI: BoardUI) {
         this.boardUI = boardUI;
 
@@ -46,10 +46,35 @@ class Board {
 
 
         for (let i = 1; i < 25; i++) {
-            this.checkerContainers[i] = new Point(this.boardUI.pointUIs[i-1], i, onPointInspected, onPointSelected);
+            this.checkerContainers[i] = new Point(this.boardUI.pointUIs[i - 1], i, onPointInspected, onPointSelected);
         }
-        this.checkerContainers[PointId.BAR] = new Bar(this.boardUI.blackBarUI, this.boardUI.redBarUI, onPointInspected, onPointSelected);
-        
+
+
+        let barUIs = new Array<BarUI>(2);
+        barUIs[PlayerId.BLACK] = this.boardUI.blackBarUI;
+        barUIs[PlayerId.RED] = this.boardUI.redBarUI;
+
+        let bar = new Bar();
+        this.boardUI.blackBarUI.onInspected = (on: boolean) => onPointInspected(bar, on);
+        this.boardUI.blackBarUI.onSelected = () => onPointSelected(bar);
+        this.boardUI.redBarUI.onInspected = (on: boolean) => onPointInspected(bar, on);
+        this.boardUI.redBarUI.onSelected = () => onPointSelected(bar);
+
+        bar.onCheckerCountChanged = (playerId: PlayerId, count: number) => {
+            barUIs[playerId].setCheckers(playerId, count);
+        }
+
+        bar.onSetSelected = (playerId: PlayerId, on: boolean) => {
+            barUIs[playerId].setSelected(on);
+        }
+
+        bar.onSetValidSource = (playerId: PlayerId, on: boolean) => {
+            barUIs[playerId].setSelected(on);
+        }
+
+
+        this.checkerContainers[PointId.BAR] = bar;
+
         this.increment(PlayerId.RED, 24, 2);
         this.increment(PlayerId.BLACK, 1, 2);
         this.increment(PlayerId.RED, 6, 5);
@@ -59,15 +84,15 @@ class Board {
         this.increment(PlayerId.RED, 13, 5);
         this.increment(PlayerId.BLACK, 12, 5);
     }
-    
+
     decrement(player: PlayerId, pointId: number): void {
         this.checkerContainers[pointId].decrement(player);
     }
-        
+
     increment(player: PlayerId, pointId: number, count?: number): void {
         this.checkerContainers[pointId].increment(player, count || 1);
     }
-    
+
     static getDestinationPointId(player: PlayerId, sourcePointId: number, numberOfMoves: number): number {
         switch (player) {
             case PlayerId.BLACK: {
@@ -77,8 +102,8 @@ class Board {
 
                 let destinationPointId = sourcePointId + numberOfMoves;
                 if (destinationPointId > 24) {
-                     // bearing off
-                     return PointId.HOME;
+                    // bearing off
+                    return PointId.HOME;
                 }
                 return destinationPointId;
 
@@ -87,26 +112,26 @@ class Board {
                 if (sourcePointId === PointId.BAR) {
                     return PointId.BAR - numberOfMoves;
                 }
-                
+
                 let destinationPointId = sourcePointId - numberOfMoves;
                 if (destinationPointId < 1) {
-                     // bearing off
-                     return PointId.HOME;
+                    // bearing off
+                    return PointId.HOME;
                 }
                 return destinationPointId;
             }
             default: throw `Unknown player: ${player}`;
         }
     }
-    
+
     isLegalMove(player: PlayerId, sourcePointId: number, numberOfMoves: number): boolean {
-        
+
         // case: there is no counter to move: fail
         if (this.checkerContainers[sourcePointId].checkers[player] == 0) {
             console.info('no counter at ' + sourcePointId);
             return false;
         }
-                
+
         // case: there is a counter on the bar, and this is not it
         if ((sourcePointId != PointId.BAR) && (this.checkerContainers[PointId.BAR].checkers[player] > 0)) {
             console.info('must move counter off bar first');
@@ -125,14 +150,14 @@ class Board {
                     return false;
                 }
             }
-            
+
             // check that there are no checkers more deserving of this dice roll
             let actualDestinationPointId = sourcePointId + (direction * numberOfMoves);
             // if it's dead on, we're fine.
             if (actualDestinationPointId === 0 || actualDestinationPointId === 25) {
                 return true;
             }
-            
+
             const startingPointOfHomeBoard = (player === PlayerId.BLACK) ? 18 : 6;
             for (let homeBoardPointId = startingPointOfHomeBoard; homeBoardPointId !== sourcePointId; homeBoardPointId += direction) {
                 if (this.checkerContainers[homeBoardPointId].checkers[player] > 0) {
@@ -153,7 +178,7 @@ class Board {
 
         return true;
     }
-    
+
     move(player: PlayerId, sourcePointId: number, numberOfMoves: number): boolean {
         if (!this.isLegalMove(player, sourcePointId, numberOfMoves)) {
             return false;
@@ -169,24 +194,24 @@ class Board {
         this.increment(player, destinationPointId);
         return true;
     }
-        
+
     checkIfValidDestination(player: PlayerId, sourcePointId: number, numberOfMoves: number): void {
         if (this.isLegalMove(player, sourcePointId, numberOfMoves)) {
             let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
             if (destinationPointId === PointId.HOME) {
-                (<Home> this.checkerContainers[PointId.HOME]).setValidDestination(player, true);
+                (<Home>this.checkerContainers[PointId.HOME]).setValidDestination(player, true);
             }
             else {
-                (<Point> this.checkerContainers[destinationPointId]).setValidDestination(true);
+                (<Point>this.checkerContainers[destinationPointId]).setValidDestination(true);
             }
         }
     }
-    
+
     removeAllHighlights(): void {
         for (let pointId = 1; pointId <= 24; pointId++) {
-            (<Point> this.checkerContainers[pointId]).setValidDestination(false);
+            (<Point>this.checkerContainers[pointId]).setValidDestination(false);
         }
-        (<Home> this.checkerContainers[PointId.HOME]).setValidDestination(PlayerId.BLACK, false);
-        (<Home> this.checkerContainers[PointId.HOME]).setValidDestination(PlayerId.RED, false);
+        (<Home>this.checkerContainers[PointId.HOME]).setValidDestination(PlayerId.BLACK, false);
+        (<Home>this.checkerContainers[PointId.HOME]).setValidDestination(PlayerId.RED, false);
     }
 }

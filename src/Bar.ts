@@ -3,40 +3,39 @@
 /// <reference path="Point.ts"/>
 
 class Bar extends CheckerContainer {
-    barUIs: Array<BarUI>;
     
-    constructor(
-        blackBarUI: BarUI,
-        redBarUI: BarUI,
-        onInspected: (bar: Bar, on: boolean) => void,
-        onSelected: (bar: Bar) => void) {
+    onCheckerCountChanged: (PlayerId, number) => void;
+    onDecrement: (PlayerId, number) => void;
+    onSetSelected: (PlayerId, boolean) => void;
+    onSetValidSource: (PlayerId, boolean) => void;
+
+    constructor() {
         super(PointId.BAR);
-        
-        blackBarUI.onInspected = (on: boolean) => { onInspected(this, on); };
-        blackBarUI.onSelected = () => { onSelected(this); };
-        redBarUI.onInspected = (on: boolean) => { onInspected(this, on); };
-        redBarUI.onSelected = () => { onSelected(this); };
-        
-        this.barUIs = new Array<BarUI>(2);
-        this.barUIs[PlayerId.BLACK] = blackBarUI;
-        this.barUIs[PlayerId.RED] = redBarUI;
     }
     
-    decrement(player: PlayerId): void {
-        super.decrement(player);
-        this.barUIs[player].setCheckers(player, this.checkers[player]);
+    decrement(playerId: PlayerId): void {
+        super.decrement(playerId);
+        if (this.onCheckerCountChanged) {
+            this.onCheckerCountChanged(playerId, this.checkers[playerId]);
+        }
     }
     
-    increment(player: PlayerId, count: number): void {
-        super.increment(player, count);
-        this.barUIs[player].setCheckers(player, this.checkers[player]);
+    increment(playerId: PlayerId, count: number): void {
+        super.increment(playerId, count);
+        if (this.onCheckerCountChanged) {
+            this.onCheckerCountChanged(playerId, this.checkers[playerId]);
+        }
     }
     
-    setSelected(player: PlayerId, on: boolean) {
-        this.barUIs[player].setSelected(on);
+    setSelected(playerId: PlayerId, on: boolean) {
+        if (this.onSetSelected) {
+            this.onSetSelected(playerId, on);
+        }
     }
     
-    setValidSource(player: PlayerId, on: boolean) {
-        this.barUIs[player].setValidSource(on);
+    setValidSource(playerId: PlayerId, on: boolean) {
+        if (this.onSetValidSource) {
+            this.onSetValidSource(playerId, on);
+        }
     }
 }
