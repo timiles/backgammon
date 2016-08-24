@@ -115,6 +115,70 @@ describe('UI: game play', function () {
 
 });
 
+describe('UI: the bar', function () {
+
+    beforeEach(function () {
+        
+        let ui = new GameUI('backgammon');
+        let board = new Board(ui.boardUI);
+        
+        fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
+
+        let dice = new Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
+        dice.roll(PlayerId.BLACK);
+        
+        let statusLogger = new StatusLogger(ui.statusUI);
+
+        game = new Game(ui, board, dice, statusLogger, PlayerId.BLACK);
+    });
+
+    it('should highlight as valid source when Black on the bar', function () {
+
+        // move Black from 1 point: 6 then 4
+        $('#backgammon_point1').click();
+        $('#backgammon_point7').click();
+        $('#backgammon_point1').click();
+        $('#backgammon_point5').click();
+        
+        // move Red from 13 point: 6 (hit) then 4
+        $('#backgammon_point13').click();
+        $('#backgammon_point7').click();
+        $('#backgammon_point13').click();
+        $('#backgammon_point9').click();
+        
+        let $blackBar = $('.checker-container.checker-container-bottom.bar');
+        expect($('.checker', $blackBar).length).toBe(1);
+        expect($blackBar.hasClass('valid-source')).toBe(true);
+    });
+
+
+    it('should highlight as valid source when Red on the bar', function () {
+
+        // use up Black's roll first
+        $('#backgammon_point1').click();
+        $('#backgammon_point7').click();
+        $('#backgammon_point1').click();
+        $('#backgammon_point5').click();
+        
+        // move Red from 24 point: 6 then 4
+        $('#backgammon_point24').click();
+        $('#backgammon_point18').click();
+        $('#backgammon_point24').click();
+        $('#backgammon_point20').click();
+        
+        // move Black from 12 point: 6 (hit) then 4
+        $('#backgammon_point12').click();
+        $('#backgammon_point18').click();
+        $('#backgammon_point12').click();
+        $('#backgammon_point16').click();
+
+        let $redBar = $('.checker-container.checker-container-top.bar');
+        expect($('.checker', $redBar).length).toBe(1);
+        expect($redBar.hasClass('valid-source')).toBe(true);
+    });
+
+});
+
 describe('UI: home board', function () {
 
     beforeEach(function () {
