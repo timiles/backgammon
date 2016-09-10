@@ -311,7 +311,7 @@ var Board = (function () {
             barUIs[playerId].setSelected(on);
         };
         bar.onSetValidSource = function (playerId, on) {
-            barUIs[playerId].setSelected(on);
+            barUIs[playerId].setValidSource(on);
         };
         this.checkerContainers[PointId.BAR] = bar;
         this.increment(PlayerId.RED, 24, 2);

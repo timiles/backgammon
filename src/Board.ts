@@ -69,7 +69,7 @@ class Board {
         }
 
         bar.onSetValidSource = (playerId: PlayerId, on: boolean) => {
-            barUIs[playerId].setSelected(on);
+            barUIs[playerId].setValidSource(on);
         }
 
 
