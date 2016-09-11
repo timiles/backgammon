@@ -10,7 +10,7 @@ class Backgammon {
     constructor(containerId: string) {
         
         let ui = new GameUI(containerId);
-        let board = new Board(ui.boardUI);
+        let board = new Board();
         let dice = new Dice(new DiceRollGenerator(), ui.blackDiceUI, ui.redDiceUI);
         let statusLogger = new StatusLogger(ui.statusUI);
 

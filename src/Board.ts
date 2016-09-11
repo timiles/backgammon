@@ -1,5 +1,4 @@
 /// <reference path="Bar.ts"/>
-/// <reference path="BoardUI.ts"/>
 /// <reference path="CheckerContainer.ts"/>
 /// <reference path="Enums.ts"/>
 /// <reference path="Home.ts"/>
@@ -14,13 +13,13 @@ class Board {
     onPointSelected: (pointId: number) => void;
     onCheckerCountChanged: (pointId: number, playerId: PlayerId, count: number) => void;
     onSetSelected: (playerId: PlayerId, on: boolean) => void;
+    onSetPointSelected: (pointId: number, on: boolean) => void;
     onSetValidDestination: (playerId: PlayerId, on: boolean) => void;
+    onSetPointValidDestination: (pointId: number, on: boolean) => void;
     onSetValidSource: (playerId: PlayerId, on: boolean) => void;
-    boardUI: BoardUI;
+    onSetPointValidSource: (pointId: number, on: boolean) => void;
 
-    constructor(boardUI: BoardUI) {
-
-        this.boardUI = boardUI;
+    constructor() {
 
         this.checkerContainers = new Array(26);
 
@@ -61,10 +60,35 @@ class Board {
                 this.onSetValidSource(playerId, on);
             }
         }
-
-
         this.checkerContainers[PointId.BAR] = bar;
+    }
 
+    createPoint(pointId: number): Point {
+        let point = new Point(pointId);
+        point.onCheckerCountChanged = (playerId: PlayerId, count: number) => {
+            if (this.onCheckerCountChanged) {
+                this.onCheckerCountChanged(pointId, playerId, count);
+            }
+        };
+        point.onSetSelected = (on: boolean) => {
+            if (this.onSetPointSelected) {
+                this.onSetPointSelected(pointId, on);
+            }
+        };
+        point.onSetValidDestination = (on: boolean) => {
+            if (this.onSetPointValidDestination) {
+                this.onSetPointValidDestination(pointId, on);
+            }
+        };
+        point.onSetValidSource = (on: boolean) => {
+            if (this.onSetPointValidSource) {
+                this.onSetPointValidSource(pointId, on);
+            }
+        };
+        return point;
+    }
+
+    initialise(): void {
         this.increment(PlayerId.RED, 24, 2);
         this.increment(PlayerId.BLACK, 1, 2);
         this.increment(PlayerId.RED, 6, 5);
@@ -73,26 +97,6 @@ class Board {
         this.increment(PlayerId.BLACK, 17, 3);
         this.increment(PlayerId.RED, 13, 5);
         this.increment(PlayerId.BLACK, 12, 5);
-    }
-
-    createPoint(pointId: number): Point {
-        let point = new Point(pointId);
-        let pointUI = this.boardUI.pointUIs[pointId - 1];
-        pointUI.onInspected = (on: boolean) => { this.onPointInspected(pointId, on); };
-        pointUI.onSelected = () => { this.onPointSelected(pointId); };
-        point.onCheckerCountChanged = (playerId: PlayerId, count: number) => {
-            pointUI.setCheckers(playerId, count);
-        };
-        point.onSetSelected = (on: boolean) => {
-            pointUI.setSelected(on);
-        };
-        point.onSetValidDestination = (on: boolean) => {
-            pointUI.setValidDestination(on);
-        };
-        point.onSetValidSource = (on: boolean) => {
-            pointUI.setValidSource(on);
-        };
-        return point;
     }
 
     decrement(player: PlayerId, pointId: number): void {

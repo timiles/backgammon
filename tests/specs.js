@@ -8,7 +8,7 @@ describe('Backgammon', function () {
     beforeEach(function () {
         
         let ui = new GameUI('backgammon');
-        board = new Board(ui.boardUI);
+        board = new Board();
         let dice = new Dice(new DiceRollGenerator(), ui.blackDiceUI, ui.redDiceUI);
         dice.roll(PlayerId.BLACK);
         

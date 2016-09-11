@@ -22,7 +22,7 @@ describe('UI: starting board', function () {
     beforeEach(function () {
         
         let ui = new GameUI('backgammon');
-        let board = new Board(ui.boardUI);
+        let board = new Board();
         
         fakeDiceRollGenerator = new FakeDiceRollGenerator([5, 5]);
 
@@ -86,7 +86,7 @@ describe('UI: game play', function () {
     beforeEach(function () {
         
         let ui = new GameUI('backgammon');
-        let board = new Board(ui.boardUI);
+        let board = new Board();
         
         fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
 
@@ -120,7 +120,7 @@ describe('UI: the bar', function () {
     beforeEach(function () {
         
         let ui = new GameUI('backgammon');
-        let board = new Board(ui.boardUI);
+        let board = new Board();
         
         fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
 
@@ -184,18 +184,7 @@ describe('UI: home board', function () {
     beforeEach(function () {
         
         let ui = new GameUI('backgammon');
-        let board = new Board(ui.boardUI);
-        
-        board.move(PlayerId.BLACK, 1, 22);
-        board.move(PlayerId.BLACK, 1, 22);
-        board.move(PlayerId.BLACK, 12, 9);
-        board.move(PlayerId.BLACK, 12, 9);
-        board.move(PlayerId.BLACK, 12, 9);
-        board.move(PlayerId.BLACK, 12, 9);
-        board.move(PlayerId.BLACK, 12, 9);
-        board.move(PlayerId.BLACK, 17, 5);
-        board.move(PlayerId.BLACK, 17, 5);
-        board.move(PlayerId.BLACK, 17, 5);
+        let board = new Board();
         
         fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
 
@@ -205,6 +194,18 @@ describe('UI: home board', function () {
         let statusLogger = new StatusLogger(ui.statusUI);
 
         game = new Game(ui, board, dice, statusLogger, PlayerId.BLACK);
+        
+        board.move(PlayerId.BLACK, 1, 22);
+        board.move(PlayerId.BLACK, 1, 22);
+        board.move(PlayerId.BLACK, 12, 9);
+        board.move(PlayerId.BLACK, 12, 9);
+        board.move(PlayerId.BLACK, 12, 9);
+        board.move(PlayerId.BLACK, 12, 9);
+        board.move(PlayerId.BLACK, 12, 9);
+        board.move(PlayerId.BLACK, 17, 5);
+        board.move(PlayerId.BLACK, 17, 5);
+        board.move(PlayerId.BLACK, 17, 5);
+        game.evaluateBoard();
     });
 
     it('should enforce maximum possible dice use when bearing off', function () {
@@ -251,6 +252,7 @@ describe('UI: home board', function () {
         game.board.move(PlayerId.BLACK, 19, 4);
         game.board.move(PlayerId.BLACK, 19, 4);
         game.board.move(PlayerId.BLACK, 19, 4);
+        game.evaluateBoard();
 
         $('#backgammon_point21').click();
 
