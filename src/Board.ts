@@ -10,8 +10,8 @@ enum PointId { HOME = 0, BAR = 25 }
 class Board {
 
     checkerContainers: Array<CheckerContainer>;
-    onPointInspected: (checkerContainer: CheckerContainer, on: boolean) => void;
-    onPointSelected: (checkerContainer: CheckerContainer) => void;
+    onPointInspected: (pointId: number, on: boolean) => void;
+    onPointSelected: (pointId: number) => void;
     boardUI: BoardUI;
 
     constructor(boardUI: BoardUI) {
@@ -23,8 +23,8 @@ class Board {
         homeUIs[PlayerId.BLACK] = this.boardUI.blackHomeUI;
         homeUIs[PlayerId.RED] = this.boardUI.redHomeUI;
         let home = new Home();
-        this.boardUI.blackHomeUI.onSelected = () => this.onPointSelected(home);
-        this.boardUI.redHomeUI.onSelected = () => this.onPointSelected(home);
+        this.boardUI.blackHomeUI.onSelected = () => this.onPointSelected(PointId.HOME);
+        this.boardUI.redHomeUI.onSelected = () => this.onPointSelected(PointId.HOME);
 
         home.onIncrement = (playerId: PlayerId, count: number) => {
             homeUIs[playerId].setCheckers(playerId, count);
@@ -45,10 +45,10 @@ class Board {
         barUIs[PlayerId.RED] = this.boardUI.redBarUI;
 
         let bar = new Bar();
-        this.boardUI.blackBarUI.onInspected = (on: boolean) => this.onPointInspected(bar, on);
-        this.boardUI.blackBarUI.onSelected = () => this.onPointSelected(bar);
-        this.boardUI.redBarUI.onInspected = (on: boolean) => this.onPointInspected(bar, on);
-        this.boardUI.redBarUI.onSelected = () => this.onPointSelected(bar);
+        this.boardUI.blackBarUI.onInspected = (on: boolean) => this.onPointInspected(PointId.BAR, on);
+        this.boardUI.blackBarUI.onSelected = () => this.onPointSelected(PointId.BAR);
+        this.boardUI.redBarUI.onInspected = (on: boolean) => this.onPointInspected(PointId.BAR, on);
+        this.boardUI.redBarUI.onSelected = () => this.onPointSelected(PointId.BAR);
 
         bar.onCheckerCountChanged = (playerId: PlayerId, count: number) => {
             barUIs[playerId].setCheckers(playerId, count);
@@ -78,8 +78,8 @@ class Board {
     createPoint(pointId: number): Point {
         let point = new Point(pointId);
         let pointUI = this.boardUI.pointUIs[pointId - 1];
-        pointUI.onInspected = (on: boolean) => { this.onPointInspected(point, on); };
-        pointUI.onSelected = () => { this.onPointSelected(point); };
+        pointUI.onInspected = (on: boolean) => { this.onPointInspected(pointId, on); };
+        pointUI.onSelected = () => { this.onPointSelected(pointId); };
         point.onCheckerCountChanged = (playerId: PlayerId, count: number) => {
             pointUI.setCheckers(playerId, count);
         };

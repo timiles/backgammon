@@ -279,8 +279,8 @@ var Board = (function () {
         homeUIs[PlayerId.BLACK] = this.boardUI.blackHomeUI;
         homeUIs[PlayerId.RED] = this.boardUI.redHomeUI;
         var home = new Home();
-        this.boardUI.blackHomeUI.onSelected = function () { return _this.onPointSelected(home); };
-        this.boardUI.redHomeUI.onSelected = function () { return _this.onPointSelected(home); };
+        this.boardUI.blackHomeUI.onSelected = function () { return _this.onPointSelected(PointId.HOME); };
+        this.boardUI.redHomeUI.onSelected = function () { return _this.onPointSelected(PointId.HOME); };
         home.onIncrement = function (playerId, count) {
             homeUIs[playerId].setCheckers(playerId, count);
         };
@@ -295,10 +295,10 @@ var Board = (function () {
         barUIs[PlayerId.BLACK] = this.boardUI.blackBarUI;
         barUIs[PlayerId.RED] = this.boardUI.redBarUI;
         var bar = new Bar();
-        this.boardUI.blackBarUI.onInspected = function (on) { return _this.onPointInspected(bar, on); };
-        this.boardUI.blackBarUI.onSelected = function () { return _this.onPointSelected(bar); };
-        this.boardUI.redBarUI.onInspected = function (on) { return _this.onPointInspected(bar, on); };
-        this.boardUI.redBarUI.onSelected = function () { return _this.onPointSelected(bar); };
+        this.boardUI.blackBarUI.onInspected = function (on) { return _this.onPointInspected(PointId.BAR, on); };
+        this.boardUI.blackBarUI.onSelected = function () { return _this.onPointSelected(PointId.BAR); };
+        this.boardUI.redBarUI.onInspected = function (on) { return _this.onPointInspected(PointId.BAR, on); };
+        this.boardUI.redBarUI.onSelected = function () { return _this.onPointSelected(PointId.BAR); };
         bar.onCheckerCountChanged = function (playerId, count) {
             barUIs[playerId].setCheckers(playerId, count);
         };
@@ -322,8 +322,8 @@ var Board = (function () {
         var _this = this;
         var point = new Point(pointId);
         var pointUI = this.boardUI.pointUIs[pointId - 1];
-        pointUI.onInspected = function (on) { _this.onPointInspected(point, on); };
-        pointUI.onSelected = function () { _this.onPointSelected(point); };
+        pointUI.onInspected = function (on) { _this.onPointInspected(pointId, on); };
+        pointUI.onSelected = function () { _this.onPointSelected(pointId); };
         point.onCheckerCountChanged = function (playerId, count) {
             pointUI.setCheckers(playerId, count);
         };
@@ -627,7 +627,7 @@ var Game = (function () {
         this.currentPlayer = currentPlayer;
         this.logCurrentPlayer();
         this.evaluateBoard();
-        this.board.onPointInspected = function (checkerContainer, on) {
+        this.board.onPointInspected = function (pointId, on) {
             if (_this.currentSelectedCheckerContainer != undefined) {
                 // if we're halfway a move, don't check
                 return;
@@ -636,6 +636,7 @@ var Game = (function () {
                 _this.board.removeAllHighlights();
                 return;
             }
+            var checkerContainer = _this.board.checkerContainers[pointId];
             if (!(checkerContainer instanceof Home) && (checkerContainer.checkers[_this.currentPlayer] > 0)) {
                 for (var _i = 0, _a = [_this.dice.die1, _this.dice.die2]; _i < _a.length; _i++) {
                     var die = _a[_i];
@@ -645,7 +646,8 @@ var Game = (function () {
                 }
             }
         };
-        this.board.onPointSelected = function (checkerContainer) {
+        this.board.onPointSelected = function (pointId) {
+            var checkerContainer = _this.board.checkerContainers[pointId];
             if (_this.currentSelectedCheckerContainer == undefined) {
                 if (checkerContainer.checkers[_this.currentPlayer] == 0) {
                     // if no pieces here, exit
@@ -678,8 +680,8 @@ var Game = (function () {
                     }
                     _this.switchPlayerIfNoValidMovesRemain();
                     // reinspect point
-                    _this.board.onPointInspected(checkerContainer, false);
-                    _this.board.onPointInspected(checkerContainer, true);
+                    _this.board.onPointInspected(checkerContainer.pointId, false);
+                    _this.board.onPointInspected(checkerContainer.pointId, true);
                 }
                 else if (canUseDie1 || canUseDie2) {
                     if (checkerContainer instanceof Point) {
@@ -718,8 +720,8 @@ var Game = (function () {
                 useDieIfPossible(_this.dice.die1) || useDieIfPossible(_this.dice.die2);
                 _this.switchPlayerIfNoValidMovesRemain();
                 // reinspect point
-                _this.board.onPointInspected(checkerContainer, false);
-                _this.board.onPointInspected(checkerContainer, true);
+                _this.board.onPointInspected(checkerContainer.pointId, false);
+                _this.board.onPointInspected(checkerContainer.pointId, true);
             }
         };
     }

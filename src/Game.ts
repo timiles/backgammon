@@ -23,7 +23,7 @@ class Game {
         this.logCurrentPlayer();
         this.evaluateBoard();
         
-        this.board.onPointInspected = (checkerContainer: CheckerContainer, on: boolean) => {
+        this.board.onPointInspected = (pointId: number, on: boolean) => {
             if (this.currentSelectedCheckerContainer != undefined) {
                 // if we're halfway a move, don't check
                 return;
@@ -34,6 +34,7 @@ class Game {
                 return;
             }
             
+            let checkerContainer = this.board.checkerContainers[pointId];
             if (!(checkerContainer instanceof Home) && (checkerContainer.checkers[this.currentPlayer] > 0)) {
                 for (let die of [this.dice.die1, this.dice.die2]) {
                     if (die.remainingUses > 0) {
@@ -43,7 +44,8 @@ class Game {
             }
         };
         
-        this.board.onPointSelected = (checkerContainer: CheckerContainer) => {
+        this.board.onPointSelected = (pointId: number) => {
+            let checkerContainer = this.board.checkerContainers[pointId];            
             if (this.currentSelectedCheckerContainer == undefined) {
                 if (checkerContainer.checkers[this.currentPlayer] == 0) {
                     // if no pieces here, exit
@@ -82,8 +84,8 @@ class Game {
                     this.switchPlayerIfNoValidMovesRemain();
                     
                     // reinspect point
-                    this.board.onPointInspected(checkerContainer, false);
-                    this.board.onPointInspected(checkerContainer, true);
+                    this.board.onPointInspected(checkerContainer.pointId, false);
+                    this.board.onPointInspected(checkerContainer.pointId, true);
                 }
                 else if (canUseDie1 || canUseDie2) {
                     if (checkerContainer instanceof Point) {
@@ -128,8 +130,8 @@ class Game {
                 this.switchPlayerIfNoValidMovesRemain();
                                 
                 // reinspect point
-                this.board.onPointInspected(checkerContainer, false);
-                this.board.onPointInspected(checkerContainer, true);
+                this.board.onPointInspected(checkerContainer.pointId, false);
+                this.board.onPointInspected(checkerContainer.pointId, true);
             }
         };       
         

@@ -217,20 +217,20 @@ describe('UI: home board', function () {
     
     it('should highlight home when inspecting checker that can bear off', function () {
         
-        game.board.onPointInspected(game.board.checkerContainers[19], true);
+        game.board.onPointInspected(19, true);
         expect($('#backgammon_point23').hasClass('valid-destination')).toBe(true);
         expect($('#backgammon_blackhome').hasClass('valid-destination')).toBe(true);
         
-        game.board.onPointInspected(game.board.checkerContainers[19], false);
+        game.board.onPointInspected(19, false);
         expect($('#backgammon_point23').hasClass('valid-destination')).toBe(false);
         expect($('#backgammon_blackhome').hasClass('valid-destination')).toBe(false);
     });
 
     it('should bear off home when selecting checker then selecting home', function () {
         
-        game.board.onPointInspected(game.board.checkerContainers[19], true);
+        game.board.onPointInspected(19, true);
         $('#backgammon_point19').click();
-        game.board.onPointInspected(game.board.checkerContainers[19], false);
+        game.board.onPointInspected(19, false);
 
         expect($('#backgammon_point19').hasClass('valid-source')).toBe(true);
         expect($('#backgammon_point23').hasClass('valid-destination')).toBe(true);
