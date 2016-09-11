@@ -9,15 +9,17 @@ enum PointId { HOME = 0, BAR = 25 }
 class Board {
 
     checkerContainers: Array<CheckerContainer>;
+
     onPointInspected: (pointId: number, on: boolean) => void;
     onPointSelected: (pointId: number) => void;
+
     onCheckerCountChanged: (pointId: number, playerId: PlayerId, count: number) => void;
-    onSetSelected: (playerId: PlayerId, on: boolean) => void;
-    onSetPointSelected: (pointId: number, on: boolean) => void;
-    onSetValidDestination: (playerId: PlayerId, on: boolean) => void;
-    onSetPointValidDestination: (pointId: number, on: boolean) => void;
-    onSetValidSource: (playerId: PlayerId, on: boolean) => void;
-    onSetPointValidSource: (pointId: number, on: boolean) => void;
+    onSetBarAsSelected: (playerId: PlayerId, on: boolean) => void;
+    onSetPointAsSelected: (pointId: number, on: boolean) => void;
+    onSetHomeAsValidDestination: (playerId: PlayerId, on: boolean) => void;
+    onSetPointAsValidDestination: (pointId: number, on: boolean) => void;
+    onSetBarAsValidSource: (playerId: PlayerId, on: boolean) => void;
+    onSetPointAsValidSource: (pointId: number, on: boolean) => void;
 
     constructor() {
 
@@ -30,15 +32,38 @@ class Board {
             }
         };
         home.onSetValidDestination = (playerId: PlayerId, on: boolean) => {
-            if (this.onSetValidDestination) {
-                this.onSetValidDestination(playerId, on);
+            if (this.onSetHomeAsValidDestination) {
+                this.onSetHomeAsValidDestination(playerId, on);
             }
         }
         this.checkerContainers[PointId.HOME] = home;
 
-
+        let createPoint = (pointId: number): Point => {
+            let point = new Point(pointId);
+            point.onCheckerCountChanged = (playerId: PlayerId, count: number) => {
+                if (this.onCheckerCountChanged) {
+                    this.onCheckerCountChanged(pointId, playerId, count);
+                }
+            };
+            point.onSetSelected = (on: boolean) => {
+                if (this.onSetPointAsSelected) {
+                    this.onSetPointAsSelected(pointId, on);
+                }
+            };
+            point.onSetValidDestination = (on: boolean) => {
+                if (this.onSetPointAsValidDestination) {
+                    this.onSetPointAsValidDestination(pointId, on);
+                }
+            };
+            point.onSetValidSource = (on: boolean) => {
+                if (this.onSetPointAsValidSource) {
+                    this.onSetPointAsValidSource(pointId, on);
+                }
+            };
+            return point;
+        }
         for (let i = 1; i < 25; i++) {
-            this.checkerContainers[i] = this.createPoint(i);
+            this.checkerContainers[i] = createPoint(i);
         }
 
 
@@ -48,44 +73,17 @@ class Board {
                 this.onCheckerCountChanged(PointId.BAR, playerId, count);
             }
         }
-
         bar.onSetSelected = (playerId: PlayerId, on: boolean) => {
-            if (this.onSetSelected) {
-                this.onSetSelected(playerId, on);
+            if (this.onSetBarAsSelected) {
+                this.onSetBarAsSelected(playerId, on);
             }
         }
-
         bar.onSetValidSource = (playerId: PlayerId, on: boolean) => {
-            if (this.onSetValidSource) {
-                this.onSetValidSource(playerId, on);
+            if (this.onSetBarAsValidSource) {
+                this.onSetBarAsValidSource(playerId, on);
             }
         }
         this.checkerContainers[PointId.BAR] = bar;
-    }
-
-    createPoint(pointId: number): Point {
-        let point = new Point(pointId);
-        point.onCheckerCountChanged = (playerId: PlayerId, count: number) => {
-            if (this.onCheckerCountChanged) {
-                this.onCheckerCountChanged(pointId, playerId, count);
-            }
-        };
-        point.onSetSelected = (on: boolean) => {
-            if (this.onSetPointSelected) {
-                this.onSetPointSelected(pointId, on);
-            }
-        };
-        point.onSetValidDestination = (on: boolean) => {
-            if (this.onSetPointValidDestination) {
-                this.onSetPointValidDestination(pointId, on);
-            }
-        };
-        point.onSetValidSource = (on: boolean) => {
-            if (this.onSetPointValidSource) {
-                this.onSetPointValidSource(pointId, on);
-            }
-        };
-        return point;
     }
 
     initialise(): void {

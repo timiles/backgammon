@@ -1,4 +1,4 @@
-/// <reference path="BoardUI.ts"/>
+/// <reference path="UI/BoardUI.ts"/>
 /// <reference path="DiceUI.ts"/>
 /// <reference path="Enums.ts"/>
 /// <reference path="StatusUI.ts"/>

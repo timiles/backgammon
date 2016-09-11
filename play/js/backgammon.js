@@ -131,13 +131,37 @@ var Board = (function () {
             }
         };
         home.onSetValidDestination = function (playerId, on) {
-            if (_this.onSetValidDestination) {
-                _this.onSetValidDestination(playerId, on);
+            if (_this.onSetHomeAsValidDestination) {
+                _this.onSetHomeAsValidDestination(playerId, on);
             }
         };
         this.checkerContainers[PointId.HOME] = home;
+        var createPoint = function (pointId) {
+            var point = new Point(pointId);
+            point.onCheckerCountChanged = function (playerId, count) {
+                if (_this.onCheckerCountChanged) {
+                    _this.onCheckerCountChanged(pointId, playerId, count);
+                }
+            };
+            point.onSetSelected = function (on) {
+                if (_this.onSetPointAsSelected) {
+                    _this.onSetPointAsSelected(pointId, on);
+                }
+            };
+            point.onSetValidDestination = function (on) {
+                if (_this.onSetPointAsValidDestination) {
+                    _this.onSetPointAsValidDestination(pointId, on);
+                }
+            };
+            point.onSetValidSource = function (on) {
+                if (_this.onSetPointAsValidSource) {
+                    _this.onSetPointAsValidSource(pointId, on);
+                }
+            };
+            return point;
+        };
         for (var i = 1; i < 25; i++) {
-            this.checkerContainers[i] = this.createPoint(i);
+            this.checkerContainers[i] = createPoint(i);
         }
         var bar = new Bar();
         bar.onCheckerCountChanged = function (playerId, count) {
@@ -146,42 +170,17 @@ var Board = (function () {
             }
         };
         bar.onSetSelected = function (playerId, on) {
-            if (_this.onSetSelected) {
-                _this.onSetSelected(playerId, on);
+            if (_this.onSetBarAsSelected) {
+                _this.onSetBarAsSelected(playerId, on);
             }
         };
         bar.onSetValidSource = function (playerId, on) {
-            if (_this.onSetValidSource) {
-                _this.onSetValidSource(playerId, on);
+            if (_this.onSetBarAsValidSource) {
+                _this.onSetBarAsValidSource(playerId, on);
             }
         };
         this.checkerContainers[PointId.BAR] = bar;
     }
-    Board.prototype.createPoint = function (pointId) {
-        var _this = this;
-        var point = new Point(pointId);
-        point.onCheckerCountChanged = function (playerId, count) {
-            if (_this.onCheckerCountChanged) {
-                _this.onCheckerCountChanged(pointId, playerId, count);
-            }
-        };
-        point.onSetSelected = function (on) {
-            if (_this.onSetPointSelected) {
-                _this.onSetPointSelected(pointId, on);
-            }
-        };
-        point.onSetValidDestination = function (on) {
-            if (_this.onSetPointValidDestination) {
-                _this.onSetPointValidDestination(pointId, on);
-            }
-        };
-        point.onSetValidSource = function (on) {
-            if (_this.onSetPointValidSource) {
-                _this.onSetPointValidSource(pointId, on);
-            }
-        };
-        return point;
-    };
     Board.prototype.initialise = function () {
         this.increment(PlayerId.RED, 24, 2);
         this.increment(PlayerId.BLACK, 1, 2);
@@ -531,10 +530,10 @@ var PointUI = (function (_super) {
     }
     return PointUI;
 })(CheckerContainerUI);
-/// <reference path="UI/BarUI.ts"/>
-/// <reference path="UI/HomeUI.ts"/>
-/// <reference path="UI/PointUI.ts"/>
-/// <reference path="Enums.ts"/>
+/// <reference path="BarUI.ts"/>
+/// <reference path="HomeUI.ts"/>
+/// <reference path="PointUI.ts"/>
+/// <reference path="../Enums.ts"/>
 var BoardUI = (function () {
     function BoardUI(gameContainerId) {
         this.containerDiv = document.createElement('div');
@@ -592,7 +591,7 @@ var BoardUI = (function () {
     };
     return BoardUI;
 })();
-/// <reference path="BoardUI.ts"/>
+/// <reference path="UI/BoardUI.ts"/>
 /// <reference path="DiceUI.ts"/>
 /// <reference path="Enums.ts"/>
 /// <reference path="StatusUI.ts"/>
@@ -628,16 +627,16 @@ var Game = (function () {
         this.dice = dice;
         this.statusLogger = statusLogger;
         this.currentPlayer = currentPlayer;
-        this.logCurrentPlayer();
+        // helpers
+        var getBarUI = function (playerId) {
+            return (playerId === PlayerId.BLACK) ? gameUI.boardUI.blackBarUI : gameUI.boardUI.redBarUI;
+        };
+        var getHomeUI = function (playerId) {
+            return (playerId === PlayerId.BLACK) ? gameUI.boardUI.blackHomeUI : gameUI.boardUI.redHomeUI;
+        };
         // wire up UI events
-        var homeUIs = new Array(2);
-        homeUIs[PlayerId.BLACK] = gameUI.boardUI.blackHomeUI;
-        homeUIs[PlayerId.RED] = gameUI.boardUI.redHomeUI;
         gameUI.boardUI.blackHomeUI.onSelected = function () { return board.onPointSelected(PointId.HOME); };
         gameUI.boardUI.redHomeUI.onSelected = function () { return board.onPointSelected(PointId.HOME); };
-        var barUIs = new Array(2);
-        barUIs[PlayerId.BLACK] = gameUI.boardUI.blackBarUI;
-        barUIs[PlayerId.RED] = gameUI.boardUI.redBarUI;
         gameUI.boardUI.blackBarUI.onInspected = function (on) { return board.onPointInspected(PointId.BAR, on); };
         gameUI.boardUI.blackBarUI.onSelected = function () { return board.onPointSelected(PointId.BAR); };
         gameUI.boardUI.redBarUI.onInspected = function (on) { return board.onPointInspected(PointId.BAR, on); };
@@ -653,11 +652,11 @@ var Game = (function () {
         board.onCheckerCountChanged = function (pointId, playerId, count) {
             switch (pointId) {
                 case PointId.HOME: {
-                    homeUIs[playerId].setCheckers(playerId, count);
+                    getHomeUI(playerId).setCheckers(playerId, count);
                     break;
                 }
                 case PointId.BAR: {
-                    barUIs[playerId].setCheckers(playerId, count);
+                    getBarUI(playerId).setCheckers(playerId, count);
                     break;
                 }
                 default: {
@@ -665,22 +664,22 @@ var Game = (function () {
                 }
             }
         };
-        board.onSetSelected = function (playerId, on) {
-            barUIs[playerId].setSelected(on);
+        board.onSetBarAsSelected = function (playerId, on) {
+            getBarUI(playerId).setSelected(on);
         };
-        board.onSetPointSelected = function (pointId, on) {
+        board.onSetPointAsSelected = function (pointId, on) {
             gameUI.boardUI.pointUIs[pointId - 1].setSelected(on);
         };
-        board.onSetValidDestination = function (playerId, on) {
-            homeUIs[playerId].setValidDestination(on);
+        board.onSetHomeAsValidDestination = function (playerId, on) {
+            getHomeUI(playerId).setValidDestination(on);
         };
-        board.onSetPointValidDestination = function (pointId, on) {
+        board.onSetPointAsValidDestination = function (pointId, on) {
             gameUI.boardUI.pointUIs[pointId - 1].setValidDestination(on);
         };
-        board.onSetValidSource = function (playerId, on) {
-            barUIs[playerId].setValidSource(on);
+        board.onSetBarAsValidSource = function (playerId, on) {
+            getBarUI(playerId).setValidSource(on);
         };
-        board.onSetPointValidSource = function (pointId, on) {
+        board.onSetPointAsValidSource = function (pointId, on) {
             gameUI.boardUI.pointUIs[pointId - 1].setValidSource(on);
         };
         this.board.onPointInspected = function (pointId, on) {
@@ -781,6 +780,7 @@ var Game = (function () {
             }
         };
         board.initialise();
+        this.logCurrentPlayer();
         this.evaluateBoard();
     }
     Game.prototype.checkIfValidMovesRemain = function () {

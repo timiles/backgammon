@@ -20,27 +20,24 @@ class Game {
         this.dice = dice;
         this.statusLogger = statusLogger;
         this.currentPlayer = currentPlayer;
-        this.logCurrentPlayer();
 
+        // helpers
+        let getBarUI = (playerId: PlayerId): BarUI => {
+            return (playerId === PlayerId.BLACK) ? gameUI.boardUI.blackBarUI : gameUI.boardUI.redBarUI;
+        }
+        let getHomeUI = (playerId: PlayerId): HomeUI => {
+            return (playerId === PlayerId.BLACK) ? gameUI.boardUI.blackHomeUI : gameUI.boardUI.redHomeUI;
+        }
 
         // wire up UI events
-        let homeUIs = new Array<HomeUI>(2);
-        homeUIs[PlayerId.BLACK] = gameUI.boardUI.blackHomeUI;
-        homeUIs[PlayerId.RED] = gameUI.boardUI.redHomeUI;
-
         gameUI.boardUI.blackHomeUI.onSelected = () => board.onPointSelected(PointId.HOME);
         gameUI.boardUI.redHomeUI.onSelected = () => board.onPointSelected(PointId.HOME);
-
-        let barUIs = new Array<BarUI>(2);
-        barUIs[PlayerId.BLACK] = gameUI.boardUI.blackBarUI;
-        barUIs[PlayerId.RED] = gameUI.boardUI.redBarUI;
-
         gameUI.boardUI.blackBarUI.onInspected = (on: boolean) => board.onPointInspected(PointId.BAR, on);
         gameUI.boardUI.blackBarUI.onSelected = () => board.onPointSelected(PointId.BAR);
         gameUI.boardUI.redBarUI.onInspected = (on: boolean) => board.onPointInspected(PointId.BAR, on);
         gameUI.boardUI.redBarUI.onSelected = () => board.onPointSelected(PointId.BAR);
 
-        let bindPointUIEvents = (pointId: number) => {
+        let bindPointUIEvents = (pointId: number): void => {
             let pointUI = gameUI.boardUI.pointUIs[pointId - 1];
             pointUI.onInspected = (on: boolean) => { board.onPointInspected(pointId, on); };
             pointUI.onSelected = () => { board.onPointSelected(pointId); };
@@ -52,11 +49,11 @@ class Game {
         board.onCheckerCountChanged = (pointId: number, playerId: PlayerId, count: number) => {
             switch (pointId) {
                 case PointId.HOME: {
-                    homeUIs[playerId].setCheckers(playerId, count);
+                    getHomeUI(playerId).setCheckers(playerId, count);
                     break;
                 }
                 case PointId.BAR: {
-                    barUIs[playerId].setCheckers(playerId, count);
+                    getBarUI(playerId).setCheckers(playerId, count);
                     break;
                 }
                 default: {
@@ -64,22 +61,22 @@ class Game {
                 }
             }
         };
-        board.onSetSelected = (playerId: PlayerId, on: boolean) => {
-            barUIs[playerId].setSelected(on);
+        board.onSetBarAsSelected = (playerId: PlayerId, on: boolean) => {
+            getBarUI(playerId).setSelected(on);
         };
-        board.onSetPointSelected = (pointId: number, on: boolean) => {
+        board.onSetPointAsSelected = (pointId: number, on: boolean) => {
             gameUI.boardUI.pointUIs[pointId - 1].setSelected(on);
         };
-        board.onSetValidDestination = (playerId: PlayerId, on: boolean) => {
-            homeUIs[playerId].setValidDestination(on);
+        board.onSetHomeAsValidDestination = (playerId: PlayerId, on: boolean) => {
+            getHomeUI(playerId).setValidDestination(on);
         };
-        board.onSetPointValidDestination = (pointId: number, on: boolean) => {
+        board.onSetPointAsValidDestination = (pointId: number, on: boolean) => {
             gameUI.boardUI.pointUIs[pointId - 1].setValidDestination(on);
         };
-        board.onSetValidSource = (playerId: PlayerId, on: boolean) => {
-            barUIs[playerId].setValidSource(on);
+        board.onSetBarAsValidSource = (playerId: PlayerId, on: boolean) => {
+            getBarUI(playerId).setValidSource(on);
         };
-        board.onSetPointValidSource = (pointId: number,on: boolean) => {
+        board.onSetPointAsValidSource = (pointId: number, on: boolean) => {
             gameUI.boardUI.pointUIs[pointId - 1].setValidSource(on);
         };
 
@@ -197,7 +194,8 @@ class Game {
         };
 
         board.initialise();
-        this.evaluateBoard();        
+        this.logCurrentPlayer();
+        this.evaluateBoard();
     }
 
     private checkIfValidMovesRemain(): boolean {

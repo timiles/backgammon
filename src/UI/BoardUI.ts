@@ -1,7 +1,7 @@
-/// <reference path="UI/BarUI.ts"/>
-/// <reference path="UI/HomeUI.ts"/>
-/// <reference path="UI/PointUI.ts"/>
-/// <reference path="Enums.ts"/>
+/// <reference path="BarUI.ts"/>
+/// <reference path="HomeUI.ts"/>
+/// <reference path="PointUI.ts"/>
+/// <reference path="../Enums.ts"/>
 
 class BoardUI {
     
