@@ -1,42 +1,45 @@
 /// <reference path="CheckerContainer.ts"/>
-/// <reference path="PointUI.ts"/>
 
 class Point extends CheckerContainer {
-    
-    pointUI: PointUI;
-    
-    constructor(
-        pointUI: PointUI,
-        pointId: number,
-        onInspected: (point: Point, on: boolean) => void,
-        onSelected: (point: Point) => void) {
+
+    onCheckerCountChanged: (PlayerId, number) => void;
+    onSetSelected: (boolean) => void;
+    onSetValidDestination: (boolean) => void;
+    onSetValidSource: (boolean) => void;
+
+    constructor(pointId: number) {
         super(pointId);
-        
-        this.pointId = pointId;
-        this.pointUI = pointUI;
-        this.pointUI.onInspected = (on: boolean) => { onInspected(this, on); };
-        this.pointUI.onSelected = () => { onSelected(this); };
     }
-    
-    decrement(player: PlayerId): void {
-        super.decrement(player);
-        this.pointUI.setCheckers(player, this.checkers[player]);
+
+    decrement(playerId: PlayerId): void {
+        super.decrement(playerId);
+        if (this.onCheckerCountChanged) {
+            this.onCheckerCountChanged(playerId, this.checkers[playerId]);
+        }
     }
-    
-    increment(player: PlayerId, count: number): void {
-        super.increment(player, count);
-        this.pointUI.setCheckers(player, this.checkers[player]);
+
+    increment(playerId: PlayerId, count: number): void {
+        super.increment(playerId, count);
+        if (this.onCheckerCountChanged) {
+            this.onCheckerCountChanged(playerId, this.checkers[playerId]);
+        }
     }
-    
+
     setValidDestination(on: boolean) {
-        this.pointUI.setValidDestination(on);
+        if (this.onSetValidDestination) {
+            this.onSetValidDestination(on);
+        }
     }
-    
+
     setValidSource(on: boolean) {
-        this.pointUI.setValidSource(on);
+        if (this.onSetValidSource) {
+            this.onSetValidSource(on);
+        }
     }
-    
+
     setSelected(on: boolean) {
-        this.pointUI.setSelected(on);
+        if (this.onSetSelected) {
+            this.onSetSelected(on);
+        }
     }
 }

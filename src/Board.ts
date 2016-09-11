@@ -31,13 +31,13 @@ class Board {
 
         let homeUIs = new Array<HomeUI>(2);
         homeUIs[PlayerId.BLACK] = this.boardUI.blackHomeUI;
-        homeUIs[PlayerId.RED] = this.boardUI.redHomeUI;        
+        homeUIs[PlayerId.RED] = this.boardUI.redHomeUI;
         let home = new Home();
         this.boardUI.blackHomeUI.onSelected = () => onPointSelected(home);
         this.boardUI.redHomeUI.onSelected = () => onPointSelected(home);
-        
+
         home.onIncrement = (playerId: PlayerId, count: number) => {
-            homeUIs[playerId].setCheckers(playerId, count);            
+            homeUIs[playerId].setCheckers(playerId, count);
         };
         home.onSetValidDestination = (playerId: PlayerId, on: boolean) => {
             homeUIs[playerId].setValidDestination(on);
@@ -46,7 +46,7 @@ class Board {
 
 
         for (let i = 1; i < 25; i++) {
-            this.checkerContainers[i] = new Point(this.boardUI.pointUIs[i - 1], i, onPointInspected, onPointSelected);
+            this.checkerContainers[i] = this.createPoint(i);
         }
 
 
@@ -83,6 +83,26 @@ class Board {
         this.increment(PlayerId.BLACK, 17, 3);
         this.increment(PlayerId.RED, 13, 5);
         this.increment(PlayerId.BLACK, 12, 5);
+    }
+
+    createPoint(pointId: number): Point {
+        let point = new Point(pointId);
+        let pointUI = this.boardUI.pointUIs[pointId - 1];
+        pointUI.onInspected = (on: boolean) => { this.onPointInspected(point, on); };
+        pointUI.onSelected = () => { this.onPointSelected(point); };
+        point.onCheckerCountChanged = (playerId: PlayerId, count: number) => {
+            pointUI.setCheckers(playerId, count);
+        };
+        point.onSetSelected = (on: boolean) => {
+            pointUI.setSelected(on);
+        };
+        point.onSetValidDestination = (on: boolean) => {
+            pointUI.setValidDestination(on);
+        };
+        point.onSetValidSource = (on: boolean) => {
+            pointUI.setValidSource(on);
+        };
+        return point;
     }
 
     decrement(player: PlayerId, pointId: number): void {
