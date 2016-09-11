@@ -275,17 +275,16 @@ var Board = (function () {
         var _this = this;
         this.boardUI = boardUI;
         this.checkerContainers = new Array(26);
-        var homeUIs = new Array(2);
-        homeUIs[PlayerId.BLACK] = this.boardUI.blackHomeUI;
-        homeUIs[PlayerId.RED] = this.boardUI.redHomeUI;
         var home = new Home();
-        this.boardUI.blackHomeUI.onSelected = function () { return _this.onPointSelected(PointId.HOME); };
-        this.boardUI.redHomeUI.onSelected = function () { return _this.onPointSelected(PointId.HOME); };
         home.onIncrement = function (playerId, count) {
-            homeUIs[playerId].setCheckers(playerId, count);
+            if (_this.onSetCheckers) {
+                _this.onSetCheckers(playerId, count);
+            }
         };
         home.onSetValidDestination = function (playerId, on) {
-            homeUIs[playerId].setValidDestination(on);
+            if (_this.onSetValidDestination) {
+                _this.onSetValidDestination(playerId, on);
+            }
         };
         this.checkerContainers[PointId.HOME] = home;
         for (var i = 1; i < 25; i++) {
@@ -627,6 +626,18 @@ var Game = (function () {
         this.currentPlayer = currentPlayer;
         this.logCurrentPlayer();
         this.evaluateBoard();
+        // wire up UI events
+        var homeUIs = new Array(2);
+        homeUIs[PlayerId.BLACK] = gameUI.boardUI.blackHomeUI;
+        homeUIs[PlayerId.RED] = gameUI.boardUI.redHomeUI;
+        gameUI.boardUI.blackHomeUI.onSelected = function () { return board.onPointSelected(PointId.HOME); };
+        gameUI.boardUI.redHomeUI.onSelected = function () { return board.onPointSelected(PointId.HOME); };
+        board.onSetCheckers = function (playerId, count) {
+            homeUIs[playerId].setCheckers(playerId, count);
+        };
+        board.onSetValidDestination = function (playerId, on) {
+            homeUIs[playerId].setValidDestination(on);
+        };
         this.board.onPointInspected = function (pointId, on) {
             if (_this.currentSelectedCheckerContainer != undefined) {
                 // if we're halfway a move, don't check

@@ -12,25 +12,26 @@ class Board {
     checkerContainers: Array<CheckerContainer>;
     onPointInspected: (pointId: number, on: boolean) => void;
     onPointSelected: (pointId: number) => void;
+    onSetCheckers: (playerId: PlayerId, count: number) => void;
+    onSetValidDestination: (playerId: PlayerId, on: boolean) => void;
     boardUI: BoardUI;
 
     constructor(boardUI: BoardUI) {
+
         this.boardUI = boardUI;
 
         this.checkerContainers = new Array(26);
 
-        let homeUIs = new Array<HomeUI>(2);
-        homeUIs[PlayerId.BLACK] = this.boardUI.blackHomeUI;
-        homeUIs[PlayerId.RED] = this.boardUI.redHomeUI;
         let home = new Home();
-        this.boardUI.blackHomeUI.onSelected = () => this.onPointSelected(PointId.HOME);
-        this.boardUI.redHomeUI.onSelected = () => this.onPointSelected(PointId.HOME);
-
         home.onIncrement = (playerId: PlayerId, count: number) => {
-            homeUIs[playerId].setCheckers(playerId, count);
+            if (this.onSetCheckers) {
+                this.onSetCheckers(playerId, count);
+            }
         };
         home.onSetValidDestination = (playerId: PlayerId, on: boolean) => {
-            homeUIs[playerId].setValidDestination(on);
+            if (this.onSetValidDestination) {
+                this.onSetValidDestination(playerId, on);
+            }
         }
         this.checkerContainers[PointId.HOME] = home;
 

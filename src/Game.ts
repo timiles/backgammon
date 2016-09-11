@@ -23,6 +23,23 @@ class Game {
         this.logCurrentPlayer();
         this.evaluateBoard();
         
+
+        // wire up UI events
+        let homeUIs = new Array<HomeUI>(2);
+        homeUIs[PlayerId.BLACK] = gameUI.boardUI.blackHomeUI;
+        homeUIs[PlayerId.RED] = gameUI.boardUI.redHomeUI;
+
+        gameUI.boardUI.blackHomeUI.onSelected = () => board.onPointSelected(PointId.HOME);
+        gameUI.boardUI.redHomeUI.onSelected = () => board.onPointSelected(PointId.HOME);
+
+        board.onSetCheckers = (playerId: PlayerId, count: number) => {
+            homeUIs[playerId].setCheckers(playerId, count);
+        };
+        board.onSetValidDestination = (playerId: PlayerId, on: boolean) => {
+            homeUIs[playerId].setValidDestination(on);
+        };
+
+
         this.board.onPointInspected = (pointId: number, on: boolean) => {
             if (this.currentSelectedCheckerContainer != undefined) {
                 // if we're halfway a move, don't check
