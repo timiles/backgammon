@@ -32,11 +32,33 @@ class Game {
         gameUI.boardUI.blackHomeUI.onSelected = () => board.onPointSelected(PointId.HOME);
         gameUI.boardUI.redHomeUI.onSelected = () => board.onPointSelected(PointId.HOME);
 
-        board.onSetCheckers = (playerId: PlayerId, count: number) => {
-            homeUIs[playerId].setCheckers(playerId, count);
+        let barUIs = new Array<BarUI>(2);
+        barUIs[PlayerId.BLACK] = gameUI.boardUI.blackBarUI;
+        barUIs[PlayerId.RED] = gameUI.boardUI.redBarUI;
+
+        gameUI.boardUI.blackBarUI.onInspected = (on: boolean) => board.onPointInspected(PointId.BAR, on);
+        gameUI.boardUI.blackBarUI.onSelected = () => board.onPointSelected(PointId.BAR);
+        gameUI.boardUI.redBarUI.onInspected = (on: boolean) => board.onPointInspected(PointId.BAR, on);
+        gameUI.boardUI.redBarUI.onSelected = () => board.onPointSelected(PointId.BAR);
+
+        board.onCheckerCountChanged = (pointId: number, playerId: PlayerId, count: number) => {
+            switch (pointId) {
+                case PointId.HOME: {
+                    homeUIs[playerId].setCheckers(playerId, count);
+                }
+                case PointId.BAR: {
+                    barUIs[playerId].setCheckers(playerId, count);
+                }
+            }
+        };
+        board.onSetSelected = (playerId: PlayerId, on: boolean) => {
+            barUIs[playerId].setSelected(on);
         };
         board.onSetValidDestination = (playerId: PlayerId, on: boolean) => {
             homeUIs[playerId].setValidDestination(on);
+        };
+        board.onSetValidSource = (playerId: PlayerId, on: boolean) => {
+            barUIs[playerId].setValidSource(on);
         };
 
 

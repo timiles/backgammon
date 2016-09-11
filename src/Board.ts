@@ -12,8 +12,10 @@ class Board {
     checkerContainers: Array<CheckerContainer>;
     onPointInspected: (pointId: number, on: boolean) => void;
     onPointSelected: (pointId: number) => void;
-    onSetCheckers: (playerId: PlayerId, count: number) => void;
+    onCheckerCountChanged: (pointId: number, playerId: PlayerId, count: number) => void;
+    onSetSelected: (playerId: PlayerId, on: boolean) => void;
     onSetValidDestination: (playerId: PlayerId, on: boolean) => void;
+    onSetValidSource: (playerId: PlayerId, on: boolean) => void;
     boardUI: BoardUI;
 
     constructor(boardUI: BoardUI) {
@@ -24,8 +26,8 @@ class Board {
 
         let home = new Home();
         home.onIncrement = (playerId: PlayerId, count: number) => {
-            if (this.onSetCheckers) {
-                this.onSetCheckers(playerId, count);
+            if (this.onCheckerCountChanged) {
+                this.onCheckerCountChanged(PointId.HOME, playerId, count);
             }
         };
         home.onSetValidDestination = (playerId: PlayerId, on: boolean) => {
@@ -41,26 +43,23 @@ class Board {
         }
 
 
-        let barUIs = new Array<BarUI>(2);
-        barUIs[PlayerId.BLACK] = this.boardUI.blackBarUI;
-        barUIs[PlayerId.RED] = this.boardUI.redBarUI;
-
         let bar = new Bar();
-        this.boardUI.blackBarUI.onInspected = (on: boolean) => this.onPointInspected(PointId.BAR, on);
-        this.boardUI.blackBarUI.onSelected = () => this.onPointSelected(PointId.BAR);
-        this.boardUI.redBarUI.onInspected = (on: boolean) => this.onPointInspected(PointId.BAR, on);
-        this.boardUI.redBarUI.onSelected = () => this.onPointSelected(PointId.BAR);
-
         bar.onCheckerCountChanged = (playerId: PlayerId, count: number) => {
-            barUIs[playerId].setCheckers(playerId, count);
+            if (this.onCheckerCountChanged) {
+                this.onCheckerCountChanged(PointId.BAR, playerId, count);
+            }
         }
 
         bar.onSetSelected = (playerId: PlayerId, on: boolean) => {
-            barUIs[playerId].setSelected(on);
+            if (this.onSetSelected) {
+                this.onSetSelected(playerId, on);
+            }
         }
 
         bar.onSetValidSource = (playerId: PlayerId, on: boolean) => {
-            barUIs[playerId].setValidSource(on);
+            if (this.onSetValidSource) {
+                this.onSetValidSource(playerId, on);
+            }
         }
 
 

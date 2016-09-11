@@ -277,8 +277,8 @@ var Board = (function () {
         this.checkerContainers = new Array(26);
         var home = new Home();
         home.onIncrement = function (playerId, count) {
-            if (_this.onSetCheckers) {
-                _this.onSetCheckers(playerId, count);
+            if (_this.onCheckerCountChanged) {
+                _this.onCheckerCountChanged(PointId.HOME, playerId, count);
             }
         };
         home.onSetValidDestination = function (playerId, on) {
@@ -290,22 +290,21 @@ var Board = (function () {
         for (var i = 1; i < 25; i++) {
             this.checkerContainers[i] = this.createPoint(i);
         }
-        var barUIs = new Array(2);
-        barUIs[PlayerId.BLACK] = this.boardUI.blackBarUI;
-        barUIs[PlayerId.RED] = this.boardUI.redBarUI;
         var bar = new Bar();
-        this.boardUI.blackBarUI.onInspected = function (on) { return _this.onPointInspected(PointId.BAR, on); };
-        this.boardUI.blackBarUI.onSelected = function () { return _this.onPointSelected(PointId.BAR); };
-        this.boardUI.redBarUI.onInspected = function (on) { return _this.onPointInspected(PointId.BAR, on); };
-        this.boardUI.redBarUI.onSelected = function () { return _this.onPointSelected(PointId.BAR); };
         bar.onCheckerCountChanged = function (playerId, count) {
-            barUIs[playerId].setCheckers(playerId, count);
+            if (_this.onCheckerCountChanged) {
+                _this.onCheckerCountChanged(PointId.BAR, playerId, count);
+            }
         };
         bar.onSetSelected = function (playerId, on) {
-            barUIs[playerId].setSelected(on);
+            if (_this.onSetSelected) {
+                _this.onSetSelected(playerId, on);
+            }
         };
         bar.onSetValidSource = function (playerId, on) {
-            barUIs[playerId].setValidSource(on);
+            if (_this.onSetValidSource) {
+                _this.onSetValidSource(playerId, on);
+            }
         };
         this.checkerContainers[PointId.BAR] = bar;
         this.increment(PlayerId.RED, 24, 2);
@@ -632,11 +631,31 @@ var Game = (function () {
         homeUIs[PlayerId.RED] = gameUI.boardUI.redHomeUI;
         gameUI.boardUI.blackHomeUI.onSelected = function () { return board.onPointSelected(PointId.HOME); };
         gameUI.boardUI.redHomeUI.onSelected = function () { return board.onPointSelected(PointId.HOME); };
-        board.onSetCheckers = function (playerId, count) {
-            homeUIs[playerId].setCheckers(playerId, count);
+        var barUIs = new Array(2);
+        barUIs[PlayerId.BLACK] = gameUI.boardUI.blackBarUI;
+        barUIs[PlayerId.RED] = gameUI.boardUI.redBarUI;
+        gameUI.boardUI.blackBarUI.onInspected = function (on) { return board.onPointInspected(PointId.BAR, on); };
+        gameUI.boardUI.blackBarUI.onSelected = function () { return board.onPointSelected(PointId.BAR); };
+        gameUI.boardUI.redBarUI.onInspected = function (on) { return board.onPointInspected(PointId.BAR, on); };
+        gameUI.boardUI.redBarUI.onSelected = function () { return board.onPointSelected(PointId.BAR); };
+        board.onCheckerCountChanged = function (pointId, playerId, count) {
+            switch (pointId) {
+                case PointId.HOME: {
+                    homeUIs[playerId].setCheckers(playerId, count);
+                }
+                case PointId.BAR: {
+                    barUIs[playerId].setCheckers(playerId, count);
+                }
+            }
+        };
+        board.onSetSelected = function (playerId, on) {
+            barUIs[playerId].setSelected(on);
         };
         board.onSetValidDestination = function (playerId, on) {
             homeUIs[playerId].setValidDestination(on);
+        };
+        board.onSetValidSource = function (playerId, on) {
+            barUIs[playerId].setValidSource(on);
         };
         this.board.onPointInspected = function (pointId, on) {
             if (_this.currentSelectedCheckerContainer != undefined) {
