@@ -1,4 +1,5 @@
 /// <reference path="CheckerContainer.ts"/>
+/// <reference path="Enums.ts"/>
 
 class Point extends CheckerContainer {
 

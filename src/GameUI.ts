@@ -2,7 +2,6 @@
 /// <reference path="DiceUI.ts"/>
 /// <reference path="Enums.ts"/>
 /// <reference path="StatusUI.ts"/>
-/// <reference path="Utils.ts"/>
 
 class GameUI {
     

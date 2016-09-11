@@ -3,6 +3,57 @@ var PlayerId;
     PlayerId[PlayerId["BLACK"] = 0] = "BLACK";
     PlayerId[PlayerId["RED"] = 1] = "RED";
 })(PlayerId || (PlayerId = {}));
+/// <reference path="Enums.ts"/>
+var CheckerContainer = (function () {
+    function CheckerContainer(pointId) {
+        this.pointId = pointId;
+        this.checkers = [0, 0];
+    }
+    CheckerContainer.prototype.decrement = function (player) {
+        this.checkers[player]--;
+    };
+    CheckerContainer.prototype.increment = function (player, count) {
+        this.checkers[player] += count;
+    };
+    return CheckerContainer;
+})();
+/// <reference path="CheckerContainer.ts"/>
+/// <reference path="Enums.ts"/>
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Bar = (function (_super) {
+    __extends(Bar, _super);
+    function Bar() {
+        _super.call(this, PointId.BAR);
+    }
+    Bar.prototype.decrement = function (playerId) {
+        _super.prototype.decrement.call(this, playerId);
+        if (this.onCheckerCountChanged) {
+            this.onCheckerCountChanged(playerId, this.checkers[playerId]);
+        }
+    };
+    Bar.prototype.increment = function (playerId, count) {
+        _super.prototype.increment.call(this, playerId, count);
+        if (this.onCheckerCountChanged) {
+            this.onCheckerCountChanged(playerId, this.checkers[playerId]);
+        }
+    };
+    Bar.prototype.setSelected = function (playerId, on) {
+        if (this.onSetSelected) {
+            this.onSetSelected(playerId, on);
+        }
+    };
+    Bar.prototype.setValidSource = function (playerId, on) {
+        if (this.onSetValidSource) {
+            this.onSetValidSource(playerId, on);
+        }
+    };
+    return Bar;
+})(CheckerContainer);
 // REVIEW: invoke as extensions/prototype?
 var Utils = (function () {
     function Utils() {
@@ -22,7 +73,7 @@ var Utils = (function () {
     };
     return Utils;
 })();
-/// <reference path="Enums.ts"/>
+/// <reference path="../Enums.ts"/>
 /// <reference path="Utils.ts"/>
 var CheckerContainerUI = (function () {
     function CheckerContainerUI(containerType, isTopSide) {
@@ -59,14 +110,8 @@ var CheckerContainerUI = (function () {
     };
     return CheckerContainerUI;
 })();
+/// <reference path="../Enums.ts"/>
 /// <reference path="CheckerContainerUI.ts"/>
-/// <reference path="Enums.ts"/>
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 var BarUI = (function (_super) {
     __extends(BarUI, _super);
     function BarUI(player) {
@@ -77,87 +122,7 @@ var BarUI = (function (_super) {
     }
     return BarUI;
 })(CheckerContainerUI);
-/// <reference path="Enums.ts"/>
-var CheckerContainer = (function () {
-    function CheckerContainer(pointId) {
-        this.pointId = pointId;
-        this.checkers = [0, 0];
-    }
-    CheckerContainer.prototype.decrement = function (player) {
-        this.checkers[player]--;
-    };
-    CheckerContainer.prototype.increment = function (player, count) {
-        this.checkers[player] += count;
-    };
-    return CheckerContainer;
-})();
-/// <reference path="CheckerContainer.ts"/>
-var Point = (function (_super) {
-    __extends(Point, _super);
-    function Point(pointId) {
-        _super.call(this, pointId);
-    }
-    Point.prototype.decrement = function (playerId) {
-        _super.prototype.decrement.call(this, playerId);
-        if (this.onCheckerCountChanged) {
-            this.onCheckerCountChanged(playerId, this.checkers[playerId]);
-        }
-    };
-    Point.prototype.increment = function (playerId, count) {
-        _super.prototype.increment.call(this, playerId, count);
-        if (this.onCheckerCountChanged) {
-            this.onCheckerCountChanged(playerId, this.checkers[playerId]);
-        }
-    };
-    Point.prototype.setValidDestination = function (on) {
-        if (this.onSetValidDestination) {
-            this.onSetValidDestination(on);
-        }
-    };
-    Point.prototype.setValidSource = function (on) {
-        if (this.onSetValidSource) {
-            this.onSetValidSource(on);
-        }
-    };
-    Point.prototype.setSelected = function (on) {
-        if (this.onSetSelected) {
-            this.onSetSelected(on);
-        }
-    };
-    return Point;
-})(CheckerContainer);
-/// <reference path="BarUI.ts"/>
-/// <reference path="Enums.ts"/>
-/// <reference path="Point.ts"/>
-var Bar = (function (_super) {
-    __extends(Bar, _super);
-    function Bar() {
-        _super.call(this, PointId.BAR);
-    }
-    Bar.prototype.decrement = function (playerId) {
-        _super.prototype.decrement.call(this, playerId);
-        if (this.onCheckerCountChanged) {
-            this.onCheckerCountChanged(playerId, this.checkers[playerId]);
-        }
-    };
-    Bar.prototype.increment = function (playerId, count) {
-        _super.prototype.increment.call(this, playerId, count);
-        if (this.onCheckerCountChanged) {
-            this.onCheckerCountChanged(playerId, this.checkers[playerId]);
-        }
-    };
-    Bar.prototype.setSelected = function (playerId, on) {
-        if (this.onSetSelected) {
-            this.onSetSelected(playerId, on);
-        }
-    };
-    Bar.prototype.setValidSource = function (playerId, on) {
-        if (this.onSetValidSource) {
-            this.onSetValidSource(playerId, on);
-        }
-    };
-    return Bar;
-})(CheckerContainer);
+/// <reference path="../Enums.ts"/>
 /// <reference path="CheckerContainerUI.ts"/>
 var HomeUI = (function (_super) {
     __extends(HomeUI, _super);
@@ -177,11 +142,10 @@ var PointUI = (function (_super) {
     }
     return PointUI;
 })(CheckerContainerUI);
-/// <reference path="BarUI.ts"/>
+/// <reference path="UI/BarUI.ts"/>
+/// <reference path="UI/HomeUI.ts"/>
+/// <reference path="UI/PointUI.ts"/>
 /// <reference path="Enums.ts"/>
-/// <reference path="HomeUI.ts"/>
-/// <reference path="PointUI.ts"/>
-/// <reference path="Utils.ts"/>
 var BoardUI = (function () {
     function BoardUI(gameContainerId) {
         this.containerDiv = document.createElement('div');
@@ -240,6 +204,7 @@ var BoardUI = (function () {
     return BoardUI;
 })();
 /// <reference path="CheckerContainer.ts"/>
+/// <reference path="Enums.ts"/>
 var Home = (function (_super) {
     __extends(Home, _super);
     function Home() {
@@ -258,6 +223,42 @@ var Home = (function (_super) {
     };
     return Home;
 })(CheckerContainer);
+/// <reference path="CheckerContainer.ts"/>
+/// <reference path="Enums.ts"/>
+var Point = (function (_super) {
+    __extends(Point, _super);
+    function Point(pointId) {
+        _super.call(this, pointId);
+    }
+    Point.prototype.decrement = function (playerId) {
+        _super.prototype.decrement.call(this, playerId);
+        if (this.onCheckerCountChanged) {
+            this.onCheckerCountChanged(playerId, this.checkers[playerId]);
+        }
+    };
+    Point.prototype.increment = function (playerId, count) {
+        _super.prototype.increment.call(this, playerId, count);
+        if (this.onCheckerCountChanged) {
+            this.onCheckerCountChanged(playerId, this.checkers[playerId]);
+        }
+    };
+    Point.prototype.setValidDestination = function (on) {
+        if (this.onSetValidDestination) {
+            this.onSetValidDestination(on);
+        }
+    };
+    Point.prototype.setValidSource = function (on) {
+        if (this.onSetValidSource) {
+            this.onSetValidSource(on);
+        }
+    };
+    Point.prototype.setSelected = function (on) {
+        if (this.onSetSelected) {
+            this.onSetSelected(on);
+        }
+    };
+    return Point;
+})(CheckerContainer);
 /// <reference path="Bar.ts"/>
 /// <reference path="BoardUI.ts"/>
 /// <reference path="CheckerContainer.ts"/>
@@ -273,23 +274,13 @@ var Board = (function () {
     function Board(boardUI) {
         var _this = this;
         this.boardUI = boardUI;
-        var onPointInspected = function (checkerContainer, on) {
-            if (_this.onPointInspected) {
-                _this.onPointInspected(checkerContainer, on);
-            }
-        };
-        var onPointSelected = function (checkerContainer) {
-            if (_this.onPointSelected) {
-                _this.onPointSelected(checkerContainer);
-            }
-        };
         this.checkerContainers = new Array(26);
         var homeUIs = new Array(2);
         homeUIs[PlayerId.BLACK] = this.boardUI.blackHomeUI;
         homeUIs[PlayerId.RED] = this.boardUI.redHomeUI;
         var home = new Home();
-        this.boardUI.blackHomeUI.onSelected = function () { return onPointSelected(home); };
-        this.boardUI.redHomeUI.onSelected = function () { return onPointSelected(home); };
+        this.boardUI.blackHomeUI.onSelected = function () { return _this.onPointSelected(home); };
+        this.boardUI.redHomeUI.onSelected = function () { return _this.onPointSelected(home); };
         home.onIncrement = function (playerId, count) {
             homeUIs[playerId].setCheckers(playerId, count);
         };
@@ -304,10 +295,10 @@ var Board = (function () {
         barUIs[PlayerId.BLACK] = this.boardUI.blackBarUI;
         barUIs[PlayerId.RED] = this.boardUI.redBarUI;
         var bar = new Bar();
-        this.boardUI.blackBarUI.onInspected = function (on) { return onPointInspected(bar, on); };
-        this.boardUI.blackBarUI.onSelected = function () { return onPointSelected(bar); };
-        this.boardUI.redBarUI.onInspected = function (on) { return onPointInspected(bar, on); };
-        this.boardUI.redBarUI.onSelected = function () { return onPointSelected(bar); };
+        this.boardUI.blackBarUI.onInspected = function (on) { return _this.onPointInspected(bar, on); };
+        this.boardUI.blackBarUI.onSelected = function () { return _this.onPointSelected(bar); };
+        this.boardUI.redBarUI.onInspected = function (on) { return _this.onPointInspected(bar, on); };
+        this.boardUI.redBarUI.onSelected = function () { return _this.onPointSelected(bar); };
         bar.onCheckerCountChanged = function (playerId, count) {
             barUIs[playerId].setCheckers(playerId, count);
         };
@@ -522,7 +513,7 @@ var DiceUI = (function () {
     };
     return DiceUI;
 })();
-/// <reference path="Utils.ts"/>
+/// <reference path="UI/Utils.ts"/>
 var StatusUI = (function () {
     function StatusUI() {
         this.containerDiv = document.createElement('div');
@@ -602,7 +593,6 @@ var Dice = (function () {
 /// <reference path="DiceUI.ts"/>
 /// <reference path="Enums.ts"/>
 /// <reference path="StatusUI.ts"/>
-/// <reference path="Utils.ts"/>
 var GameUI = (function () {
     function GameUI(containerElementId) {
         var container = document.getElementById(containerElementId);

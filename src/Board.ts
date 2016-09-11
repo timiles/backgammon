@@ -17,24 +17,14 @@ class Board {
     constructor(boardUI: BoardUI) {
         this.boardUI = boardUI;
 
-        let onPointInspected = (checkerContainer: CheckerContainer, on: boolean) => {
-            if (this.onPointInspected) {
-                this.onPointInspected(checkerContainer, on);
-            }
-        }
-        let onPointSelected = (checkerContainer: CheckerContainer) => {
-            if (this.onPointSelected) {
-                this.onPointSelected(checkerContainer);
-            }
-        }
         this.checkerContainers = new Array(26);
 
         let homeUIs = new Array<HomeUI>(2);
         homeUIs[PlayerId.BLACK] = this.boardUI.blackHomeUI;
         homeUIs[PlayerId.RED] = this.boardUI.redHomeUI;
         let home = new Home();
-        this.boardUI.blackHomeUI.onSelected = () => onPointSelected(home);
-        this.boardUI.redHomeUI.onSelected = () => onPointSelected(home);
+        this.boardUI.blackHomeUI.onSelected = () => this.onPointSelected(home);
+        this.boardUI.redHomeUI.onSelected = () => this.onPointSelected(home);
 
         home.onIncrement = (playerId: PlayerId, count: number) => {
             homeUIs[playerId].setCheckers(playerId, count);
@@ -55,10 +45,10 @@ class Board {
         barUIs[PlayerId.RED] = this.boardUI.redBarUI;
 
         let bar = new Bar();
-        this.boardUI.blackBarUI.onInspected = (on: boolean) => onPointInspected(bar, on);
-        this.boardUI.blackBarUI.onSelected = () => onPointSelected(bar);
-        this.boardUI.redBarUI.onInspected = (on: boolean) => onPointInspected(bar, on);
-        this.boardUI.redBarUI.onSelected = () => onPointSelected(bar);
+        this.boardUI.blackBarUI.onInspected = (on: boolean) => this.onPointInspected(bar, on);
+        this.boardUI.blackBarUI.onSelected = () => this.onPointSelected(bar);
+        this.boardUI.redBarUI.onInspected = (on: boolean) => this.onPointInspected(bar, on);
+        this.boardUI.redBarUI.onSelected = () => this.onPointSelected(bar);
 
         bar.onCheckerCountChanged = (playerId: PlayerId, count: number) => {
             barUIs[playerId].setCheckers(playerId, count);

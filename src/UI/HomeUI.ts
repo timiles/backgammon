@@ -1,3 +1,4 @@
+/// <reference path="../Enums.ts"/>
 /// <reference path="CheckerContainerUI.ts"/>
 
 class HomeUI extends CheckerContainerUI {
