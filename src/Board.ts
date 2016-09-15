@@ -86,15 +86,24 @@ class Board {
         this.checkerContainers[PointId.BAR] = bar;
     }
 
-    initialise(): void {
-        this.increment(PlayerId.RED, 24, 2);
-        this.increment(PlayerId.BLACK, 1, 2);
-        this.increment(PlayerId.RED, 6, 5);
-        this.increment(PlayerId.BLACK, 19, 5);
-        this.increment(PlayerId.RED, 8, 3);
-        this.increment(PlayerId.BLACK, 17, 3);
-        this.increment(PlayerId.RED, 13, 5);
-        this.increment(PlayerId.BLACK, 12, 5);
+    initialise(layout?: number[][]): void {
+        if (layout === undefined) {
+            layout = [[0, 0],
+                [2, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 5],
+                [0, 0], [0, 3], [0, 0], [0, 0], [0, 0], [5, 0],
+                [0, 5], [0, 0], [0, 0], [0, 0], [3, 0], [0, 0],
+                [5, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 2],
+                [0, 0]];
+        }
+
+        for (let pointId = 0; pointId < 26; pointId++) {
+            for (let playerId of [PlayerId.BLACK, PlayerId.RED]) {
+                let checkerCount = layout[pointId][playerId];
+                if (checkerCount > 0) {
+                    this.increment(playerId, pointId, checkerCount);
+                }
+            }
+        }
     }
 
     decrement(player: PlayerId, pointId: number): void {
