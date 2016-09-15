@@ -1,7 +1,10 @@
 /// <reference path="Board.ts"/>
 /// <reference path="CheckerContainer.ts"/>
+/// <reference path="ComputerPlayer.ts"/>
 /// <reference path="Dice.ts"/>
 /// <reference path="Enums.ts"/>
+/// <reference path="HumanPlayer.ts"/>
+/// <reference path="Player.ts"/>
 /// <reference path="GameUI.ts"/>
 /// <reference path="StatusLogger.ts"/>
 
@@ -12,14 +15,20 @@ class Game {
     statusLogger: StatusLogger;
 
     currentPlayer: PlayerId;
+    players: Player[];
     currentSelectedCheckerContainer: CheckerContainer;
 
-    constructor(gameUI: GameUI, board: Board, dice: Dice, statusLogger: StatusLogger, currentPlayer: PlayerId) {
+    constructor(gameUI: GameUI, board: Board, dice: Dice, statusLogger: StatusLogger, currentPlayer: PlayerId, isComputerPlayer = [false, false]) {
 
         this.board = board;
         this.dice = dice;
         this.statusLogger = statusLogger;
         this.currentPlayer = currentPlayer;
+
+        this.players = new Array<Player>(2);
+        for (let playerId of [PlayerId.BLACK, PlayerId.RED]) {
+            this.players[playerId] = (isComputerPlayer[playerId]) ? new ComputerPlayer(playerId, this.board) : new HumanPlayer(playerId, this.board);
+        }
 
         // helpers
         let getBarUI = (playerId: PlayerId): BarUI => {
@@ -142,8 +151,10 @@ class Game {
                     this.switchPlayerIfNoValidMovesRemain();
 
                     // reinspect point
-                    this.board.onPointInspected(checkerContainer.pointId, false);
-                    this.board.onPointInspected(checkerContainer.pointId, true);
+                    if (this.board.onPointInspected) {
+                        this.board.onPointInspected(checkerContainer.pointId, false);
+                        this.board.onPointInspected(checkerContainer.pointId, true);
+                    }
                 }
                 else if (canUseDie1 || canUseDie2) {
                     if (checkerContainer instanceof Point) {
@@ -188,14 +199,17 @@ class Game {
                 this.switchPlayerIfNoValidMovesRemain();
 
                 // reinspect point
-                this.board.onPointInspected(checkerContainer.pointId, false);
-                this.board.onPointInspected(checkerContainer.pointId, true);
+                if (this.board.onPointInspected) {
+                    this.board.onPointInspected(checkerContainer.pointId, false);
+                    this.board.onPointInspected(checkerContainer.pointId, true);
+                }
             }
         };
 
         board.initialise();
         this.logCurrentPlayer();
         this.evaluateBoard();
+        this.switchPlayerIfNoValidMovesRemain();
     }
 
     private checkIfValidMovesRemain(): boolean {
@@ -227,6 +241,25 @@ class Game {
             this.dice.roll(this.currentPlayer);
             this.evaluateBoard();
             this.switchPlayerIfNoValidMovesRemain();
+            return;
+        }
+
+        if (this.players[this.currentPlayer] instanceof ComputerPlayer) {
+            let computerPlayer = <ComputerPlayer>this.players[this.currentPlayer];
+            let bestPossibleGo = computerPlayer.getBestPossibleGo(this.dice);
+            if (bestPossibleGo) {
+                for (let moveNumber = 0; moveNumber < bestPossibleGo.moves.length; moveNumber++) {
+                    let move = bestPossibleGo.moves[moveNumber];
+                    this.board.move(this.currentPlayer, move.startingPointId, move.numberOfPointsToMove);
+                }
+                console.log(bestPossibleGo);
+            }
+            setTimeout(() => {
+                this.switchPlayer();
+                this.dice.roll(this.currentPlayer);
+                this.evaluateBoard();
+                this.switchPlayerIfNoValidMovesRemain();
+            }, 500);
         }
     }
 

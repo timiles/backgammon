@@ -181,15 +181,24 @@ var Board = (function () {
         };
         this.checkerContainers[PointId.BAR] = bar;
     }
-    Board.prototype.initialise = function () {
-        this.increment(PlayerId.RED, 24, 2);
-        this.increment(PlayerId.BLACK, 1, 2);
-        this.increment(PlayerId.RED, 6, 5);
-        this.increment(PlayerId.BLACK, 19, 5);
-        this.increment(PlayerId.RED, 8, 3);
-        this.increment(PlayerId.BLACK, 17, 3);
-        this.increment(PlayerId.RED, 13, 5);
-        this.increment(PlayerId.BLACK, 12, 5);
+    Board.prototype.initialise = function (layout) {
+        if (layout === undefined) {
+            layout = [[0, 0],
+                [2, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 5],
+                [0, 0], [0, 3], [0, 0], [0, 0], [0, 0], [5, 0],
+                [0, 5], [0, 0], [0, 0], [0, 0], [3, 0], [0, 0],
+                [5, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 2],
+                [0, 0]];
+        }
+        for (var pointId = 0; pointId < 26; pointId++) {
+            for (var _i = 0, _a = [PlayerId.BLACK, PlayerId.RED]; _i < _a.length; _i++) {
+                var playerId = _a[_i];
+                var checkerCount = layout[pointId][playerId];
+                if (checkerCount > 0) {
+                    this.increment(playerId, pointId, checkerCount);
+                }
+            }
+        }
     };
     Board.prototype.decrement = function (player, pointId) {
         this.checkerContainers[pointId].decrement(player);
@@ -227,12 +236,12 @@ var Board = (function () {
     Board.prototype.isLegalMove = function (player, sourcePointId, numberOfMoves) {
         // case: there is no counter to move: fail
         if (this.checkerContainers[sourcePointId].checkers[player] == 0) {
-            console.info('no counter at ' + sourcePointId);
+            // console.info('no counter at ' + sourcePointId);
             return false;
         }
         // case: there is a counter on the bar, and this is not it
         if ((sourcePointId != PointId.BAR) && (this.checkerContainers[PointId.BAR].checkers[player] > 0)) {
-            console.info('must move counter off bar first');
+            // console.info('must move counter off bar first');
             return false;
         }
         // case: bearing off
@@ -265,7 +274,7 @@ var Board = (function () {
         var otherPlayer = Game.getOtherPlayer(player);
         // case: there is a counter, but opponent blocks the end pip
         if (this.checkerContainers[destinationPointId].checkers[otherPlayer] >= 2) {
-            console.info('point is blocked');
+            // console.info('point is blocked');
             return false;
         }
         return true;
@@ -461,6 +470,231 @@ var Dice = (function () {
     };
     return Dice;
 })();
+var Move = (function () {
+    function Move(startingPointId, numberOfPointsToMove) {
+        this.startingPointId = startingPointId;
+        this.numberOfPointsToMove = numberOfPointsToMove;
+    }
+    return Move;
+})();
+/// <reference path="Board.ts"/>
+/// <reference path="Move.ts"/>
+var PossibleGo = (function () {
+    function PossibleGo(moves, resultantBoard) {
+        this.moves = moves;
+        this.resultantBoard = resultantBoard;
+    }
+    return PossibleGo;
+})();
+/// <reference path="Board.ts"/>
+/// <reference path="Enums.ts"/>
+/// <reference path="Move.ts"/>
+/// <reference path="PossibleGo.ts"/>
+var BoardEvaluator = (function () {
+    function BoardEvaluator() {
+    }
+    BoardEvaluator.isRace = function (board) {
+        var playerId = 0;
+        for (var pointId = 1; pointId <= 24; pointId++) {
+            if (board.checkerContainers[pointId].checkers[playerId] > 0) {
+                if (playerId === 0) {
+                    // once we've found a checker of one player, switch and we'll look for the other
+                    playerId++;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        return true;
+    };
+    BoardEvaluator.clone = function (source) {
+        var clone = new Board();
+        var layout = new Array();
+        for (var pointId = 0; pointId < 26; pointId++) {
+            layout[pointId] = [source.checkerContainers[pointId].checkers[PlayerId.BLACK], source.checkerContainers[pointId].checkers[PlayerId.RED]];
+        }
+        clone.initialise(layout);
+        return clone;
+    };
+    BoardEvaluator.getPossibleGoes = function (board, playerId, d) {
+        var possibleGoes = new Array();
+        // 1. double number thrown.
+        if (d.die1 === d.die2) {
+            var points_1 = d.die1.value;
+            var testBoard = new Array(4);
+            var numOfMoves = 0;
+            // 25: include bar
+            for (var i1 = 1; i1 <= 25; i1++) {
+                testBoard[0] = BoardEvaluator.clone(board);
+                if (!testBoard[0].move(playerId, i1, points_1)) {
+                    continue;
+                }
+                possibleGoes.push(new PossibleGo([new Move(i1, points_1)], testBoard[0]));
+                for (var i2 = 1; i2 <= 25; i2++) {
+                    testBoard[1] = BoardEvaluator.clone(testBoard[0]);
+                    if (!testBoard[1].move(playerId, i2, points_1)) {
+                        continue;
+                    }
+                    possibleGoes.push(new PossibleGo([new Move(i1, points_1), new Move(i2, points_1)], testBoard[1]));
+                    for (var i3 = 1; i3 <= 25; i3++) {
+                        testBoard[2] = BoardEvaluator.clone(testBoard[1]);
+                        if (!testBoard[2].move(playerId, i3, points_1)) {
+                            continue;
+                        }
+                        possibleGoes.push(new PossibleGo([new Move(i1, points_1), new Move(i2, points_1), new Move(i3, points_1)], testBoard[2]));
+                        for (var i4 = 1; i4 <= 25; i4++) {
+                            testBoard[3] = BoardEvaluator.clone(testBoard[2]);
+                            if (testBoard[3].move(playerId, i4, points_1)) {
+                                possibleGoes.push(new PossibleGo([new Move(i1, points_1), new Move(i2, points_1), new Move(i3, points_1), new Move(i4, points_1)], testBoard[3]));
+                            }
+                        }
+                    }
+                }
+            }
+            return BoardEvaluator.getPossibleGoesThatUseMostDice(possibleGoes);
+        }
+        // 2. non-double thrown.
+        var points = [d.die1.value, d.die2.value];
+        for (var startPoint1 = 1; startPoint1 <= 25; startPoint1++) {
+            for (var die = 0; die < 2; die++) {
+                var testBoard1 = BoardEvaluator.clone(board);
+                if (testBoard1.move(playerId, startPoint1, points[die])) {
+                    if (!BoardEvaluator.canMove(testBoard1, playerId, points[(die + 1) % 2])) {
+                        possibleGoes.push(new PossibleGo([new Move(startPoint1, points[die])], BoardEvaluator.clone(testBoard1)));
+                        continue;
+                    }
+                    // else 
+                    for (var startPoint2 = 1; startPoint2 <= 25; startPoint2++) {
+                        var testBoard2 = BoardEvaluator.clone(testBoard1);
+                        if (testBoard2.move(playerId, startPoint2, points[(die + 1) % 2])) {
+                            possibleGoes.push(new PossibleGo([new Move(startPoint1, points[die]), new Move(startPoint2, points[(die + 1) % 2])], BoardEvaluator.clone(testBoard2)));
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+        return BoardEvaluator.getPossibleGoesThatUseMostDice(possibleGoes);
+    };
+    BoardEvaluator.canMove = function (board, playerId, points) {
+        // 25: include bar
+        for (var startingPoint = 1; startingPoint <= 25; startingPoint++) {
+            if (board.isLegalMove(playerId, startingPoint, points)) {
+                return true;
+            }
+        }
+        return false;
+    };
+    BoardEvaluator.getPossibleGoesThatUseMostDice = function (possibleGoes) {
+        var max = 0;
+        // 1. find move with most amount of dice used
+        for (var i = 0; i < possibleGoes.length; i++) {
+            max = Math.max(max, possibleGoes[i].moves.length);
+        }
+        var goesThatUseMostDice = new Array();
+        // 2. copy into new array all with length of max
+        for (var i = 0; i < possibleGoes.length; i++) {
+            if (possibleGoes[i].moves.length === max) {
+                goesThatUseMostDice.push(possibleGoes[i]);
+            }
+        }
+        return goesThatUseMostDice;
+    };
+    return BoardEvaluator;
+})();
+var Player = (function () {
+    function Player(playerId, board) {
+        this.playerId = playerId;
+        this.board = board;
+    }
+    return Player;
+})();
+/// <reference path="Board.ts"/>
+/// <reference path="BoardEvaluator.ts"/>
+/// <reference path="Dice.ts"/>
+/// <reference path="Enums.ts"/>
+/// <reference path="Player.ts"/>
+/// <reference path="StatusLogger.ts"/>
+var ComputerPlayer = (function (_super) {
+    __extends(ComputerPlayer, _super);
+    function ComputerPlayer(playerId, board) {
+        _super.call(this, playerId, board);
+        this.safetyFactor = 1;
+        this.clusteringFactor = 1;
+        this.offensiveFactor = 1;
+        this.reentryFactor = 1;
+    }
+    ComputerPlayer.prototype.getBestPossibleGo = function (dice) {
+        var possibleGoes = BoardEvaluator.getPossibleGoes(this.board, this.playerId, dice);
+        if (possibleGoes.length === 0) {
+            console.info('No possible go');
+            return null;
+        }
+        var maxScore = 0;
+        var maxScoreIndex = 0;
+        for (var i = 0; i < possibleGoes.length; i++) {
+            var score = this.evaluateBoard(possibleGoes[i].resultantBoard);
+            // greater than or equal: bias towards further on moves
+            if (score >= maxScore) {
+                maxScore = score;
+                maxScoreIndex = i;
+            }
+        }
+        return possibleGoes[maxScoreIndex];
+    };
+    ComputerPlayer.prototype.evaluateBoard = function (b) {
+        return this.evaluateSafety(b) * this.safetyFactor +
+            this.evaluateClustering(b) * this.clusteringFactor +
+            this.evaluateOffensive(b) * this.offensiveFactor;
+    };
+    /**
+     * return score of how safe the stones are.
+     */
+    ComputerPlayer.prototype.evaluateSafety = function (b) {
+        // if the game is a race, safety is irrelevant
+        if (BoardEvaluator.isRace(b)) {
+            return 0;
+        }
+        var score = 100;
+        for (var pointId = 1; pointId <= 24; pointId++) {
+            if (b.checkerContainers[pointId].checkers[this.playerId] === 1) {
+                // TODO
+                // factor safety on prob of opp hitting this piece
+                score *= .75;
+            }
+        }
+        return score;
+    };
+    /**
+     * return score of how clustered the towers are.
+     */
+    ComputerPlayer.prototype.evaluateClustering = function (b) {
+        var score = 0;
+        // number of towers
+        // proximity of towers
+        return score;
+    };
+    /**
+     * offensive: putting opponent onto bar
+     */
+    ComputerPlayer.prototype.evaluateOffensive = function (b) {
+        var otherPlayerId = (this.playerId + 1) % 2;
+        switch (b.checkerContainers[PointId.BAR].checkers[otherPlayerId]) {
+            case 0: return 0;
+            case 1: return 65;
+            default: return 100;
+        }
+    };
+    return ComputerPlayer;
+})(Player);
+var HumanPlayer = (function (_super) {
+    __extends(HumanPlayer, _super);
+    function HumanPlayer() {
+        _super.apply(this, arguments);
+    }
+    return HumanPlayer;
+})(Player);
 /// <reference path="../Enums.ts"/>
 /// <reference path="Utils.ts"/>
 var CheckerContainerUI = (function () {
@@ -616,17 +850,26 @@ var GameUI = (function () {
 })();
 /// <reference path="Board.ts"/>
 /// <reference path="CheckerContainer.ts"/>
+/// <reference path="ComputerPlayer.ts"/>
 /// <reference path="Dice.ts"/>
 /// <reference path="Enums.ts"/>
+/// <reference path="HumanPlayer.ts"/>
+/// <reference path="Player.ts"/>
 /// <reference path="GameUI.ts"/>
 /// <reference path="StatusLogger.ts"/>
 var Game = (function () {
-    function Game(gameUI, board, dice, statusLogger, currentPlayer) {
+    function Game(gameUI, board, dice, statusLogger, currentPlayer, isComputerPlayer) {
         var _this = this;
+        if (isComputerPlayer === void 0) { isComputerPlayer = [false, false]; }
         this.board = board;
         this.dice = dice;
         this.statusLogger = statusLogger;
         this.currentPlayer = currentPlayer;
+        this.players = new Array(2);
+        for (var _i = 0, _a = [PlayerId.BLACK, PlayerId.RED]; _i < _a.length; _i++) {
+            var playerId = _a[_i];
+            this.players[playerId] = (isComputerPlayer[playerId]) ? new ComputerPlayer(playerId, this.board) : new HumanPlayer(playerId, this.board);
+        }
         // helpers
         var getBarUI = function (playerId) {
             return (playerId === PlayerId.BLACK) ? gameUI.boardUI.blackBarUI : gameUI.boardUI.redBarUI;
@@ -735,8 +978,10 @@ var Game = (function () {
                     }
                     _this.switchPlayerIfNoValidMovesRemain();
                     // reinspect point
-                    _this.board.onPointInspected(checkerContainer.pointId, false);
-                    _this.board.onPointInspected(checkerContainer.pointId, true);
+                    if (_this.board.onPointInspected) {
+                        _this.board.onPointInspected(checkerContainer.pointId, false);
+                        _this.board.onPointInspected(checkerContainer.pointId, true);
+                    }
                 }
                 else if (canUseDie1 || canUseDie2) {
                     if (checkerContainer instanceof Point) {
@@ -775,13 +1020,16 @@ var Game = (function () {
                 useDieIfPossible(_this.dice.die1) || useDieIfPossible(_this.dice.die2);
                 _this.switchPlayerIfNoValidMovesRemain();
                 // reinspect point
-                _this.board.onPointInspected(checkerContainer.pointId, false);
-                _this.board.onPointInspected(checkerContainer.pointId, true);
+                if (_this.board.onPointInspected) {
+                    _this.board.onPointInspected(checkerContainer.pointId, false);
+                    _this.board.onPointInspected(checkerContainer.pointId, true);
+                }
             }
         };
         board.initialise();
         this.logCurrentPlayer();
         this.evaluateBoard();
+        this.switchPlayerIfNoValidMovesRemain();
     }
     Game.prototype.checkIfValidMovesRemain = function () {
         var _this = this;
@@ -800,6 +1048,7 @@ var Game = (function () {
         return false;
     };
     Game.prototype.switchPlayerIfNoValidMovesRemain = function () {
+        var _this = this;
         if (this.board.checkerContainers[PointId.HOME].checkers[this.currentPlayer] === 15) {
             this.statusLogger.logInfo(PlayerId[this.currentPlayer] + " WINS!");
             return;
@@ -810,6 +1059,24 @@ var Game = (function () {
             this.dice.roll(this.currentPlayer);
             this.evaluateBoard();
             this.switchPlayerIfNoValidMovesRemain();
+            return;
+        }
+        if (this.players[this.currentPlayer] instanceof ComputerPlayer) {
+            var computerPlayer = this.players[this.currentPlayer];
+            var bestPossibleGo = computerPlayer.getBestPossibleGo(this.dice);
+            if (bestPossibleGo) {
+                for (var moveNumber = 0; moveNumber < bestPossibleGo.moves.length; moveNumber++) {
+                    var move = bestPossibleGo.moves[moveNumber];
+                    this.board.move(this.currentPlayer, move.startingPointId, move.numberOfPointsToMove);
+                }
+                console.log(bestPossibleGo);
+            }
+            setTimeout(function () {
+                _this.switchPlayer();
+                _this.dice.roll(_this.currentPlayer);
+                _this.evaluateBoard();
+                _this.switchPlayerIfNoValidMovesRemain();
+            }, 500);
         }
     };
     Game.getOtherPlayer = function (player) {
@@ -858,13 +1125,15 @@ var Game = (function () {
 /// <reference path="GameUI.ts"/>
 /// <reference path="StatusLogger.ts"/>
 var Backgammon = (function () {
-    function Backgammon(containerId) {
+    function Backgammon(containerId, blackIsComputer, redIsComputer) {
+        if (blackIsComputer === void 0) { blackIsComputer = false; }
+        if (redIsComputer === void 0) { redIsComputer = false; }
         var ui = new GameUI(containerId);
         var board = new Board();
         var dice = new Dice(new DiceRollGenerator(), ui.blackDiceUI, ui.redDiceUI);
         var statusLogger = new StatusLogger(ui.statusUI);
         dice.rollToStart(statusLogger, function (successfulPlayer) {
-            new Game(ui, board, dice, statusLogger, successfulPlayer);
+            new Game(ui, board, dice, statusLogger, successfulPlayer, [blackIsComputer, redIsComputer]);
         });
     }
     return Backgammon;

@@ -1,0 +1,3 @@
+class HumanPlayer extends Player {
+
+}

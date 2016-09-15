@@ -7,7 +7,7 @@
 
 class Backgammon {
     
-    constructor(containerId: string) {
+    constructor(containerId: string, blackIsComputer = false, redIsComputer = false) {
         
         let ui = new GameUI(containerId);
         let board = new Board();
@@ -15,7 +15,7 @@ class Backgammon {
         let statusLogger = new StatusLogger(ui.statusUI);
 
         dice.rollToStart(statusLogger, (successfulPlayer: PlayerId) => {
-            new Game(ui, board, dice, statusLogger, successfulPlayer);
+            new Game(ui, board, dice, statusLogger, successfulPlayer, [blackIsComputer, redIsComputer]);
         });
     }
 }
