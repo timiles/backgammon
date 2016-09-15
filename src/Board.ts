@@ -149,13 +149,13 @@ class Board {
 
         // case: there is no counter to move: fail
         if (this.checkerContainers[sourcePointId].checkers[player] == 0) {
-            console.info('no counter at ' + sourcePointId);
+            // console.info('no counter at ' + sourcePointId);
             return false;
         }
 
         // case: there is a counter on the bar, and this is not it
         if ((sourcePointId != PointId.BAR) && (this.checkerContainers[PointId.BAR].checkers[player] > 0)) {
-            console.info('must move counter off bar first');
+            // console.info('must move counter off bar first');
             return false;
         }
 
@@ -193,7 +193,7 @@ class Board {
 
         // case: there is a counter, but opponent blocks the end pip
         if (this.checkerContainers[destinationPointId].checkers[otherPlayer] >= 2) {
-            console.info('point is blocked');
+            // console.info('point is blocked');
             return false;
         }
 
