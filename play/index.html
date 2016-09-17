@@ -1,28 +1,30 @@
-
 <!DOCTYPE html5>
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
     <title>Backgammon</title>
     <link rel="stylesheet" type="text/css" href="css/ui.css" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script src="js/backgammon.js"></script>
     <style>
-        BODY
-        {
+        BODY {
             font-family: Arial;
         }
     </style>
 </head>
+
 <body>
     <h1>
         Backgammon</h1>
 
     <div id="backgammon"></div>
 
-    <script>        
-        new Backgammon('backgammon', true, true);
+    <script>
+        var queryStringParams = new URLSearchParams(window.location.search);
+        new Backgammon('backgammon', queryStringParams.get('black') === 'computer', queryStringParams.get('red') === 'computer');
     </script>
-    
+
     <p><a href="../tests/SpecRunner.html">run tests</a></p>
 </body>
+
 </html>
