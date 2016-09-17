@@ -206,13 +206,13 @@ var Board = (function () {
     Board.prototype.increment = function (player, pointId, count) {
         this.checkerContainers[pointId].increment(player, count || 1);
     };
-    Board.getDestinationPointId = function (player, sourcePointId, numberOfMoves) {
+    Board.getDestinationPointId = function (player, sourcePointId, numberOfPointsToMove) {
         switch (player) {
             case PlayerId.BLACK: {
                 if (sourcePointId === PointId.BAR) {
-                    return numberOfMoves;
+                    return numberOfPointsToMove;
                 }
-                var destinationPointId = sourcePointId + numberOfMoves;
+                var destinationPointId = sourcePointId + numberOfPointsToMove;
                 if (destinationPointId > 24) {
                     // bearing off
                     return PointId.HOME;
@@ -221,9 +221,9 @@ var Board = (function () {
             }
             case PlayerId.RED: {
                 if (sourcePointId === PointId.BAR) {
-                    return PointId.BAR - numberOfMoves;
+                    return PointId.BAR - numberOfPointsToMove;
                 }
-                var destinationPointId = sourcePointId - numberOfMoves;
+                var destinationPointId = sourcePointId - numberOfPointsToMove;
                 if (destinationPointId < 1) {
                     // bearing off
                     return PointId.HOME;
@@ -233,7 +233,7 @@ var Board = (function () {
             default: throw "Unknown player: " + player;
         }
     };
-    Board.prototype.isLegalMove = function (player, sourcePointId, numberOfMoves) {
+    Board.prototype.isLegalMove = function (player, sourcePointId, numberOfPointsToMove) {
         // case: there is no counter to move: fail
         if (this.checkerContainers[sourcePointId].checkers[player] == 0) {
             // console.info('no counter at ' + sourcePointId);
@@ -246,7 +246,7 @@ var Board = (function () {
         }
         // case: bearing off
         var direction = (player === PlayerId.BLACK) ? 1 : -1;
-        var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
+        var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfPointsToMove);
         if (destinationPointId === PointId.HOME) {
             // check that there are no checkers outside of home board. (BAR has already been checked above)
             var startingPointOfOuterBoard = (player === PlayerId.BLACK) ? 1 : 24;
@@ -257,7 +257,7 @@ var Board = (function () {
                 }
             }
             // check that there are no checkers more deserving of this dice roll
-            var actualDestinationPointId = sourcePointId + (direction * numberOfMoves);
+            var actualDestinationPointId = sourcePointId + (direction * numberOfPointsToMove);
             // if it's dead on, we're fine.
             if (actualDestinationPointId === 0 || actualDestinationPointId === 25) {
                 return true;
@@ -279,11 +279,11 @@ var Board = (function () {
         }
         return true;
     };
-    Board.prototype.move = function (player, sourcePointId, numberOfMoves) {
-        if (!this.isLegalMove(player, sourcePointId, numberOfMoves)) {
+    Board.prototype.move = function (player, sourcePointId, numberOfPointsToMove) {
+        if (!this.isLegalMove(player, sourcePointId, numberOfPointsToMove)) {
             return false;
         }
-        var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
+        var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfPointsToMove);
         var otherPlayer = Game.getOtherPlayer(player);
         if (destinationPointId !== PointId.HOME &&
             this.checkerContainers[destinationPointId].checkers[otherPlayer] == 1) {
@@ -294,9 +294,9 @@ var Board = (function () {
         this.increment(player, destinationPointId);
         return true;
     };
-    Board.prototype.checkIfValidDestination = function (player, sourcePointId, numberOfMoves) {
-        if (this.isLegalMove(player, sourcePointId, numberOfMoves)) {
-            var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
+    Board.prototype.checkIfValidDestination = function (player, sourcePointId, numberOfPointsToMove) {
+        if (this.isLegalMove(player, sourcePointId, numberOfPointsToMove)) {
+            var destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfPointsToMove);
             if (destinationPointId === PointId.HOME) {
                 this.checkerContainers[PointId.HOME].setValidDestination(player, true);
             }
@@ -471,8 +471,8 @@ var Dice = (function () {
     return Dice;
 })();
 var Move = (function () {
-    function Move(startingPointId, numberOfPointsToMove) {
-        this.startingPointId = startingPointId;
+    function Move(sourcePointId, numberOfPointsToMove) {
+        this.sourcePointId = sourcePointId;
         this.numberOfPointsToMove = numberOfPointsToMove;
     }
     return Move;
@@ -858,13 +858,13 @@ var GameUI = (function () {
 /// <reference path="GameUI.ts"/>
 /// <reference path="StatusLogger.ts"/>
 var Game = (function () {
-    function Game(gameUI, board, dice, statusLogger, currentPlayer, isComputerPlayer) {
+    function Game(gameUI, board, dice, statusLogger, currentPlayerId, isComputerPlayer) {
         var _this = this;
         if (isComputerPlayer === void 0) { isComputerPlayer = [false, false]; }
         this.board = board;
         this.dice = dice;
         this.statusLogger = statusLogger;
-        this.currentPlayer = currentPlayer;
+        this.currentPlayerId = currentPlayerId;
         this.players = new Array(2);
         for (var _i = 0, _a = [PlayerId.BLACK, PlayerId.RED]; _i < _a.length; _i++) {
             var playerId = _a[_i];
@@ -935,11 +935,11 @@ var Game = (function () {
                 return;
             }
             var checkerContainer = _this.board.checkerContainers[pointId];
-            if (!(checkerContainer instanceof Home) && (checkerContainer.checkers[_this.currentPlayer] > 0)) {
+            if (!(checkerContainer instanceof Home) && (checkerContainer.checkers[_this.currentPlayerId] > 0)) {
                 for (var _i = 0, _a = [_this.dice.die1, _this.dice.die2]; _i < _a.length; _i++) {
                     var die = _a[_i];
                     if (die.remainingUses > 0) {
-                        _this.board.checkIfValidDestination(_this.currentPlayer, checkerContainer.pointId, die.value);
+                        _this.board.checkIfValidDestination(_this.currentPlayerId, checkerContainer.pointId, die.value);
                     }
                 }
             }
@@ -947,18 +947,18 @@ var Game = (function () {
         this.board.onPointSelected = function (pointId) {
             var checkerContainer = _this.board.checkerContainers[pointId];
             if (_this.currentSelectedCheckerContainer == undefined) {
-                if (checkerContainer.checkers[_this.currentPlayer] == 0) {
+                if (checkerContainer.checkers[_this.currentPlayerId] == 0) {
                     // if no pieces here, exit
                     return;
                 }
                 var canUseDie = function (die) {
                     return (die.remainingUses > 0 &&
-                        _this.board.isLegalMove(_this.currentPlayer, checkerContainer.pointId, die.value));
+                        _this.board.isLegalMove(_this.currentPlayerId, checkerContainer.pointId, die.value));
                 };
                 var canBearOff = function (die) {
                     return (die.remainingUses > 0 &&
-                        Board.getDestinationPointId(_this.currentPlayer, checkerContainer.pointId, die.value) === PointId.HOME &&
-                        _this.board.isLegalMove(_this.currentPlayer, checkerContainer.pointId, die.value));
+                        Board.getDestinationPointId(_this.currentPlayerId, checkerContainer.pointId, die.value) === PointId.HOME &&
+                        _this.board.isLegalMove(_this.currentPlayerId, checkerContainer.pointId, die.value));
                 };
                 var canUseDie1 = canUseDie(_this.dice.die1);
                 var canUseDie2 = canUseDie(_this.dice.die2);
@@ -967,12 +967,12 @@ var Game = (function () {
                     (_this.dice.die1.value === _this.dice.die2.value) ||
                     (canBearOff(_this.dice.die1) && canBearOff(_this.dice.die2))) {
                     if (canUseDie1) {
-                        _this.board.move(_this.currentPlayer, checkerContainer.pointId, _this.dice.die1.value);
+                        _this.board.move(_this.currentPlayerId, checkerContainer.pointId, _this.dice.die1.value);
                         _this.dice.die1.decrementRemainingUses();
                         _this.evaluateBoard();
                     }
                     else if (canUseDie2) {
-                        _this.board.move(_this.currentPlayer, checkerContainer.pointId, _this.dice.die2.value);
+                        _this.board.move(_this.currentPlayerId, checkerContainer.pointId, _this.dice.die2.value);
                         _this.dice.die2.decrementRemainingUses();
                         _this.evaluateBoard();
                     }
@@ -988,7 +988,7 @@ var Game = (function () {
                         checkerContainer.setSelected(true);
                     }
                     else if (checkerContainer instanceof Bar) {
-                        checkerContainer.setSelected(_this.currentPlayer, true);
+                        checkerContainer.setSelected(_this.currentPlayerId, true);
                     }
                     _this.currentSelectedCheckerContainer = checkerContainer;
                     _this.evaluateBoard();
@@ -1003,11 +1003,11 @@ var Game = (function () {
             }
             else {
                 var useDieIfPossible = function (die) {
-                    var destinationPointId = Board.getDestinationPointId(_this.currentPlayer, _this.currentSelectedCheckerContainer.pointId, die.value);
+                    var destinationPointId = Board.getDestinationPointId(_this.currentPlayerId, _this.currentSelectedCheckerContainer.pointId, die.value);
                     if (destinationPointId !== checkerContainer.pointId) {
                         return false;
                     }
-                    _this.board.move(_this.currentPlayer, _this.currentSelectedCheckerContainer.pointId, die.value);
+                    _this.board.move(_this.currentPlayerId, _this.currentSelectedCheckerContainer.pointId, die.value);
                     die.decrementRemainingUses();
                     if (_this.currentSelectedCheckerContainer instanceof Point) {
                         _this.currentSelectedCheckerContainer.setSelected(false);
@@ -1037,7 +1037,7 @@ var Game = (function () {
             return false;
         }
         var isValidMove = function (die, pointId) {
-            return (die.remainingUses > 0) && _this.board.isLegalMove(_this.currentPlayer, pointId, die.value);
+            return (die.remainingUses > 0) && _this.board.isLegalMove(_this.currentPlayerId, pointId, die.value);
         };
         for (var pointId = 1; pointId <= 25; pointId++) {
             if (isValidMove(this.dice.die1, pointId) || isValidMove(this.dice.die2, pointId)) {
@@ -1049,31 +1049,31 @@ var Game = (function () {
     };
     Game.prototype.switchPlayerIfNoValidMovesRemain = function () {
         var _this = this;
-        if (this.board.checkerContainers[PointId.HOME].checkers[this.currentPlayer] === 15) {
-            this.statusLogger.logInfo(PlayerId[this.currentPlayer] + " WINS!");
+        if (this.board.checkerContainers[PointId.HOME].checkers[this.currentPlayerId] === 15) {
+            this.statusLogger.logInfo(PlayerId[this.currentPlayerId] + " WINS!");
             return;
         }
         if (!this.checkIfValidMovesRemain()) {
             // if we're still here, 
             this.switchPlayer();
-            this.dice.roll(this.currentPlayer);
+            this.dice.roll(this.currentPlayerId);
             this.evaluateBoard();
             this.switchPlayerIfNoValidMovesRemain();
             return;
         }
-        if (this.players[this.currentPlayer] instanceof ComputerPlayer) {
-            var computerPlayer = this.players[this.currentPlayer];
+        if (this.players[this.currentPlayerId] instanceof ComputerPlayer) {
+            var computerPlayer = this.players[this.currentPlayerId];
             var bestPossibleGo = computerPlayer.getBestPossibleGo(this.dice);
             if (bestPossibleGo) {
                 for (var moveNumber = 0; moveNumber < bestPossibleGo.moves.length; moveNumber++) {
                     var move = bestPossibleGo.moves[moveNumber];
-                    this.board.move(this.currentPlayer, move.startingPointId, move.numberOfPointsToMove);
+                    this.board.move(this.currentPlayerId, move.sourcePointId, move.numberOfPointsToMove);
                 }
                 console.log(bestPossibleGo);
             }
             setTimeout(function () {
                 _this.switchPlayer();
-                _this.dice.roll(_this.currentPlayer);
+                _this.dice.roll(_this.currentPlayerId);
                 _this.evaluateBoard();
                 _this.switchPlayerIfNoValidMovesRemain();
             }, 500);
@@ -1083,7 +1083,7 @@ var Game = (function () {
         return player === PlayerId.BLACK ? PlayerId.RED : PlayerId.BLACK;
     };
     Game.prototype.switchPlayer = function () {
-        this.currentPlayer = (this.currentPlayer + 1) % 2;
+        this.currentPlayerId = (this.currentPlayerId + 1) % 2;
         this.logCurrentPlayer();
     };
     Game.prototype.evaluateBoard = function () {
@@ -1097,24 +1097,24 @@ var Game = (function () {
             return;
         }
         var isValidSource = function (pointId) {
-            if (_this.board.checkerContainers[pointId].checkers[_this.currentPlayer] > 0) {
+            if (_this.board.checkerContainers[pointId].checkers[_this.currentPlayerId] > 0) {
                 for (var _i = 0, _a = [_this.dice.die1, _this.dice.die2]; _i < _a.length; _i++) {
                     var die = _a[_i];
                     if ((die.remainingUses > 0) &&
-                        (_this.board.isLegalMove(_this.currentPlayer, pointId, die.value))) {
+                        (_this.board.isLegalMove(_this.currentPlayerId, pointId, die.value))) {
                         return true;
                     }
                 }
             }
             return false;
         };
-        this.board.checkerContainers[PointId.BAR].setValidSource(this.currentPlayer, isValidSource(PointId.BAR));
+        this.board.checkerContainers[PointId.BAR].setValidSource(this.currentPlayerId, isValidSource(PointId.BAR));
         for (var i = 1; i <= 24; i++) {
             this.board.checkerContainers[i].setValidSource(isValidSource(i));
         }
     };
     Game.prototype.logCurrentPlayer = function () {
-        this.statusLogger.logInfo(PlayerId[this.currentPlayer] + " to move");
+        this.statusLogger.logInfo(PlayerId[this.currentPlayerId] + " to move");
     };
     return Game;
 })();

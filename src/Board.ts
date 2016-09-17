@@ -114,14 +114,14 @@ class Board {
         this.checkerContainers[pointId].increment(player, count || 1);
     }
 
-    static getDestinationPointId(player: PlayerId, sourcePointId: number, numberOfMoves: number): number {
+    static getDestinationPointId(player: PlayerId, sourcePointId: number, numberOfPointsToMove: number): number {
         switch (player) {
             case PlayerId.BLACK: {
                 if (sourcePointId === PointId.BAR) {
-                    return numberOfMoves;
+                    return numberOfPointsToMove;
                 }
 
-                let destinationPointId = sourcePointId + numberOfMoves;
+                let destinationPointId = sourcePointId + numberOfPointsToMove;
                 if (destinationPointId > 24) {
                     // bearing off
                     return PointId.HOME;
@@ -131,10 +131,10 @@ class Board {
             }
             case PlayerId.RED: {
                 if (sourcePointId === PointId.BAR) {
-                    return PointId.BAR - numberOfMoves;
+                    return PointId.BAR - numberOfPointsToMove;
                 }
 
-                let destinationPointId = sourcePointId - numberOfMoves;
+                let destinationPointId = sourcePointId - numberOfPointsToMove;
                 if (destinationPointId < 1) {
                     // bearing off
                     return PointId.HOME;
@@ -145,7 +145,7 @@ class Board {
         }
     }
 
-    isLegalMove(player: PlayerId, sourcePointId: number, numberOfMoves: number): boolean {
+    isLegalMove(player: PlayerId, sourcePointId: number, numberOfPointsToMove: number): boolean {
 
         // case: there is no counter to move: fail
         if (this.checkerContainers[sourcePointId].checkers[player] == 0) {
@@ -161,7 +161,7 @@ class Board {
 
         // case: bearing off
         const direction = (player === PlayerId.BLACK) ? 1 : -1;
-        let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
+        let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfPointsToMove);
         if (destinationPointId === PointId.HOME) {
             // check that there are no checkers outside of home board. (BAR has already been checked above)
             const startingPointOfOuterBoard = (player === PlayerId.BLACK) ? 1 : 24;
@@ -173,7 +173,7 @@ class Board {
             }
 
             // check that there are no checkers more deserving of this dice roll
-            let actualDestinationPointId = sourcePointId + (direction * numberOfMoves);
+            let actualDestinationPointId = sourcePointId + (direction * numberOfPointsToMove);
             // if it's dead on, we're fine.
             if (actualDestinationPointId === 0 || actualDestinationPointId === 25) {
                 return true;
@@ -200,11 +200,11 @@ class Board {
         return true;
     }
 
-    move(player: PlayerId, sourcePointId: number, numberOfMoves: number): boolean {
-        if (!this.isLegalMove(player, sourcePointId, numberOfMoves)) {
+    move(player: PlayerId, sourcePointId: number, numberOfPointsToMove: number): boolean {
+        if (!this.isLegalMove(player, sourcePointId, numberOfPointsToMove)) {
             return false;
         }
-        let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
+        let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfPointsToMove);
         let otherPlayer = Game.getOtherPlayer(player);
         if (destinationPointId !== PointId.HOME &&
             this.checkerContainers[destinationPointId].checkers[otherPlayer] == 1) {
@@ -216,9 +216,9 @@ class Board {
         return true;
     }
 
-    checkIfValidDestination(player: PlayerId, sourcePointId: number, numberOfMoves: number): void {
-        if (this.isLegalMove(player, sourcePointId, numberOfMoves)) {
-            let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfMoves);
+    checkIfValidDestination(player: PlayerId, sourcePointId: number, numberOfPointsToMove: number): void {
+        if (this.isLegalMove(player, sourcePointId, numberOfPointsToMove)) {
+            let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfPointsToMove);
             if (destinationPointId === PointId.HOME) {
                 (<Home>this.checkerContainers[PointId.HOME]).setValidDestination(player, true);
             }

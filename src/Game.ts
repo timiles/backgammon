@@ -14,16 +14,16 @@ class Game {
     dice: Dice;
     statusLogger: StatusLogger;
 
-    currentPlayer: PlayerId;
+    currentPlayerId: PlayerId;
     players: Player[];
     currentSelectedCheckerContainer: CheckerContainer;
 
-    constructor(gameUI: GameUI, board: Board, dice: Dice, statusLogger: StatusLogger, currentPlayer: PlayerId, isComputerPlayer = [false, false]) {
+    constructor(gameUI: GameUI, board: Board, dice: Dice, statusLogger: StatusLogger, currentPlayerId: PlayerId, isComputerPlayer = [false, false]) {
 
         this.board = board;
         this.dice = dice;
         this.statusLogger = statusLogger;
-        this.currentPlayer = currentPlayer;
+        this.currentPlayerId = currentPlayerId;
 
         this.players = new Array<Player>(2);
         for (let playerId of [PlayerId.BLACK, PlayerId.RED]) {
@@ -102,10 +102,10 @@ class Game {
             }
 
             let checkerContainer = this.board.checkerContainers[pointId];
-            if (!(checkerContainer instanceof Home) && (checkerContainer.checkers[this.currentPlayer] > 0)) {
+            if (!(checkerContainer instanceof Home) && (checkerContainer.checkers[this.currentPlayerId] > 0)) {
                 for (let die of [this.dice.die1, this.dice.die2]) {
                     if (die.remainingUses > 0) {
-                        this.board.checkIfValidDestination(this.currentPlayer, checkerContainer.pointId, die.value);
+                        this.board.checkIfValidDestination(this.currentPlayerId, checkerContainer.pointId, die.value);
                     }
                 }
             }
@@ -114,20 +114,20 @@ class Game {
         this.board.onPointSelected = (pointId: number) => {
             let checkerContainer = this.board.checkerContainers[pointId];
             if (this.currentSelectedCheckerContainer == undefined) {
-                if (checkerContainer.checkers[this.currentPlayer] == 0) {
+                if (checkerContainer.checkers[this.currentPlayerId] == 0) {
                     // if no pieces here, exit
                     return;
                 }
 
                 let canUseDie = (die: Die): boolean => {
                     return (die.remainingUses > 0 &&
-                        this.board.isLegalMove(this.currentPlayer, checkerContainer.pointId, die.value));
+                        this.board.isLegalMove(this.currentPlayerId, checkerContainer.pointId, die.value));
                 }
 
                 let canBearOff = (die: Die): boolean => {
                     return (die.remainingUses > 0 &&
-                        Board.getDestinationPointId(this.currentPlayer, checkerContainer.pointId, die.value) === PointId.HOME &&
-                        this.board.isLegalMove(this.currentPlayer, checkerContainer.pointId, die.value));
+                        Board.getDestinationPointId(this.currentPlayerId, checkerContainer.pointId, die.value) === PointId.HOME &&
+                        this.board.isLegalMove(this.currentPlayerId, checkerContainer.pointId, die.value));
                 }
 
                 let canUseDie1 = canUseDie(this.dice.die1);
@@ -138,12 +138,12 @@ class Game {
                     (this.dice.die1.value === this.dice.die2.value) ||
                     (canBearOff(this.dice.die1) && canBearOff(this.dice.die2))) {
                     if (canUseDie1) {
-                        this.board.move(this.currentPlayer, checkerContainer.pointId, this.dice.die1.value);
+                        this.board.move(this.currentPlayerId, checkerContainer.pointId, this.dice.die1.value);
                         this.dice.die1.decrementRemainingUses();
                         this.evaluateBoard();
                     }
                     else if (canUseDie2) {
-                        this.board.move(this.currentPlayer, checkerContainer.pointId, this.dice.die2.value);
+                        this.board.move(this.currentPlayerId, checkerContainer.pointId, this.dice.die2.value);
                         this.dice.die2.decrementRemainingUses();
                         this.evaluateBoard();
                     }
@@ -161,7 +161,7 @@ class Game {
                         (<Point>checkerContainer).setSelected(true);
                     }
                     else if (checkerContainer instanceof Bar) {
-                        (<Bar>checkerContainer).setSelected(this.currentPlayer, true);
+                        (<Bar>checkerContainer).setSelected(this.currentPlayerId, true);
                     }
                     this.currentSelectedCheckerContainer = checkerContainer;
                     this.evaluateBoard();
@@ -178,12 +178,12 @@ class Game {
             else {
 
                 let useDieIfPossible = (die: Die): boolean => {
-                    let destinationPointId = Board.getDestinationPointId(this.currentPlayer, this.currentSelectedCheckerContainer.pointId, die.value);
+                    let destinationPointId = Board.getDestinationPointId(this.currentPlayerId, this.currentSelectedCheckerContainer.pointId, die.value);
                     if (destinationPointId !== checkerContainer.pointId) {
                         return false;
                     }
 
-                    this.board.move(this.currentPlayer, this.currentSelectedCheckerContainer.pointId, die.value);
+                    this.board.move(this.currentPlayerId, this.currentSelectedCheckerContainer.pointId, die.value);
                     die.decrementRemainingUses();
                     if (this.currentSelectedCheckerContainer instanceof Point) {
                         (<Point>this.currentSelectedCheckerContainer).setSelected(false);
@@ -218,7 +218,7 @@ class Game {
         }
 
         let isValidMove = (die: Die, pointId: number): boolean => {
-            return (die.remainingUses > 0) && this.board.isLegalMove(this.currentPlayer, pointId, die.value);
+            return (die.remainingUses > 0) && this.board.isLegalMove(this.currentPlayerId, pointId, die.value);
         }
         for (let pointId = 1; pointId <= 25; pointId++) {
             if (isValidMove(this.dice.die1, pointId) || isValidMove(this.dice.die2, pointId)) {
@@ -231,32 +231,32 @@ class Game {
     }
 
     private switchPlayerIfNoValidMovesRemain(): void {
-        if (this.board.checkerContainers[PointId.HOME].checkers[this.currentPlayer] === 15) {
-            this.statusLogger.logInfo(`${PlayerId[this.currentPlayer]} WINS!`);
+        if (this.board.checkerContainers[PointId.HOME].checkers[this.currentPlayerId] === 15) {
+            this.statusLogger.logInfo(`${PlayerId[this.currentPlayerId]} WINS!`);
             return;
         }
         if (!this.checkIfValidMovesRemain()) {
             // if we're still here, 
             this.switchPlayer();
-            this.dice.roll(this.currentPlayer);
+            this.dice.roll(this.currentPlayerId);
             this.evaluateBoard();
             this.switchPlayerIfNoValidMovesRemain();
             return;
         }
 
-        if (this.players[this.currentPlayer] instanceof ComputerPlayer) {
-            let computerPlayer = <ComputerPlayer>this.players[this.currentPlayer];
+        if (this.players[this.currentPlayerId] instanceof ComputerPlayer) {
+            let computerPlayer = <ComputerPlayer>this.players[this.currentPlayerId];
             let bestPossibleGo = computerPlayer.getBestPossibleGo(this.dice);
             if (bestPossibleGo) {
                 for (let moveNumber = 0; moveNumber < bestPossibleGo.moves.length; moveNumber++) {
                     let move = bestPossibleGo.moves[moveNumber];
-                    this.board.move(this.currentPlayer, move.startingPointId, move.numberOfPointsToMove);
+                    this.board.move(this.currentPlayerId, move.sourcePointId, move.numberOfPointsToMove);
                 }
                 console.log(bestPossibleGo);
             }
             setTimeout(() => {
                 this.switchPlayer();
-                this.dice.roll(this.currentPlayer);
+                this.dice.roll(this.currentPlayerId);
                 this.evaluateBoard();
                 this.switchPlayerIfNoValidMovesRemain();
             }, 500);
@@ -268,7 +268,7 @@ class Game {
     }
 
     switchPlayer(): void {
-        this.currentPlayer = (this.currentPlayer + 1) % 2;
+        this.currentPlayerId = (this.currentPlayerId + 1) % 2;
         this.logCurrentPlayer();
     }
 
@@ -283,10 +283,10 @@ class Game {
         }
 
         let isValidSource = (pointId: number): boolean => {
-            if (this.board.checkerContainers[pointId].checkers[this.currentPlayer] > 0) {
+            if (this.board.checkerContainers[pointId].checkers[this.currentPlayerId] > 0) {
                 for (let die of [this.dice.die1, this.dice.die2]) {
                     if ((die.remainingUses > 0) &&
-                        (this.board.isLegalMove(this.currentPlayer, pointId, die.value))) {
+                        (this.board.isLegalMove(this.currentPlayerId, pointId, die.value))) {
                         return true;
                     }
                 }
@@ -294,13 +294,13 @@ class Game {
             return false;
         };
 
-        (<Bar>this.board.checkerContainers[PointId.BAR]).setValidSource(this.currentPlayer, isValidSource(PointId.BAR));
+        (<Bar>this.board.checkerContainers[PointId.BAR]).setValidSource(this.currentPlayerId, isValidSource(PointId.BAR));
         for (let i = 1; i <= 24; i++) {
             (<Point>this.board.checkerContainers[i]).setValidSource(isValidSource(i));
         }
     }
 
     logCurrentPlayer(): void {
-        this.statusLogger.logInfo(`${PlayerId[this.currentPlayer]} to move`);
+        this.statusLogger.logInfo(`${PlayerId[this.currentPlayerId]} to move`);
     }
 }

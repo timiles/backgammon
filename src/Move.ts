@@ -1,4 +1,4 @@
 class Move {
-    constructor(public startingPointId: number, public numberOfPointsToMove: number) {
+    constructor(public sourcePointId: number, public numberOfPointsToMove: number) {
     }
 }
