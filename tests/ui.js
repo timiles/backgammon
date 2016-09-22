@@ -1,8 +1,5 @@
 'use strict';
 
-var game;
-var fakeDiceRollGenerator;
-
 let FakeDiceRollGenerator = (function () {
     var diceRolls = [];
     var sequenceIndex = 0;
@@ -21,17 +18,19 @@ describe('UI: starting board', function () {
 
     beforeEach(function () {
         
-        let ui = new GameUI('backgammon');
         let board = new Board();
+        let ui = new GameUI('backgammon', board);
+        board.initialise();
         
-        fakeDiceRollGenerator = new FakeDiceRollGenerator([5, 5]);
+        let fakeDiceRollGenerator = new FakeDiceRollGenerator([5, 5]);
 
         let dice = new Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
         dice.roll(PlayerId.BLACK);
         
         let statusLogger = new StatusLogger(ui.statusUI);
 
-        game = new Game(ui, board, dice, statusLogger, PlayerId.BLACK);
+        let game = new Game(board, dice, statusLogger);
+        game.begin(PlayerId.BLACK);
     });
 
     it('should initialise points as expected', function () {
@@ -85,17 +84,19 @@ describe('UI: game play', function () {
 
     beforeEach(function () {
         
-        let ui = new GameUI('backgammon');
         let board = new Board();
+        let ui = new GameUI('backgammon', board);
+        board.initialise();
         
-        fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
+        let fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
 
         let dice = new Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
         dice.roll(PlayerId.BLACK);
         
         let statusLogger = new StatusLogger(ui.statusUI);
 
-        game = new Game(ui, board, dice, statusLogger, PlayerId.BLACK);
+        let game = new Game(board, dice, statusLogger);
+        game.begin(PlayerId.BLACK);
     });
 
     it('should re-highlight sources after checker is selected then deselected', function () {
@@ -119,17 +120,19 @@ describe('UI: the bar', function () {
 
     beforeEach(function () {
         
-        let ui = new GameUI('backgammon');
         let board = new Board();
-        
-        fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
+        let ui = new GameUI('backgammon', board);
+        board.initialise();
+
+        let fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
 
         let dice = new Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
         dice.roll(PlayerId.BLACK);
         
         let statusLogger = new StatusLogger(ui.statusUI);
 
-        game = new Game(ui, board, dice, statusLogger, PlayerId.BLACK);
+        let game = new Game(board, dice, statusLogger, PlayerId.BLACK);
+        game.begin(PlayerId.BLACK);
     });
 
     it('should highlight as valid source when Black on the bar', function () {
@@ -181,19 +184,23 @@ describe('UI: the bar', function () {
 
 describe('UI: home board', function () {
 
+    var game;
+
     beforeEach(function () {
         
-        let ui = new GameUI('backgammon');
         let board = new Board();
-        
-        fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
+        let ui = new GameUI('backgammon', board);
+        board.initialise();
+
+        let fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
 
         let dice = new Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
         dice.roll(PlayerId.BLACK);
         
         let statusLogger = new StatusLogger(ui.statusUI);
 
-        game = new Game(ui, board, dice, statusLogger, PlayerId.BLACK);
+        game = new Game(board, dice, statusLogger);
+        game.begin(PlayerId.BLACK);
         
         board.move(PlayerId.BLACK, 1, 22);
         board.move(PlayerId.BLACK, 1, 22);

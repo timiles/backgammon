@@ -1,20 +1,22 @@
 'use strict';
 
-var game;
-var board;
-
 describe('Backgammon', function () {
+
+    var game;
+    var board;
 
     beforeEach(function () {
         
-        let ui = new GameUI('backgammon');
         board = new Board();
+        let ui = new GameUI('backgammon', board);
+        board.initialise();
+
         let dice = new Dice(new DiceRollGenerator(), ui.blackDiceUI, ui.redDiceUI);
         dice.roll(PlayerId.BLACK);
         
         let statusLogger = new StatusLogger(ui.statusUI);
 
-        game = new Game(ui, board, dice, statusLogger, PlayerId.BLACK);
+        game = new Game(board, dice, statusLogger);
     });
 
     it('should initialise a standard starting board', function () {

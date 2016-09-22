@@ -5,7 +5,6 @@
 /// <reference path="Enums.ts"/>
 /// <reference path="HumanPlayer.ts"/>
 /// <reference path="Player.ts"/>
-/// <reference path="GameUI.ts"/>
 /// <reference path="StatusLogger.ts"/>
 
 class Game {
@@ -18,77 +17,16 @@ class Game {
     players: Player[];
     currentSelectedCheckerContainer: CheckerContainer;
 
-    constructor(gameUI: GameUI, board: Board, dice: Dice, statusLogger: StatusLogger, currentPlayerId: PlayerId, isComputerPlayer = [false, false]) {
+    constructor(board: Board, dice: Dice, statusLogger: StatusLogger, isComputerPlayer = [false, false]) {
 
         this.board = board;
         this.dice = dice;
         this.statusLogger = statusLogger;
-        this.currentPlayerId = currentPlayerId;
 
         this.players = new Array<Player>(2);
         for (let playerId of [PlayerId.BLACK, PlayerId.RED]) {
             this.players[playerId] = (isComputerPlayer[playerId]) ? new ComputerPlayer(playerId, this.board) : new HumanPlayer(playerId, this.board);
         }
-
-        // helpers
-        let getBarUI = (playerId: PlayerId): BarUI => {
-            return (playerId === PlayerId.BLACK) ? gameUI.boardUI.blackBarUI : gameUI.boardUI.redBarUI;
-        }
-        let getHomeUI = (playerId: PlayerId): HomeUI => {
-            return (playerId === PlayerId.BLACK) ? gameUI.boardUI.blackHomeUI : gameUI.boardUI.redHomeUI;
-        }
-
-        // wire up UI events
-        gameUI.boardUI.blackHomeUI.onSelected = () => board.onPointSelected(PointId.HOME);
-        gameUI.boardUI.redHomeUI.onSelected = () => board.onPointSelected(PointId.HOME);
-        gameUI.boardUI.blackBarUI.onInspected = (on: boolean) => board.onPointInspected(PointId.BAR, on);
-        gameUI.boardUI.blackBarUI.onSelected = () => board.onPointSelected(PointId.BAR);
-        gameUI.boardUI.redBarUI.onInspected = (on: boolean) => board.onPointInspected(PointId.BAR, on);
-        gameUI.boardUI.redBarUI.onSelected = () => board.onPointSelected(PointId.BAR);
-
-        let bindPointUIEvents = (pointId: number): void => {
-            let pointUI = gameUI.boardUI.pointUIs[pointId - 1];
-            pointUI.onInspected = (on: boolean) => { board.onPointInspected(pointId, on); };
-            pointUI.onSelected = () => { board.onPointSelected(pointId); };
-        }
-        for (let i = 1; i < 25; i++) {
-            bindPointUIEvents(i);
-        }
-
-        board.onCheckerCountChanged = (pointId: number, playerId: PlayerId, count: number) => {
-            switch (pointId) {
-                case PointId.HOME: {
-                    getHomeUI(playerId).setCheckers(playerId, count);
-                    break;
-                }
-                case PointId.BAR: {
-                    getBarUI(playerId).setCheckers(playerId, count);
-                    break;
-                }
-                default: {
-                    gameUI.boardUI.pointUIs[pointId - 1].setCheckers(playerId, count);
-                }
-            }
-        };
-        board.onSetBarAsSelected = (playerId: PlayerId, on: boolean) => {
-            getBarUI(playerId).setSelected(on);
-        };
-        board.onSetPointAsSelected = (pointId: number, on: boolean) => {
-            gameUI.boardUI.pointUIs[pointId - 1].setSelected(on);
-        };
-        board.onSetHomeAsValidDestination = (playerId: PlayerId, on: boolean) => {
-            getHomeUI(playerId).setValidDestination(on);
-        };
-        board.onSetPointAsValidDestination = (pointId: number, on: boolean) => {
-            gameUI.boardUI.pointUIs[pointId - 1].setValidDestination(on);
-        };
-        board.onSetBarAsValidSource = (playerId: PlayerId, on: boolean) => {
-            getBarUI(playerId).setValidSource(on);
-        };
-        board.onSetPointAsValidSource = (pointId: number, on: boolean) => {
-            gameUI.boardUI.pointUIs[pointId - 1].setValidSource(on);
-        };
-
 
         this.board.onPointInspected = (pointId: number, on: boolean) => {
             if (this.currentSelectedCheckerContainer != undefined) {
@@ -205,8 +143,10 @@ class Game {
                 }
             }
         };
+    }
 
-        board.initialise();
+    begin(startingPlayerId: PlayerId): void {
+        this.currentPlayerId = startingPlayerId;
         this.logCurrentPlayer();
         this.evaluateBoard();
         this.switchPlayerIfNoValidMovesRemain();

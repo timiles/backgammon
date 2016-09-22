@@ -1,4 +1,5 @@
 /// <reference path="BarUI.ts"/>
+/// <reference path="../Board.ts"/>
 /// <reference path="HomeUI.ts"/>
 /// <reference path="PointUI.ts"/>
 /// <reference path="../Enums.ts"/>
@@ -12,7 +13,7 @@ class BoardUI {
     blackBarUI: BarUI;
     redBarUI: BarUI;
     
-    constructor(gameContainerId: string) {
+    constructor(gameContainerId: string, board: Board) {
         
         this.containerDiv = document.createElement('div');
         Utils.removeAllChildren(this.containerDiv);
@@ -65,11 +66,74 @@ class BoardUI {
         this.containerDiv.appendChild(this.pointUIs[0].containerDiv);
         this.containerDiv.appendChild(this.redHomeUI.containerDiv);
         this.containerDiv.appendChild(BoardUI.createClearBreak());
+
+        this.bindEvents(board);
     }
     
     private static createClearBreak() {
         let br = document.createElement('br');
         br.className = 'clear';
         return br;
+    }
+
+    private bindEvents(board: Board) {
+        // helpers
+        let getBarUI = (playerId: PlayerId): BarUI => {
+            return (playerId === PlayerId.BLACK) ? this.blackBarUI : this.redBarUI;
+        }
+        let getHomeUI = (playerId: PlayerId): HomeUI => {
+            return (playerId === PlayerId.BLACK) ? this.blackHomeUI : this.redHomeUI;
+        }
+
+        // wire up UI events
+        this.blackHomeUI.onSelected = () => board.onPointSelected(PointId.HOME);
+        this.redHomeUI.onSelected = () => board.onPointSelected(PointId.HOME);
+        this.blackBarUI.onInspected = (on: boolean) => board.onPointInspected(PointId.BAR, on);
+        this.blackBarUI.onSelected = () => board.onPointSelected(PointId.BAR);
+        this.redBarUI.onInspected = (on: boolean) => board.onPointInspected(PointId.BAR, on);
+        this.redBarUI.onSelected = () => board.onPointSelected(PointId.BAR);
+
+        let bindPointUIEvents = (pointId: number): void => {
+            let pointUI = this.pointUIs[pointId - 1];
+            pointUI.onInspected = (on: boolean) => { board.onPointInspected(pointId, on); };
+            pointUI.onSelected = () => { board.onPointSelected(pointId); };
+        }
+        for (let i = 1; i < 25; i++) {
+            bindPointUIEvents(i);
+        }
+
+        board.onCheckerCountChanged = (pointId: number, playerId: PlayerId, count: number) => {
+            switch (pointId) {
+                case PointId.HOME: {
+                    getHomeUI(playerId).setCheckers(playerId, count);
+                    break;
+                }
+                case PointId.BAR: {
+                    getBarUI(playerId).setCheckers(playerId, count);
+                    break;
+                }
+                default: {
+                    this.pointUIs[pointId - 1].setCheckers(playerId, count);
+                }
+            }
+        };
+        board.onSetBarAsSelected = (playerId: PlayerId, on: boolean) => {
+            getBarUI(playerId).setSelected(on);
+        };
+        board.onSetPointAsSelected = (pointId: number, on: boolean) => {
+            this.pointUIs[pointId - 1].setSelected(on);
+        };
+        board.onSetHomeAsValidDestination = (playerId: PlayerId, on: boolean) => {
+            getHomeUI(playerId).setValidDestination(on);
+        };
+        board.onSetPointAsValidDestination = (pointId: number, on: boolean) => {
+            this.pointUIs[pointId - 1].setValidDestination(on);
+        };
+        board.onSetBarAsValidSource = (playerId: PlayerId, on: boolean) => {
+            getBarUI(playerId).setValidSource(on);
+        };
+        board.onSetPointAsValidSource = (pointId: number, on: boolean) => {
+            this.pointUIs[pointId - 1].setValidSource(on);
+        };
     }
 }

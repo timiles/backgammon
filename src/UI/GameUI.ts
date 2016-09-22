@@ -1,7 +1,9 @@
-/// <reference path="UI/BoardUI.ts"/>
-/// <reference path="DiceUI.ts"/>
-/// <reference path="Enums.ts"/>
-/// <reference path="StatusUI.ts"/>
+/// <reference path="BoardUI.ts"/>
+/// <reference path="../Board.ts"/>
+/// <reference path="../DiceUI.ts"/>
+/// <reference path="../Enums.ts"/>
+/// <reference path="../Game.ts"/>
+/// <reference path="../StatusUI.ts"/>
 
 class GameUI {
     
@@ -10,12 +12,12 @@ class GameUI {
     redDiceUI: DiceUI;
     statusUI: StatusUI;
     
-    constructor(containerElementId: string) {
+    constructor(containerElementId: string, board: Board) {
         let container = document.getElementById(containerElementId);
         container.className = 'game-container';
         Utils.removeAllChildren(container);
         
-        this.boardUI = new BoardUI(containerElementId);
+        this.boardUI = new BoardUI(containerElementId, board);
         this.blackDiceUI = new DiceUI(PlayerId.BLACK);
         this.redDiceUI = new DiceUI(PlayerId.RED);
         this.statusUI = new StatusUI();
