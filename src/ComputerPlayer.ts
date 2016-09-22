@@ -21,8 +21,8 @@ class ComputerPlayer extends Player {
         this.reentryFactor = 1;
     }
 
-    public getBestPossibleGo(dice: Dice): PossibleGo {
-        let possibleGoes = BoardEvaluator.getPossibleGoes(this.board, this.playerId, dice.die1.value, dice.die2.value);
+    public getBestPossibleGo(die1Value: number, die2Value: number): PossibleGo {
+        let possibleGoes = BoardEvaluator.getPossibleGoes(this.board, this.playerId, die1Value, die2Value);
 
         if (possibleGoes.length === 0) {
             console.info('No possible go');
@@ -58,12 +58,15 @@ class ComputerPlayer extends Player {
         }
 
         let score = 100;
+        let direction = (this.playerId === PlayerId.BLACK) ? 1 : -1;
+        let homePointId = (this.playerId === PlayerId.BLACK) ? 25 : 0;
 
         for (let pointId = 1; pointId <= 24; pointId++) {
             if (b.checkerContainers[pointId].checkers[this.playerId] === 1) {
-                // TODO
-                // factor safety on prob of opp hitting this piece
-                score *= .75;
+                // TODO: factor safety on prob of opp hitting this piece
+                let distanceOfBlotToHome = (homePointId - pointId) * direction;
+                let relativePenaltyOfLosingThisBlot = distanceOfBlotToHome / 24; 
+                score *= (.75 * relativePenaltyOfLosingThisBlot);
             }
         }
 

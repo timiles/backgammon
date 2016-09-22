@@ -624,8 +624,8 @@ var ComputerPlayer = (function (_super) {
         this.offensiveFactor = 1;
         this.reentryFactor = 1;
     }
-    ComputerPlayer.prototype.getBestPossibleGo = function (dice) {
-        var possibleGoes = BoardEvaluator.getPossibleGoes(this.board, this.playerId, dice.die1.value, dice.die2.value);
+    ComputerPlayer.prototype.getBestPossibleGo = function (die1Value, die2Value) {
+        var possibleGoes = BoardEvaluator.getPossibleGoes(this.board, this.playerId, die1Value, die2Value);
         if (possibleGoes.length === 0) {
             console.info('No possible go');
             return null;
@@ -656,11 +656,14 @@ var ComputerPlayer = (function (_super) {
             return 0;
         }
         var score = 100;
+        var direction = (this.playerId === PlayerId.BLACK) ? 1 : -1;
+        var homePointId = (this.playerId === PlayerId.BLACK) ? 25 : 0;
         for (var pointId = 1; pointId <= 24; pointId++) {
             if (b.checkerContainers[pointId].checkers[this.playerId] === 1) {
-                // TODO
-                // factor safety on prob of opp hitting this piece
-                score *= .75;
+                // TODO: factor safety on prob of opp hitting this piece
+                var distanceOfBlotToHome = (homePointId - pointId) * direction;
+                var relativePenaltyOfLosingThisBlot = distanceOfBlotToHome / 24;
+                score *= (.75 * relativePenaltyOfLosingThisBlot);
             }
         }
         return score;
@@ -1062,7 +1065,7 @@ var Game = (function () {
         }
         if (this.players[this.currentPlayerId] instanceof ComputerPlayer) {
             var computerPlayer = this.players[this.currentPlayerId];
-            var bestPossibleGo = computerPlayer.getBestPossibleGo(this.dice);
+            var bestPossibleGo = computerPlayer.getBestPossibleGo(this.dice.die1.value, this.dice.die2.value);
             if (bestPossibleGo) {
                 for (var moveNumber = 0; moveNumber < bestPossibleGo.moves.length; moveNumber++) {
                     var move = bestPossibleGo.moves[moveNumber];

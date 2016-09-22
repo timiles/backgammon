@@ -246,7 +246,7 @@ class Game {
 
         if (this.players[this.currentPlayerId] instanceof ComputerPlayer) {
             let computerPlayer = <ComputerPlayer>this.players[this.currentPlayerId];
-            let bestPossibleGo = computerPlayer.getBestPossibleGo(this.dice);
+            let bestPossibleGo = computerPlayer.getBestPossibleGo(this.dice.die1.value, this.dice.die2.value);
             if (bestPossibleGo) {
                 for (let moveNumber = 0; moveNumber < bestPossibleGo.moves.length; moveNumber++) {
                     let move = bestPossibleGo.moves[moveNumber];
