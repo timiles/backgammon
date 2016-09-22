@@ -23,22 +23,12 @@ class BoardEvaluator {
         return true;
     }
 
-    static clone(source: Board): Board {
-        var clone = new Board();
-        let layout = new Array<number[]>();
-        for (let pointId = 0; pointId < 26; pointId++) {
-            layout[pointId] = [source.checkerContainers[pointId].checkers[PlayerId.BLACK], source.checkerContainers[pointId].checkers[PlayerId.RED]] 
-        }
-        clone.initialise(layout);
-        return clone;
-    }
-
-    static getPossibleGoes(board: Board, playerId: PlayerId, d: Dice): Array<PossibleGo> {
+    static getPossibleGoes(board: Board, playerId: PlayerId, die1Value: number, die2Value: number): Array<PossibleGo> {
         let possibleGoes = new Array<PossibleGo>();
 
         // 1. double number thrown.
-        if (d.die1 === d.die2) {
-            let points = d.die1.value;
+        if (die1Value === die2Value) {
+            let points = die1Value;
 
             let testBoard = new Array<Board>(4);
             let numOfMoves = 0;
@@ -85,11 +75,11 @@ class BoardEvaluator {
         }
 
         // 2. non-double thrown.
-        let points = [d.die1.value, d.die2.value];
+        let points = [die1Value, die2Value];
 
         for (let startPoint1 = 1; startPoint1 <= 25; startPoint1++) {
             for (let die = 0; die < 2; die++) {
-                let testBoard1 = <Board>BoardEvaluator.clone(board);
+                let testBoard1 = BoardEvaluator.clone(board);
 
                 if (testBoard1.move(playerId, startPoint1, points[die])) {
                     if (!BoardEvaluator.canMove(testBoard1, playerId, points[(die + 1) % 2])) {
@@ -111,7 +101,17 @@ class BoardEvaluator {
         return BoardEvaluator.getPossibleGoesThatUseMostDice(possibleGoes);
     }
 
-    static canMove(board: Board, playerId: PlayerId, points: number): boolean {
+    private static clone(source: Board): Board {
+        var clone = new Board();
+        let layout = new Array<number[]>();
+        for (let pointId = 0; pointId < 26; pointId++) {
+            layout[pointId] = [source.checkerContainers[pointId].checkers[PlayerId.BLACK], source.checkerContainers[pointId].checkers[PlayerId.RED]] 
+        }
+        clone.initialise(layout);
+        return clone;
+    }
+
+    private static canMove(board: Board, playerId: PlayerId, points: number): boolean {
         // 25: include bar
         for (let startingPoint = 1; startingPoint <= 25; startingPoint++) {
             if (board.isLegalMove(playerId, startingPoint, points)) {
@@ -121,7 +121,7 @@ class BoardEvaluator {
         return false;
     }
 
-    static getPossibleGoesThatUseMostDice(possibleGoes: Array<PossibleGo>): Array<PossibleGo> {
+    private static getPossibleGoesThatUseMostDice(possibleGoes: Array<PossibleGo>): Array<PossibleGo> {
         let max = 0;
 
         // 1. find move with most amount of dice used

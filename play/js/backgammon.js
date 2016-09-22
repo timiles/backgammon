@@ -1,3 +1,8 @@
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 var PlayerId;
 (function (PlayerId) {
     PlayerId[PlayerId["BLACK"] = 0] = "BLACK";
@@ -16,15 +21,9 @@ var CheckerContainer = (function () {
         this.checkers[player] += count;
     };
     return CheckerContainer;
-})();
+}());
 /// <reference path="CheckerContainer.ts"/>
 /// <reference path="Enums.ts"/>
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 var Bar = (function (_super) {
     __extends(Bar, _super);
     function Bar() {
@@ -53,7 +52,7 @@ var Bar = (function (_super) {
         }
     };
     return Bar;
-})(CheckerContainer);
+}(CheckerContainer));
 /// <reference path="CheckerContainer.ts"/>
 /// <reference path="Enums.ts"/>
 var Home = (function (_super) {
@@ -73,7 +72,7 @@ var Home = (function (_super) {
         }
     };
     return Home;
-})(CheckerContainer);
+}(CheckerContainer));
 /// <reference path="CheckerContainer.ts"/>
 /// <reference path="Enums.ts"/>
 var Point = (function (_super) {
@@ -109,7 +108,7 @@ var Point = (function (_super) {
         }
     };
     return Point;
-})(CheckerContainer);
+}(CheckerContainer));
 /// <reference path="Bar.ts"/>
 /// <reference path="CheckerContainer.ts"/>
 /// <reference path="Enums.ts"/>
@@ -313,7 +312,7 @@ var Board = (function () {
         this.checkerContainers[PointId.HOME].setValidDestination(PlayerId.RED, false);
     };
     return Board;
-})();
+}());
 var Die = (function () {
     function Die(value) {
         this.value = value;
@@ -326,7 +325,7 @@ var Die = (function () {
         }
     };
     return Die;
-})();
+}());
 var DiceRollGenerator = (function () {
     function DiceRollGenerator() {
     }
@@ -334,7 +333,7 @@ var DiceRollGenerator = (function () {
         return Math.floor(Math.random() * 6) + 1;
     };
     return DiceRollGenerator;
-})();
+}());
 /// <reference path="Die.ts" />
 /// <reference path="Enums.ts"/>
 var DiceUI = (function () {
@@ -374,7 +373,7 @@ var DiceUI = (function () {
         return div;
     };
     return DiceUI;
-})();
+}());
 // REVIEW: invoke as extensions/prototype?
 var Utils = (function () {
     function Utils() {
@@ -393,7 +392,7 @@ var Utils = (function () {
         }, 0);
     };
     return Utils;
-})();
+}());
 /// <reference path="UI/Utils.ts"/>
 var StatusUI = (function () {
     function StatusUI() {
@@ -408,7 +407,7 @@ var StatusUI = (function () {
         Utils.highlight(statusP);
     };
     return StatusUI;
-})();
+}());
 /// <reference path="StatusUI.ts"/>
 var StatusLogger = (function () {
     function StatusLogger(statusUI) {
@@ -418,7 +417,7 @@ var StatusLogger = (function () {
         this.statusUI.setStatus(s);
     };
     return StatusLogger;
-})();
+}());
 /// <reference path="Die.ts"/>
 /// <reference path="DiceRollGenerator.ts"/>
 /// <reference path="DiceUI.ts"/>
@@ -444,14 +443,14 @@ var Dice = (function () {
             setTimeout(function () { _this.rollToStart(statusLogger, onSuccess); }, 1000);
         }
         else {
-            var successfulPlayer = die1.value > die2.value ? PlayerId.BLACK : PlayerId.RED;
-            statusLogger.logInfo(PlayerId[successfulPlayer] + " wins the starting roll");
+            var successfulPlayer_1 = die1.value > die2.value ? PlayerId.BLACK : PlayerId.RED;
+            statusLogger.logInfo(PlayerId[successfulPlayer_1] + " wins the starting roll");
             setTimeout(function () {
                 _this.die1 = die1;
                 _this.die2 = die2;
-                _this.diceUIs[successfulPlayer].setDiceRolls(die1, die2);
-                _this.diceUIs[successfulPlayer].setActive(true);
-                onSuccess(successfulPlayer);
+                _this.diceUIs[successfulPlayer_1].setDiceRolls(die1, die2);
+                _this.diceUIs[successfulPlayer_1].setActive(true);
+                onSuccess(successfulPlayer_1);
             }, 1000);
         }
     };
@@ -469,14 +468,14 @@ var Dice = (function () {
         this.diceUIs[otherPlayer].setActive(false);
     };
     return Dice;
-})();
+}());
 var Move = (function () {
     function Move(sourcePointId, numberOfPointsToMove) {
         this.sourcePointId = sourcePointId;
         this.numberOfPointsToMove = numberOfPointsToMove;
     }
     return Move;
-})();
+}());
 /// <reference path="Board.ts"/>
 /// <reference path="Move.ts"/>
 var PossibleGo = (function () {
@@ -485,7 +484,7 @@ var PossibleGo = (function () {
         this.resultantBoard = resultantBoard;
     }
     return PossibleGo;
-})();
+}());
 /// <reference path="Board.ts"/>
 /// <reference path="Enums.ts"/>
 /// <reference path="Move.ts"/>
@@ -508,20 +507,11 @@ var BoardEvaluator = (function () {
         }
         return true;
     };
-    BoardEvaluator.clone = function (source) {
-        var clone = new Board();
-        var layout = new Array();
-        for (var pointId = 0; pointId < 26; pointId++) {
-            layout[pointId] = [source.checkerContainers[pointId].checkers[PlayerId.BLACK], source.checkerContainers[pointId].checkers[PlayerId.RED]];
-        }
-        clone.initialise(layout);
-        return clone;
-    };
-    BoardEvaluator.getPossibleGoes = function (board, playerId, d) {
+    BoardEvaluator.getPossibleGoes = function (board, playerId, die1Value, die2Value) {
         var possibleGoes = new Array();
         // 1. double number thrown.
-        if (d.die1 === d.die2) {
-            var points_1 = d.die1.value;
+        if (die1Value === die2Value) {
+            var points_1 = die1Value;
             var testBoard = new Array(4);
             var numOfMoves = 0;
             // 25: include bar
@@ -555,7 +545,7 @@ var BoardEvaluator = (function () {
             return BoardEvaluator.getPossibleGoesThatUseMostDice(possibleGoes);
         }
         // 2. non-double thrown.
-        var points = [d.die1.value, d.die2.value];
+        var points = [die1Value, die2Value];
         for (var startPoint1 = 1; startPoint1 <= 25; startPoint1++) {
             for (var die = 0; die < 2; die++) {
                 var testBoard1 = BoardEvaluator.clone(board);
@@ -576,6 +566,15 @@ var BoardEvaluator = (function () {
             }
         }
         return BoardEvaluator.getPossibleGoesThatUseMostDice(possibleGoes);
+    };
+    BoardEvaluator.clone = function (source) {
+        var clone = new Board();
+        var layout = new Array();
+        for (var pointId = 0; pointId < 26; pointId++) {
+            layout[pointId] = [source.checkerContainers[pointId].checkers[PlayerId.BLACK], source.checkerContainers[pointId].checkers[PlayerId.RED]];
+        }
+        clone.initialise(layout);
+        return clone;
     };
     BoardEvaluator.canMove = function (board, playerId, points) {
         // 25: include bar
@@ -602,14 +601,14 @@ var BoardEvaluator = (function () {
         return goesThatUseMostDice;
     };
     return BoardEvaluator;
-})();
+}());
 var Player = (function () {
     function Player(playerId, board) {
         this.playerId = playerId;
         this.board = board;
     }
     return Player;
-})();
+}());
 /// <reference path="Board.ts"/>
 /// <reference path="BoardEvaluator.ts"/>
 /// <reference path="Dice.ts"/>
@@ -626,7 +625,7 @@ var ComputerPlayer = (function (_super) {
         this.reentryFactor = 1;
     }
     ComputerPlayer.prototype.getBestPossibleGo = function (dice) {
-        var possibleGoes = BoardEvaluator.getPossibleGoes(this.board, this.playerId, dice);
+        var possibleGoes = BoardEvaluator.getPossibleGoes(this.board, this.playerId, dice.die1.value, dice.die2.value);
         if (possibleGoes.length === 0) {
             console.info('No possible go');
             return null;
@@ -687,14 +686,14 @@ var ComputerPlayer = (function (_super) {
         }
     };
     return ComputerPlayer;
-})(Player);
+}(Player));
 var HumanPlayer = (function (_super) {
     __extends(HumanPlayer, _super);
     function HumanPlayer() {
         _super.apply(this, arguments);
     }
     return HumanPlayer;
-})(Player);
+}(Player));
 /// <reference path="../Enums.ts"/>
 /// <reference path="Utils.ts"/>
 var CheckerContainerUI = (function () {
@@ -731,7 +730,7 @@ var CheckerContainerUI = (function () {
         $(this.containerDiv).toggleClass('valid-destination', on);
     };
     return CheckerContainerUI;
-})();
+}());
 /// <reference path="../Enums.ts"/>
 /// <reference path="CheckerContainerUI.ts"/>
 var BarUI = (function (_super) {
@@ -743,7 +742,7 @@ var BarUI = (function (_super) {
         this.containerDiv.onmouseout = function () { _this.onInspected(false); };
     }
     return BarUI;
-})(CheckerContainerUI);
+}(CheckerContainerUI));
 /// <reference path="../Enums.ts"/>
 /// <reference path="CheckerContainerUI.ts"/>
 var HomeUI = (function (_super) {
@@ -752,7 +751,7 @@ var HomeUI = (function (_super) {
         _super.call(this, 'home', player === PlayerId.BLACK);
     }
     return HomeUI;
-})(CheckerContainerUI);
+}(CheckerContainerUI));
 /// <reference path="CheckerContainerUI.ts"/>
 var PointUI = (function (_super) {
     __extends(PointUI, _super);
@@ -763,7 +762,7 @@ var PointUI = (function (_super) {
         this.containerDiv.onmouseout = function () { _this.onInspected(false); };
     }
     return PointUI;
-})(CheckerContainerUI);
+}(CheckerContainerUI));
 /// <reference path="BarUI.ts"/>
 /// <reference path="HomeUI.ts"/>
 /// <reference path="PointUI.ts"/>
@@ -824,7 +823,7 @@ var BoardUI = (function () {
         return br;
     };
     return BoardUI;
-})();
+}());
 /// <reference path="UI/BoardUI.ts"/>
 /// <reference path="DiceUI.ts"/>
 /// <reference path="Enums.ts"/>
@@ -847,7 +846,7 @@ var GameUI = (function () {
         container.appendChild(sideContainer);
     }
     return GameUI;
-})();
+}());
 /// <reference path="Board.ts"/>
 /// <reference path="CheckerContainer.ts"/>
 /// <reference path="ComputerPlayer.ts"/>
@@ -1117,7 +1116,7 @@ var Game = (function () {
         this.statusLogger.logInfo(PlayerId[this.currentPlayerId] + " to move");
     };
     return Game;
-})();
+}());
 /// <reference path="Board.ts"/>
 /// <reference path="Dice.ts"/>
 /// <reference path="DiceRollGenerator.ts"/>
@@ -1137,4 +1136,4 @@ var Backgammon = (function () {
         });
     }
     return Backgammon;
-})();
+}());

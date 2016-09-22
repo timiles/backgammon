@@ -22,7 +22,7 @@ class ComputerPlayer extends Player {
     }
 
     public getBestPossibleGo(dice: Dice): PossibleGo {
-        let possibleGoes = BoardEvaluator.getPossibleGoes(this.board, this.playerId, dice);
+        let possibleGoes = BoardEvaluator.getPossibleGoes(this.board, this.playerId, dice.die1.value, dice.die2.value);
 
         if (possibleGoes.length === 0) {
             console.info('No possible go');
