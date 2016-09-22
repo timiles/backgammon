@@ -13,7 +13,7 @@ class BoardUI {
     blackBarUI: BarUI;
     redBarUI: BarUI;
     
-    constructor(gameContainerId: string, board: Board) {
+    constructor(gameContainerId: string, board?: Board) {
         
         this.containerDiv = document.createElement('div');
         Utils.removeAllChildren(this.containerDiv);
@@ -67,7 +67,9 @@ class BoardUI {
         this.containerDiv.appendChild(this.redHomeUI.containerDiv);
         this.containerDiv.appendChild(BoardUI.createClearBreak());
 
-        this.bindEvents(board);
+        if (board) {
+            this.bindEvents(board);
+        }
     }
     
     private static createClearBreak() {

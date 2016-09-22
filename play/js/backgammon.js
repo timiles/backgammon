@@ -1035,7 +1035,9 @@ var BoardUI = (function () {
         this.containerDiv.appendChild(this.pointUIs[0].containerDiv);
         this.containerDiv.appendChild(this.redHomeUI.containerDiv);
         this.containerDiv.appendChild(BoardUI.createClearBreak());
-        this.bindEvents(board);
+        if (board) {
+            this.bindEvents(board);
+        }
     }
     BoardUI.createClearBreak = function () {
         var br = document.createElement('br');
