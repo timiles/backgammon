@@ -16,4 +16,4 @@ Click here to play:
 - [ ] undo
 - [ ] autoplay mode on/off toggle
 - [ ] doubling cube
-- [ ] computer player
+- [x] computer player
