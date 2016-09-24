@@ -1,4 +1,4 @@
-import { Board } from './Board'
+import { Board } from 'BoardComponents/Board'
 import { Dice } from './Dice'
 import { DiceRollGenerator } from './DiceRollGenerator'
 import { PlayerId } from './Enums'

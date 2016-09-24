@@ -11,7 +11,7 @@ define("Enums", ["require", "exports"], function (require, exports) {
     })(exports.PlayerId || (exports.PlayerId = {}));
     var PlayerId = exports.PlayerId;
 });
-define("CheckerContainer", ["require", "exports"], function (require, exports) {
+define("BoardComponents/CheckerContainer", ["require", "exports"], function (require, exports) {
     "use strict";
     var CheckerContainer = (function () {
         function CheckerContainer(pointId) {
@@ -28,7 +28,7 @@ define("CheckerContainer", ["require", "exports"], function (require, exports) {
     }());
     exports.CheckerContainer = CheckerContainer;
 });
-define("Bar", ["require", "exports", "CheckerContainer", "Board"], function (require, exports, CheckerContainer_1, Board_1) {
+define("BoardComponents/Bar", ["require", "exports", "BoardComponents/CheckerContainer", "BoardComponents/Board"], function (require, exports, CheckerContainer_1, Board_1) {
     "use strict";
     var Bar = (function (_super) {
         __extends(Bar, _super);
@@ -247,7 +247,7 @@ define("Move", ["require", "exports"], function (require, exports) {
     }());
     exports.Move = Move;
 });
-define("PossibleGo", ["require", "exports"], function (require, exports) {
+define("Analysis/PossibleGo", ["require", "exports"], function (require, exports) {
     "use strict";
     var PossibleGo = (function () {
         function PossibleGo(moves, resultantBoard) {
@@ -258,7 +258,7 @@ define("PossibleGo", ["require", "exports"], function (require, exports) {
     }());
     exports.PossibleGo = PossibleGo;
 });
-define("BoardEvaluator", ["require", "exports", "Board", "Enums", "Move", "PossibleGo"], function (require, exports, Board_2, Enums_3, Move_1, PossibleGo_1) {
+define("Analysis/BoardEvaluator", ["require", "exports", "BoardComponents/Board", "Enums", "Move", "Analysis/PossibleGo"], function (require, exports, Board_2, Enums_3, Move_1, PossibleGo_1) {
     "use strict";
     var BoardEvaluator = (function () {
         function BoardEvaluator() {
@@ -375,7 +375,7 @@ define("BoardEvaluator", ["require", "exports", "Board", "Enums", "Move", "Possi
     }());
     exports.BoardEvaluator = BoardEvaluator;
 });
-define("Player", ["require", "exports"], function (require, exports) {
+define("Players/Player", ["require", "exports"], function (require, exports) {
     "use strict";
     var Player = (function () {
         function Player(playerId, board) {
@@ -386,7 +386,7 @@ define("Player", ["require", "exports"], function (require, exports) {
     }());
     exports.Player = Player;
 });
-define("ComputerPlayer", ["require", "exports", "Board", "BoardEvaluator", "Enums", "Player"], function (require, exports, Board_3, BoardEvaluator_1, Enums_4, Player_1) {
+define("Players/ComputerPlayer", ["require", "exports", "BoardComponents/Board", "Analysis/BoardEvaluator", "Enums", "Players/Player"], function (require, exports, Board_3, BoardEvaluator_1, Enums_4, Player_1) {
     "use strict";
     var ComputerPlayer = (function (_super) {
         __extends(ComputerPlayer, _super);
@@ -465,7 +465,7 @@ define("ComputerPlayer", ["require", "exports", "Board", "BoardEvaluator", "Enum
     }(Player_1.Player));
     exports.ComputerPlayer = ComputerPlayer;
 });
-define("Point", ["require", "exports", "CheckerContainer"], function (require, exports, CheckerContainer_2) {
+define("BoardComponents/Point", ["require", "exports", "BoardComponents/CheckerContainer"], function (require, exports, CheckerContainer_2) {
     "use strict";
     var Point = (function (_super) {
         __extends(Point, _super);
@@ -503,7 +503,7 @@ define("Point", ["require", "exports", "CheckerContainer"], function (require, e
     }(CheckerContainer_2.CheckerContainer));
     exports.Point = Point;
 });
-define("Home", ["require", "exports", "Board", "CheckerContainer"], function (require, exports, Board_4, CheckerContainer_3) {
+define("BoardComponents/Home", ["require", "exports", "BoardComponents/Board", "BoardComponents/CheckerContainer"], function (require, exports, Board_4, CheckerContainer_3) {
     "use strict";
     var Home = (function (_super) {
         __extends(Home, _super);
@@ -525,7 +525,7 @@ define("Home", ["require", "exports", "Board", "CheckerContainer"], function (re
     }(CheckerContainer_3.CheckerContainer));
     exports.Home = Home;
 });
-define("HumanPlayer", ["require", "exports", "Player"], function (require, exports, Player_2) {
+define("Players/HumanPlayer", ["require", "exports", "Players/Player"], function (require, exports, Player_2) {
     "use strict";
     var HumanPlayer = (function (_super) {
         __extends(HumanPlayer, _super);
@@ -536,7 +536,7 @@ define("HumanPlayer", ["require", "exports", "Player"], function (require, expor
     }(Player_2.Player));
     exports.HumanPlayer = HumanPlayer;
 });
-define("Game", ["require", "exports", "Bar", "Board", "Board", "ComputerPlayer", "Point", "Enums", "Home", "HumanPlayer"], function (require, exports, Bar_1, Board_5, Board_6, ComputerPlayer_1, Point_1, Enums_5, Home_1, HumanPlayer_1) {
+define("Game", ["require", "exports", "BoardComponents/Bar", "BoardComponents/Board", "BoardComponents/Board", "Players/ComputerPlayer", "BoardComponents/Point", "Enums", "BoardComponents/Home", "Players/HumanPlayer"], function (require, exports, Bar_1, Board_5, Board_6, ComputerPlayer_1, Point_1, Enums_5, Home_1, HumanPlayer_1) {
     "use strict";
     var Game = (function () {
         function Game(board, dice, statusLogger, isComputerPlayer) {
@@ -747,7 +747,7 @@ define("Game", ["require", "exports", "Bar", "Board", "Board", "ComputerPlayer",
     }());
     exports.Game = Game;
 });
-define("Board", ["require", "exports", "Bar", "Enums", "Game", "Home", "Point"], function (require, exports, Bar_2, Enums_6, Game_1, Home_2, Point_2) {
+define("BoardComponents/Board", ["require", "exports", "BoardComponents/Bar", "Enums", "Game", "BoardComponents/Home", "BoardComponents/Point"], function (require, exports, Bar_2, Enums_6, Game_1, Home_2, Point_2) {
     "use strict";
     (function (PointId) {
         PointId[PointId["HOME"] = 0] = "HOME";
@@ -1028,7 +1028,7 @@ define("UI/PointUI", ["require", "exports", "UI/CheckerContainerUI"], function (
     }(CheckerContainerUI_3.CheckerContainerUI));
     exports.PointUI = PointUI;
 });
-define("UI/BoardUI", ["require", "exports", "UI/BarUI", "UI/HomeUI", "UI/PointUI", "Board", "Enums", "UI/Utils"], function (require, exports, BarUI_1, HomeUI_1, PointUI_1, Board_7, Enums_10, Utils_4) {
+define("UI/BoardUI", ["require", "exports", "UI/BarUI", "UI/HomeUI", "UI/PointUI", "BoardComponents/Board", "Enums", "UI/Utils"], function (require, exports, BarUI_1, HomeUI_1, PointUI_1, Board_7, Enums_10, Utils_4) {
     "use strict";
     var BoardUI = (function () {
         function BoardUI(gameContainerId, board) {
@@ -1173,7 +1173,7 @@ define("UI/GameUI", ["require", "exports", "UI/BoardUI", "DiceUI", "Enums", "Sta
     }());
     exports.GameUI = GameUI;
 });
-define("Backgammon", ["require", "exports", "Board", "Dice", "DiceRollGenerator", "Game", "UI/GameUI", "StatusLogger"], function (require, exports, Board_8, Dice_1, DiceRollGenerator_1, Game_2, GameUI_1, StatusLogger_1) {
+define("Backgammon", ["require", "exports", "BoardComponents/Board", "Dice", "DiceRollGenerator", "Game", "UI/GameUI", "StatusLogger"], function (require, exports, Board_8, Dice_1, DiceRollGenerator_1, Game_2, GameUI_1, StatusLogger_1) {
     "use strict";
     var Backgammon = (function () {
         function Backgammon(containerId, blackIsComputer, redIsComputer) {

@@ -1,4 +1,4 @@
-import { Board } from './Board'
+import { Board } from 'BoardComponents/Board'
 import { PlayerId } from './Enums'
 
 export class Player {

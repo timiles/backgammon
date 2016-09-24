@@ -1,6 +1,6 @@
 'use strict';
 
-define(['Board', 'BoardEvaluator', 'ComputerPlayer', 'Enums'],
+define(['BoardComponents/Board', 'Analysis/BoardEvaluator', 'Players/ComputerPlayer', 'Enums'],
     function (Board, BoardEvaluator, ComputerPlayer, Enums) {
 
         let PlayerId = Enums.PlayerId;

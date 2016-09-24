@@ -1,8 +1,7 @@
 import { BarUI } from './BarUI'
 import { HomeUI } from './HomeUI'
 import { PointUI } from './PointUI'
-import { Board } from '../Board'
-import { PointId } from '../Board'
+import { Board, PointId } from 'BoardComponents/Board'
 import { PlayerId } from '../Enums'
 import { Utils } from './Utils'
 

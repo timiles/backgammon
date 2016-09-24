@@ -9,9 +9,9 @@
             'jasmine-html': 'tests/lib/jasmine-2.0.0/jasmine-html',
             'boot': 'tests/lib/jasmine-2.0.0/boot',
 
-            'Board': 'play/js/backgammon',
-            'BoardEvaluator': 'play/js/backgammon',
-            'ComputerPlayer': 'play/js/backgammon',
+            'BoardComponents/Board': 'play/js/backgammon',
+            'Analysis/BoardEvaluator': 'play/js/backgammon',
+            'Players/ComputerPlayer': 'play/js/backgammon',
             'Dice': 'play/js/backgammon',
             'DiceRollGenerator': 'play/js/backgammon',
             'Enums': 'play/js/backgammon',

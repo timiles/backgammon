@@ -1,4 +1,4 @@
-import { Board } from '../Board'
+import { Board } from 'BoardComponents/Board'
 import { BoardUI } from './BoardUI'
 import { DiceUI } from './DiceUI'
 import { PlayerId } from './Enums'
