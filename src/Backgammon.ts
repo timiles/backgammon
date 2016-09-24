@@ -1,11 +1,12 @@
-/// <reference path="Board.ts"/>
-/// <reference path="Dice.ts"/>
-/// <reference path="DiceRollGenerator.ts"/>
-/// <reference path="Game.ts"/>
-/// <reference path="UI/GameUI.ts"/>
-/// <reference path="StatusLogger.ts"/>
+import { Board } from './Board'
+import { Dice } from './Dice'
+import { DiceRollGenerator } from './DiceRollGenerator'
+import { PlayerId } from './Enums'
+import { Game } from './Game'
+import { GameUI } from './UI/GameUI'
+import { StatusLogger } from './StatusLogger'
 
-class Backgammon {
+export class Backgammon {
     
     constructor(containerId: string, blackIsComputer = false, redIsComputer = false) {
         

@@ -1,7 +1,7 @@
-/// <reference path="CheckerContainer.ts"/>
-/// <reference path="Enums.ts"/>
+import { CheckerContainer } from './CheckerContainer'
+import { PlayerId } from './Enums'
 
-class Point extends CheckerContainer {
+export class Point extends CheckerContainer {
 
     onCheckerCountChanged: (PlayerId, number) => void;
     onSetSelected: (boolean) => void;

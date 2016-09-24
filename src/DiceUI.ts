@@ -1,7 +1,10 @@
-/// <reference path="Die.ts" />
-/// <reference path="Enums.ts"/>
+import { Die } from './Die'
+import { PlayerId } from './Enums'
+import { Utils } from './UI/Utils'
 
-class DiceUI {
+declare var $;
+
+export class DiceUI {
     
     containerDiv: HTMLDivElement;
     die1: Die;

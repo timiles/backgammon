@@ -1,6 +1,6 @@
-/// <reference path="Enums.ts"/>
+import { PlayerId } from './Enums'
 
-class CheckerContainer {
+export class CheckerContainer {
     
     pointId: number
     checkers: Array<number>;

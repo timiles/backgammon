@@ -5,6 +5,7 @@
     <title>Backgammon</title>
     <link rel="stylesheet" type="text/css" href="css/ui.css" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="js/require.js"></script>
     <script src="js/backgammon.js"></script>
     <style>
         BODY {
@@ -21,7 +22,11 @@
 
     <script>
         var queryStringParams = new URLSearchParams(window.location.search);
-        new Backgammon('backgammon', queryStringParams.get('black') === 'computer', queryStringParams.get('red') === 'computer');
+        var blackIsComputer = queryStringParams.get('black') === 'computer';
+        var redIsComputer = queryStringParams.get('red') === 'computer';
+        require(['Backgammon'], function(b) {
+            new b.Backgammon('backgammon', blackIsComputer, redIsComputer);
+        });
     </script>
 
     <p><a href="../tests/SpecRunner.html">run tests</a></p>

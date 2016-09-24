@@ -1,8 +1,8 @@
-/// <reference path="CheckerContainerUI.ts"/>
+import { CheckerContainerUI } from './CheckerContainerUI'
 
 declare var $;
 
-class PointUI extends CheckerContainerUI {
+export class PointUI extends CheckerContainerUI {
     
     onInspected: (on: boolean) => void;
     

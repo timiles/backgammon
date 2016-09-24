@@ -1,11 +1,11 @@
-/// <reference path="BoardUI.ts"/>
-/// <reference path="../Board.ts"/>
-/// <reference path="../DiceUI.ts"/>
-/// <reference path="../Enums.ts"/>
-/// <reference path="../Game.ts"/>
-/// <reference path="../StatusUI.ts"/>
+import { Board } from '../Board'
+import { BoardUI } from './BoardUI'
+import { DiceUI } from './DiceUI'
+import { PlayerId } from './Enums'
+import { StatusUI } from './StatusUI'
+import { Utils } from './UI/Utils'
 
-class GameUI {
+export class GameUI {
     
     boardUI: BoardUI;
     blackDiceUI: DiceUI;

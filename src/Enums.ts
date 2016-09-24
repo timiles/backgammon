@@ -1,1 +1,1 @@
-enum PlayerId { BLACK, RED }
+export enum PlayerId { BLACK, RED }

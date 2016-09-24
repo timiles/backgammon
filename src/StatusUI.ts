@@ -1,6 +1,6 @@
-/// <reference path="UI/Utils.ts"/>
+import { Utils } from './UI/Utils'
 
-class StatusUI {
+export class StatusUI {
     
     containerDiv: HTMLDivElement;
     constructor() {

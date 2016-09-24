@@ -1,10 +1,10 @@
-/// <reference path="Die.ts"/>
-/// <reference path="DiceRollGenerator.ts"/>
-/// <reference path="DiceUI.ts"/>
-/// <reference path="Enums.ts"/>
-/// <reference path="StatusLogger.ts"/>
+import { Die } from './Die'
+import { CanGenerateDiceRoll } from './DiceRollGenerator'
+import { DiceUI } from './DiceUI'
+import { PlayerId } from './Enums'
+import { StatusLogger } from './StatusLogger'
 
-class Dice {
+export class Dice {
 
     diceRollGenerator: CanGenerateDiceRoll;
     die1: Die;

@@ -1,4 +1,4 @@
-class Die {
+export class Die {
     value: number;
     remainingUses: number;
     onChange: (d: Die) => void;

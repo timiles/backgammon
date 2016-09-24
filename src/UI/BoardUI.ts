@@ -1,10 +1,12 @@
-/// <reference path="BarUI.ts"/>
-/// <reference path="../Board.ts"/>
-/// <reference path="HomeUI.ts"/>
-/// <reference path="PointUI.ts"/>
-/// <reference path="../Enums.ts"/>
+import { BarUI } from './BarUI'
+import { HomeUI } from './HomeUI'
+import { PointUI } from './PointUI'
+import { Board } from '../Board'
+import { PointId } from '../Board'
+import { PlayerId } from '../Enums'
+import { Utils } from './Utils'
 
-class BoardUI {
+export class BoardUI {
     
     containerDiv: HTMLDivElement;
     blackHomeUI: HomeUI;

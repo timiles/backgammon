@@ -2,6 +2,6 @@
     "version": "0.1.0",
     "command": "tsc",
     "isShellCommand": true,
-    "args": ["--out", "play/js/backgammon.js", "src/Backgammon.ts"],
+    "args": ["src/Backgammon.ts", "--module", "amd", "--outFile", "play/js/backgammon.js"],
     "problemMatcher": "$tsc"
 }

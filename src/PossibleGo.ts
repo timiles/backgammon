@@ -1,7 +1,7 @@
-/// <reference path="Board.ts"/>
-/// <reference path="Move.ts"/>
+import { Board } from './Board'
+import { Move } from './Move'
 
-class PossibleGo {
+export class PossibleGo {
     constructor(public moves: Move[], public resultantBoard: Board) {
     }
 }

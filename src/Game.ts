@@ -1,13 +1,18 @@
-/// <reference path="Board.ts"/>
-/// <reference path="CheckerContainer.ts"/>
-/// <reference path="ComputerPlayer.ts"/>
-/// <reference path="Dice.ts"/>
-/// <reference path="Enums.ts"/>
-/// <reference path="HumanPlayer.ts"/>
-/// <reference path="Player.ts"/>
-/// <reference path="StatusLogger.ts"/>
+import { Bar } from './Bar'
+import { Board } from './Board'
+import { PointId } from './Board'
+import { CheckerContainer } from './CheckerContainer'
+import { ComputerPlayer } from './ComputerPlayer'
+import { Dice } from './Dice'
+import { Die } from './Die'
+import { Point } from './Point'
+import { PlayerId } from './Enums'
+import { Home } from './Home'
+import { HumanPlayer } from './HumanPlayer'
+import { Player } from './Player'
+import { StatusLogger } from './StatusLogger'
 
-class Game {
+export class Game {
 
     board: Board;
     dice: Dice;

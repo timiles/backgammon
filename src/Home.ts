@@ -1,7 +1,8 @@
-/// <reference path="CheckerContainer.ts"/>
-/// <reference path="Enums.ts"/>
+import { PointId } from './Board'
+import { CheckerContainer } from './CheckerContainer'
+import { PlayerId } from './Enums'
 
-class Home extends CheckerContainer {
+export class Home extends CheckerContainer {
 
     onIncrement: (PlayerId, number) => void;
     onSetValidDestination: (PlayerId, boolean) => void;

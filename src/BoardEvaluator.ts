@@ -1,9 +1,10 @@
-/// <reference path="Board.ts"/>
-/// <reference path="Enums.ts"/>
-/// <reference path="Move.ts"/>
-/// <reference path="PossibleGo.ts"/>
+import { Board } from './Board'
+import { Dice } from './Dice'
+import { PlayerId } from './Enums'
+import { Move } from './Move'
+import { PossibleGo } from './PossibleGo'
 
-class BoardEvaluator {
+export class BoardEvaluator {
 
     static isRace(board: Board): boolean {
         let playerId = 0;

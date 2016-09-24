@@ -1,21 +1,21 @@
-/// <reference path="../Enums.ts"/>
-/// <reference path="Utils.ts"/>
+import { PlayerId } from '../Enums'
+import { Utils } from './Utils'
 
 declare var $;
 
-class CheckerContainerUI {
-    
+export class CheckerContainerUI {
+
     containerDiv: HTMLDivElement;
     onSelected: () => void;
 
     constructor(containerType: string, isTopSide: boolean) {
         this.containerDiv = document.createElement('div');
-        let side = (isTopSide ? 'top': 'bottom');
+        let side = (isTopSide ? 'top' : 'bottom');
         this.containerDiv.className = `checker-container checker-container-${side} ${containerType}`;
-        
+
         this.containerDiv.onclick = () => { this.onSelected(); };
     }
-    
+
     setCheckers(player: PlayerId, count: number) {
         Utils.removeAllChildren(this.containerDiv);
 
@@ -31,7 +31,7 @@ class CheckerContainerUI {
             }
         }
     }
-    
+
     setSelected(on: boolean): void {
         $(this.containerDiv).toggleClass('selected', on);
     }
@@ -39,7 +39,7 @@ class CheckerContainerUI {
     setValidSource(on: boolean): void {
         $(this.containerDiv).toggleClass('valid-source', on);
     }
-    
+
     setValidDestination(on: boolean): void {
         $(this.containerDiv).toggleClass('valid-destination', on);
     }

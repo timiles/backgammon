@@ -1,7 +1,7 @@
-/// <reference path="../Enums.ts"/>
-/// <reference path="CheckerContainerUI.ts"/>
+import { PlayerId } from '../Enums'
+import { CheckerContainerUI } from './CheckerContainerUI'
 
-class HomeUI extends CheckerContainerUI {
+export class HomeUI extends CheckerContainerUI {
     
     constructor(player: PlayerId) {
         super('home', player === PlayerId.BLACK);

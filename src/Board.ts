@@ -1,12 +1,13 @@
-/// <reference path="Bar.ts"/>
-/// <reference path="CheckerContainer.ts"/>
-/// <reference path="Enums.ts"/>
-/// <reference path="Home.ts"/>
-/// <reference path="Point.ts"/>
+import { Bar } from './Bar'
+import { CheckerContainer } from './CheckerContainer'
+import { PlayerId } from './Enums'
+import { Game } from './Game'
+import { Home } from './Home'
+import { Point } from './Point'
 
-enum PointId { HOME = 0, BAR = 25 }
+export enum PointId { HOME = 0, BAR = 25 }
 
-class Board {
+export class Board {
 
     checkerContainers: Array<CheckerContainer>;
 

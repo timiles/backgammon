@@ -1,11 +1,13 @@
-/// <reference path="Board.ts"/>
-/// <reference path="BoardEvaluator.ts"/>
-/// <reference path="Dice.ts"/>
-/// <reference path="Enums.ts"/>
-/// <reference path="Player.ts"/>
-/// <reference path="StatusLogger.ts"/>
+import { Board } from './Board'
+import { PointId } from './Board'
+import { BoardEvaluator } from './BoardEvaluator'
+import { Dice } from './Dice'
+import { PlayerId } from './Enums'
+import { Player } from './Player'
+import { PossibleGo } from './PossibleGo'
+import { StatusLogger } from './StatusLogger'
 
-class ComputerPlayer extends Player {
+export class ComputerPlayer extends Player {
 
     private safetyFactor: number;
     private clusteringFactor: number;

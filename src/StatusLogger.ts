@@ -1,6 +1,6 @@
-/// <reference path="StatusUI.ts"/>
+import { StatusUI } from './StatusUI'
 
-class StatusLogger {
+export class StatusLogger {
     
     statusUI: StatusUI;
     constructor(statusUI: StatusUI) {
