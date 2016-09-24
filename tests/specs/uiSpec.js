@@ -1,7 +1,7 @@
 'use strict';
 
-define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'Enums', 'Game', 'UI/GameUI', 'StatusLogger'],
-    function (Board, Dice, DiceRollGenerator, Enums, Game, GameUI, StatusLogger) {
+define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'Enums', 'Game', 'UI/GameUI', 'StatusLogger', 'Move'],
+    function (Board, Dice, DiceRollGenerator, Enums, Game, GameUI, StatusLogger, Move) {
 
         let PlayerId = Enums.PlayerId;
         let PointId = Board.PointId;
@@ -208,16 +208,16 @@ define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'Enums', 'Game', '
                 game = new Game.Game(board, dice, statusLogger);
                 game.begin(PlayerId.BLACK);
 
-                board.move(PlayerId.BLACK, 1, 22);
-                board.move(PlayerId.BLACK, 1, 22);
-                board.move(PlayerId.BLACK, 12, 9);
-                board.move(PlayerId.BLACK, 12, 9);
-                board.move(PlayerId.BLACK, 12, 9);
-                board.move(PlayerId.BLACK, 12, 9);
-                board.move(PlayerId.BLACK, 12, 9);
-                board.move(PlayerId.BLACK, 17, 5);
-                board.move(PlayerId.BLACK, 17, 5);
-                board.move(PlayerId.BLACK, 17, 5);
+                board.move(new Move.Move(PlayerId.BLACK, 1, 22));
+                board.move(new Move.Move(PlayerId.BLACK, 1, 22));
+                board.move(new Move.Move(PlayerId.BLACK, 12, 9));
+                board.move(new Move.Move(PlayerId.BLACK, 12, 9));
+                board.move(new Move.Move(PlayerId.BLACK, 12, 9));
+                board.move(new Move.Move(PlayerId.BLACK, 12, 9));
+                board.move(new Move.Move(PlayerId.BLACK, 12, 9));
+                board.move(new Move.Move(PlayerId.BLACK, 17, 5));
+                board.move(new Move.Move(PlayerId.BLACK, 17, 5));
+                board.move(new Move.Move(PlayerId.BLACK, 17, 5));
                 game.evaluateBoard();
             });
 
@@ -260,11 +260,11 @@ define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'Enums', 'Game', '
 
             it('should bear off automatically when selecting furthest checker and both dice exceed required pip count', function () {
 
-                game.board.move(PlayerId.BLACK, 19, 4);
-                game.board.move(PlayerId.BLACK, 19, 4);
-                game.board.move(PlayerId.BLACK, 19, 4);
-                game.board.move(PlayerId.BLACK, 19, 4);
-                game.board.move(PlayerId.BLACK, 19, 4);
+                game.board.move(new Move.Move(PlayerId.BLACK, 19, 4));
+                game.board.move(new Move.Move(PlayerId.BLACK, 19, 4));
+                game.board.move(new Move.Move(PlayerId.BLACK, 19, 4));
+                game.board.move(new Move.Move(PlayerId.BLACK, 19, 4));
+                game.board.move(new Move.Move(PlayerId.BLACK, 19, 4));
                 game.evaluateBoard();
 
                 $('#backgammon_point21').click();

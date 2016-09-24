@@ -17,6 +17,7 @@
             'Enums': 'play/js/backgammon',
             'Game': 'play/js/backgammon',
             'UI/GameUI': 'play/js/backgammon',
+            'Move': 'play/js/backgammon',
             'StatusLogger': 'play/js/backgammon',
         },
         shim: {
@@ -38,6 +39,7 @@
         'tests/specs/boardSpec',
         'tests/specs/uiSpec',
         'tests/specs/aiSpec',
+        'tests/specs/moveSpec',
     ];
 
     // Because we are using RequireJS `window.onload()` has already been triggered so we have to manually call it again.

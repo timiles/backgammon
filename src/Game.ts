@@ -5,6 +5,7 @@ import { CheckerContainer } from './BoardComponents/CheckerContainer'
 import { ComputerPlayer } from './Players/ComputerPlayer'
 import { Dice } from './Dice'
 import { Die } from './Die'
+import { Move } from './Move'
 import { Point } from './BoardComponents/Point'
 import { PlayerId } from './Enums'
 import { Home } from './BoardComponents/Home'
@@ -48,7 +49,7 @@ export class Game {
             if (!(checkerContainer instanceof Home) && (checkerContainer.checkers[this.currentPlayerId] > 0)) {
                 for (let die of [this.dice.die1, this.dice.die2]) {
                     if (die.remainingUses > 0) {
-                        this.board.checkIfValidDestination(this.currentPlayerId, checkerContainer.pointId, die.value);
+                        this.board.checkIfValidDestination(new Move(this.currentPlayerId, checkerContainer.pointId, die.value));
                     }
                 }
             }
@@ -63,14 +64,15 @@ export class Game {
                 }
 
                 let canUseDie = (die: Die): boolean => {
-                    return (die.remainingUses > 0 &&
-                        this.board.isLegalMove(this.currentPlayerId, checkerContainer.pointId, die.value));
+                    let move = new Move(this.currentPlayerId, checkerContainer.pointId, die.value);
+                    return (die.remainingUses > 0 && this.board.isLegalMove(move));
                 }
 
                 let canBearOff = (die: Die): boolean => {
+                    let move = new Move(this.currentPlayerId, checkerContainer.pointId, die.value);
                     return (die.remainingUses > 0 &&
-                        Board.getDestinationPointId(this.currentPlayerId, checkerContainer.pointId, die.value) === PointId.HOME &&
-                        this.board.isLegalMove(this.currentPlayerId, checkerContainer.pointId, die.value));
+                        move.getDestinationPointId() === PointId.HOME &&
+                        this.board.isLegalMove(move));
                 }
 
                 let canUseDie1 = canUseDie(this.dice.die1);
@@ -80,13 +82,14 @@ export class Game {
                 if ((canUseDie1 != canUseDie2) ||
                     (this.dice.die1.value === this.dice.die2.value) ||
                     (canBearOff(this.dice.die1) && canBearOff(this.dice.die2))) {
+                    
                     if (canUseDie1) {
-                        this.board.move(this.currentPlayerId, checkerContainer.pointId, this.dice.die1.value);
+                        this.board.move(new Move(this.currentPlayerId, checkerContainer.pointId, this.dice.die1.value));
                         this.dice.die1.decrementRemainingUses();
                         this.evaluateBoard();
                     }
                     else if (canUseDie2) {
-                        this.board.move(this.currentPlayerId, checkerContainer.pointId, this.dice.die2.value);
+                        this.board.move(new Move(this.currentPlayerId, checkerContainer.pointId, this.dice.die2.value));
                         this.dice.die2.decrementRemainingUses();
                         this.evaluateBoard();
                     }
@@ -121,12 +124,13 @@ export class Game {
             else {
 
                 let useDieIfPossible = (die: Die): boolean => {
-                    let destinationPointId = Board.getDestinationPointId(this.currentPlayerId, this.currentSelectedCheckerContainer.pointId, die.value);
+                    let move = new Move(this.currentPlayerId, this.currentSelectedCheckerContainer.pointId, die.value);
+                    let destinationPointId = move.getDestinationPointId();
                     if (destinationPointId !== checkerContainer.pointId) {
                         return false;
                     }
 
-                    this.board.move(this.currentPlayerId, this.currentSelectedCheckerContainer.pointId, die.value);
+                    this.board.move(move);
                     die.decrementRemainingUses();
                     if (this.currentSelectedCheckerContainer instanceof Point) {
                         (<Point>this.currentSelectedCheckerContainer).setSelected(false);
@@ -163,7 +167,7 @@ export class Game {
         }
 
         let isValidMove = (die: Die, pointId: number): boolean => {
-            return (die.remainingUses > 0) && this.board.isLegalMove(this.currentPlayerId, pointId, die.value);
+            return (die.remainingUses > 0) && this.board.isLegalMove(new Move(this.currentPlayerId, pointId, die.value));
         }
         for (let pointId = 1; pointId <= 25; pointId++) {
             if (isValidMove(this.dice.die1, pointId) || isValidMove(this.dice.die2, pointId)) {
@@ -195,7 +199,7 @@ export class Game {
             if (bestPossibleGo) {
                 for (let moveNumber = 0; moveNumber < bestPossibleGo.moves.length; moveNumber++) {
                     let move = bestPossibleGo.moves[moveNumber];
-                    this.board.move(this.currentPlayerId, move.sourcePointId, move.numberOfPointsToMove);
+                    this.board.move(move);
                 }
                 console.log(bestPossibleGo);
             }
@@ -208,7 +212,7 @@ export class Game {
         }
     }
 
-    static getOtherPlayer(player: PlayerId): PlayerId {
+    static getOtherPlayerId(player: PlayerId): PlayerId {
         return player === PlayerId.BLACK ? PlayerId.RED : PlayerId.BLACK;
     }
 
@@ -231,7 +235,7 @@ export class Game {
             if (this.board.checkerContainers[pointId].checkers[this.currentPlayerId] > 0) {
                 for (let die of [this.dice.die1, this.dice.die2]) {
                     if ((die.remainingUses > 0) &&
-                        (this.board.isLegalMove(this.currentPlayerId, pointId, die.value))) {
+                        (this.board.isLegalMove(new Move(this.currentPlayerId, pointId, die.value)))) {
                         return true;
                     }
                 }

@@ -4,6 +4,7 @@ import { PlayerId } from './Enums'
 import { Game } from './Game'
 import { Home } from './Home'
 import { Point } from './Point'
+import { Move } from '../Move'
 
 export enum PointId { HOME = 0, BAR = 25 }
 
@@ -115,74 +116,43 @@ export class Board {
         this.checkerContainers[pointId].increment(player, count || 1);
     }
 
-    static getDestinationPointId(player: PlayerId, sourcePointId: number, numberOfPointsToMove: number): number {
-        switch (player) {
-            case PlayerId.BLACK: {
-                if (sourcePointId === PointId.BAR) {
-                    return numberOfPointsToMove;
-                }
-
-                let destinationPointId = sourcePointId + numberOfPointsToMove;
-                if (destinationPointId > 24) {
-                    // bearing off
-                    return PointId.HOME;
-                }
-                return destinationPointId;
-
-            }
-            case PlayerId.RED: {
-                if (sourcePointId === PointId.BAR) {
-                    return PointId.BAR - numberOfPointsToMove;
-                }
-
-                let destinationPointId = sourcePointId - numberOfPointsToMove;
-                if (destinationPointId < 1) {
-                    // bearing off
-                    return PointId.HOME;
-                }
-                return destinationPointId;
-            }
-            default: throw `Unknown player: ${player}`;
-        }
-    }
-
-    isLegalMove(player: PlayerId, sourcePointId: number, numberOfPointsToMove: number): boolean {
+    isLegalMove(move: Move): boolean {
 
         // case: there is no counter to move: fail
-        if (this.checkerContainers[sourcePointId].checkers[player] == 0) {
+        if (this.checkerContainers[move.sourcePointId].checkers[move.playerId] == 0) {
             // console.info('no counter at ' + sourcePointId);
             return false;
         }
 
         // case: there is a counter on the bar, and this is not it
-        if ((sourcePointId != PointId.BAR) && (this.checkerContainers[PointId.BAR].checkers[player] > 0)) {
+        if ((move.sourcePointId != PointId.BAR) && (this.checkerContainers[PointId.BAR].checkers[move.playerId] > 0)) {
             // console.info('must move counter off bar first');
             return false;
         }
 
         // case: bearing off
-        const direction = (player === PlayerId.BLACK) ? 1 : -1;
-        let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfPointsToMove);
+        let destinationPointId = move.getDestinationPointId();
         if (destinationPointId === PointId.HOME) {
             // check that there are no checkers outside of home board. (BAR has already been checked above)
-            const startingPointOfOuterBoard = (player === PlayerId.BLACK) ? 1 : 24;
+            const startingPointOfOuterBoard = (move.playerId === PlayerId.BLACK) ? 1 : 24;
             const totalPointsOfOuterBoard = 18;
+            const direction = (move.playerId === PlayerId.BLACK) ? 1 : -1;
             for (let offset = 0; offset < totalPointsOfOuterBoard; offset++) {
-                if (this.checkerContainers[startingPointOfOuterBoard + (direction * offset)].checkers[player] > 0) {
+                if (this.checkerContainers[startingPointOfOuterBoard + (direction * offset)].checkers[move.playerId] > 0) {
                     return false;
                 }
             }
 
             // check that there are no checkers more deserving of this dice roll
-            let actualDestinationPointId = sourcePointId + (direction * numberOfPointsToMove);
+            let actualDestinationPointId = move.sourcePointId + (direction * move.numberOfPointsToMove);
             // if it's dead on, we're fine.
             if (actualDestinationPointId === 0 || actualDestinationPointId === 25) {
                 return true;
             }
 
-            const startingPointOfHomeBoard = (player === PlayerId.BLACK) ? 18 : 6;
-            for (let homeBoardPointId = startingPointOfHomeBoard; homeBoardPointId !== sourcePointId; homeBoardPointId += direction) {
-                if (this.checkerContainers[homeBoardPointId].checkers[player] > 0) {
+            const startingPointOfHomeBoard = (move.playerId === PlayerId.BLACK) ? 18 : 6;
+            for (let homeBoardPointId = startingPointOfHomeBoard; homeBoardPointId !== move.sourcePointId; homeBoardPointId += direction) {
+                if (this.checkerContainers[homeBoardPointId].checkers[move.playerId] > 0) {
                     // if we find a checker on a further out point, sourcePointId is not valid
                     return false;
                 }
@@ -190,10 +160,10 @@ export class Board {
             return true;
         }
 
-        let otherPlayer = Game.getOtherPlayer(player);
+        let otherPlayerId = Game.getOtherPlayerId(move.playerId);
 
         // case: there is a counter, but opponent blocks the end pip
-        if (this.checkerContainers[destinationPointId].checkers[otherPlayer] >= 2) {
+        if (this.checkerContainers[destinationPointId].checkers[otherPlayerId] >= 2) {
             // console.info('point is blocked');
             return false;
         }
@@ -201,27 +171,27 @@ export class Board {
         return true;
     }
 
-    move(player: PlayerId, sourcePointId: number, numberOfPointsToMove: number): boolean {
-        if (!this.isLegalMove(player, sourcePointId, numberOfPointsToMove)) {
+    move(move: Move): boolean {
+        if (!this.isLegalMove(move)) {
             return false;
         }
-        let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfPointsToMove);
-        let otherPlayer = Game.getOtherPlayer(player);
+        let destinationPointId = move.getDestinationPointId();
+        let otherPlayerId = Game.getOtherPlayerId(move.playerId);
         if (destinationPointId !== PointId.HOME &&
-            this.checkerContainers[destinationPointId].checkers[otherPlayer] == 1) {
-            this.decrement(otherPlayer, destinationPointId);
-            this.increment(otherPlayer, PointId.BAR);
+            this.checkerContainers[destinationPointId].checkers[otherPlayerId] == 1) {
+            this.decrement(otherPlayerId, destinationPointId);
+            this.increment(otherPlayerId, PointId.BAR);
         }
-        this.decrement(player, sourcePointId);
-        this.increment(player, destinationPointId);
+        this.decrement(move.playerId, move.sourcePointId);
+        this.increment(move.playerId, destinationPointId);
         return true;
     }
 
-    checkIfValidDestination(player: PlayerId, sourcePointId: number, numberOfPointsToMove: number): void {
-        if (this.isLegalMove(player, sourcePointId, numberOfPointsToMove)) {
-            let destinationPointId = Board.getDestinationPointId(player, sourcePointId, numberOfPointsToMove);
+    checkIfValidDestination(move: Move): void {
+        if (this.isLegalMove(move)) {
+            let destinationPointId = move.getDestinationPointId();
             if (destinationPointId === PointId.HOME) {
-                (<Home>this.checkerContainers[PointId.HOME]).setValidDestination(player, true);
+                (<Home>this.checkerContainers[PointId.HOME]).setValidDestination(move.playerId, true);
             }
             else {
                 (<Point>this.checkerContainers[destinationPointId]).setValidDestination(true);
