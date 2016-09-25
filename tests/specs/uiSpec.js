@@ -1,7 +1,7 @@
 'use strict';
 
-define(['BoardComponents/Board', 'Dice', 'Enums', 'Game', 'UI/GameUI', 'StatusLogger', 'Move'],
-    function (Board, Dice, Enums, Game, GameUI, StatusLogger, Move) {
+define(['BoardComponents/Board', 'Dice', 'Enums', 'Game', 'UI/GameUI', 'StatusLogger'],
+    function (Board, Dice, Enums, Game, GameUI, StatusLogger) {
 
         let PlayerId = Enums.PlayerId;
         let PointId = Enums.PointId;
@@ -178,15 +178,16 @@ define(['BoardComponents/Board', 'Dice', 'Enums', 'Game', 'UI/GameUI', 'StatusLo
 
         describe('UI: board where BLACK is all home', function () {
 
-            var game;
+            // TODO: hover effect in jQuery so we don't need to reference board?
+            var board;
 
             beforeEach(function () {
-                let board = new Board.Board();
+                board = new Board.Board();
                 let fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
                 let dice = new Dice.Dice(fakeDiceRollGenerator);
                 let statusLogger = new StatusLogger.StatusLogger();
 
-                game = new Game.Game(board, dice, statusLogger);
+                let game = new Game.Game(board, dice, statusLogger);
                 let ui = new GameUI.GameUI('backgammon', game);
                 board.initialise([[0, 0],
                     [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 5],
@@ -208,20 +209,20 @@ define(['BoardComponents/Board', 'Dice', 'Enums', 'Game', 'UI/GameUI', 'StatusLo
 
             it('should highlight home when inspecting checker that can bear off', function () {
 
-                game.board.onPointInspected(19, true);
+                board.onPointInspected(19, true);
                 expect($('#backgammon_point23').hasClass('valid-destination')).toBe(true);
                 expect($('#backgammon_blackhome').hasClass('valid-destination')).toBe(true);
 
-                game.board.onPointInspected(19, false);
+                board.onPointInspected(19, false);
                 expect($('#backgammon_point23').hasClass('valid-destination')).toBe(false);
                 expect($('#backgammon_blackhome').hasClass('valid-destination')).toBe(false);
             });
 
             it('should bear off home when selecting checker then selecting home', function () {
 
-                game.board.onPointInspected(19, true);
+                board.onPointInspected(19, true);
                 $('#backgammon_point19').click();
-                game.board.onPointInspected(19, false);
+                board.onPointInspected(19, false);
 
                 expect($('#backgammon_point19').hasClass('valid-source')).toBe(true);
                 expect($('#backgammon_point23').hasClass('valid-destination')).toBe(true);
@@ -237,17 +238,29 @@ define(['BoardComponents/Board', 'Dice', 'Enums', 'Game', 'UI/GameUI', 'StatusLo
 
             it('should bear off automatically when selecting furthest checker and both dice exceed required pip count', function () {
 
-                game.board.move(new Move.Move(PlayerId.BLACK, 19, 4));
-                game.board.move(new Move.Move(PlayerId.BLACK, 19, 4));
-                game.board.move(new Move.Move(PlayerId.BLACK, 19, 4));
-                game.board.move(new Move.Move(PlayerId.BLACK, 19, 4));
-                game.board.move(new Move.Move(PlayerId.BLACK, 19, 4));
-                game.evaluateBoard();
+                board = new Board.Board();
+                let fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
+                let dice = new Dice.Dice(fakeDiceRollGenerator);
+                let statusLogger = new StatusLogger.StatusLogger();
+
+                let game = new Game.Game(board, dice, statusLogger);
+                let ui = new GameUI.GameUI('backgammon', game);
+                board.initialise([[0, 0],
+                    [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 5],
+                    [0, 0], [0, 3], [0, 0], [0, 0], [0, 0], [0, 0],
+                    [0, 5], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+                    [0, 0], [0, 0], [5, 0], [3, 0], [7, 0], [0, 2],
+                    [0, 0]]);
+                dice.roll(PlayerId.BLACK);
+                game.begin(PlayerId.BLACK);
 
                 $('#backgammon_point21').click();
-
+                // don't need to click home, should be already there
                 expect($('#backgammon_blackhome').children('.black').length).toBe(1);
 
+                $('#backgammon_point21').click();
+                // again don't need to click home, should be already there
+                expect($('#backgammon_blackhome').children('.black').length).toBe(2);
             });
         });
     });
