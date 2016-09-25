@@ -19,6 +19,7 @@
             'UI/GameUI': 'play/js/backgammon',
             'Move': 'play/js/backgammon',
             'StatusLogger': 'play/js/backgammon',
+            'UI/EventBinders/DiceUIEventBinder': 'play/js/backgammon',
             'UI/EventBinders/StatusUIEventBinder': 'play/js/backgammon',
         },
         shim: {

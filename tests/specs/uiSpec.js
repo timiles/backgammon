@@ -1,7 +1,7 @@
 'use strict';
 
-define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'Enums', 'Game', 'UI/GameUI', 'StatusLogger', 'UI/EventBinders/StatusUIEventBinder', 'Move'],
-    function (Board, Dice, DiceRollGenerator, Enums, Game, GameUI, StatusLogger, StatusUIEventBinder, Move) {
+define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'UI/EventBinders/DiceUIEventBinder', 'Enums', 'Game', 'UI/GameUI', 'StatusLogger', 'UI/EventBinders/StatusUIEventBinder', 'Move'],
+    function (Board, Dice, DiceRollGenerator, DiceUIEventBinder, Enums, Game, GameUI, StatusLogger, StatusUIEventBinder, Move) {
 
         let PlayerId = Enums.PlayerId;
         let PointId = Enums.PointId;
@@ -30,7 +30,8 @@ define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'Enums', 'Game', '
 
                 let fakeDiceRollGenerator = new FakeDiceRollGenerator([5, 5]);
 
-                let dice = new Dice.Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
+                let dice = new Dice.Dice(fakeDiceRollGenerator);
+                new DiceUIEventBinder.DiceUIEventBinder(dice, ui.blackDiceUI, ui.redDiceUI);
                 dice.roll(PlayerId.BLACK);
 
                 let statusLogger = new StatusLogger.StatusLogger();
@@ -97,7 +98,8 @@ define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'Enums', 'Game', '
 
                 let fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
 
-                let dice = new Dice.Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
+                let dice = new Dice.Dice(fakeDiceRollGenerator);
+                new DiceUIEventBinder.DiceUIEventBinder(dice, ui.blackDiceUI, ui.redDiceUI);
                 dice.roll(PlayerId.BLACK);
 
                 let statusLogger = new StatusLogger.StatusLogger();
@@ -134,7 +136,8 @@ define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'Enums', 'Game', '
 
                 let fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
 
-                let dice = new Dice.Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
+                let dice = new Dice.Dice(fakeDiceRollGenerator);
+                new DiceUIEventBinder.DiceUIEventBinder(dice, ui.blackDiceUI, ui.redDiceUI);
                 dice.roll(PlayerId.BLACK);
 
                 let statusLogger = new StatusLogger.StatusLogger();
@@ -208,7 +211,8 @@ define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'Enums', 'Game', '
 
                 let fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
 
-                let dice = new Dice.Dice(fakeDiceRollGenerator, ui.blackDiceUI, ui.redDiceUI);
+                let dice = new Dice.Dice(fakeDiceRollGenerator);
+                new DiceUIEventBinder.DiceUIEventBinder(dice, ui.blackDiceUI, ui.redDiceUI);
                 dice.roll(PlayerId.BLACK);
 
                 let statusLogger = new StatusLogger.StatusLogger();

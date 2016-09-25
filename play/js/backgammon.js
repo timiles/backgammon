@@ -95,71 +95,6 @@ define("DiceRollGenerator", ["require", "exports"], function (require, exports) 
     }());
     exports.DiceRollGenerator = DiceRollGenerator;
 });
-define("UI/Utils", ["require", "exports"], function (require, exports) {
-    "use strict";
-    // REVIEW: invoke as extensions/prototype?
-    var Utils = (function () {
-        function Utils() {
-        }
-        Utils.removeAllChildren = function (element) {
-            // fastest way to remove all child nodes: http://stackoverflow.com/a/3955238/487544
-            while (element.lastChild) {
-                element.removeChild(element.lastChild);
-            }
-        };
-        Utils.highlight = function (el) {
-            $(el).addClass('highlight');
-            // timeout purely to allow ui to update
-            setTimeout(function () {
-                $(el).addClass('highlight-end');
-            }, 0);
-        };
-        return Utils;
-    }());
-    exports.Utils = Utils;
-});
-define("DiceUI", ["require", "exports", "Enums", "UI/Utils"], function (require, exports, Enums_2, Utils_1) {
-    "use strict";
-    var DiceUI = (function () {
-        function DiceUI(player) {
-            this.containerDiv = document.createElement('div');
-            this.containerDiv.className = "dice-container dice-container-" + Enums_2.PlayerId[player].toLowerCase();
-        }
-        DiceUI.prototype.setStartingDiceRoll = function (die) {
-            Utils_1.Utils.removeAllChildren(this.containerDiv);
-            this.containerDiv.appendChild(DiceUI.createDie(die));
-        };
-        DiceUI.prototype.setDiceRolls = function (die1, die2) {
-            var _this = this;
-            this.die1 = die1;
-            this.die1.onChange = function () { _this.redraw(); };
-            this.die2 = die2;
-            this.die2.onChange = function () { _this.redraw(); };
-            this.redraw();
-        };
-        DiceUI.prototype.setActive = function (active) {
-            if (active) {
-                $(this.containerDiv).addClass('active');
-            }
-            else {
-                $(this.containerDiv).removeClass('active');
-            }
-        };
-        DiceUI.prototype.redraw = function () {
-            Utils_1.Utils.removeAllChildren(this.containerDiv);
-            this.containerDiv.appendChild(DiceUI.createDie(this.die1));
-            this.containerDiv.appendChild(DiceUI.createDie(this.die2));
-        };
-        DiceUI.createDie = function (die) {
-            var div = document.createElement('div');
-            div.className = 'die die-uses-' + die.remainingUses;
-            div.innerText = die.value.toString();
-            return div;
-        };
-        return DiceUI;
-    }());
-    exports.DiceUI = DiceUI;
-});
 define("StatusLogger", ["require", "exports"], function (require, exports) {
     "use strict";
     var StatusLogger = (function () {
@@ -174,21 +109,20 @@ define("StatusLogger", ["require", "exports"], function (require, exports) {
     }());
     exports.StatusLogger = StatusLogger;
 });
-define("Dice", ["require", "exports", "Die", "Enums"], function (require, exports, Die_1, Enums_3) {
+define("Dice", ["require", "exports", "Die", "Enums"], function (require, exports, Die_1, Enums_2) {
     "use strict";
     var Dice = (function () {
-        function Dice(diceRollGenerator, blackDiceUI, redDiceUI) {
+        function Dice(diceRollGenerator) {
             this.diceRollGenerator = diceRollGenerator;
-            this.diceUIs = new Array();
-            this.diceUIs[Enums_3.PlayerId.BLACK] = blackDiceUI;
-            this.diceUIs[Enums_3.PlayerId.RED] = redDiceUI;
         }
         Dice.prototype.rollToStart = function (statusLogger, onSuccess) {
             var _this = this;
             var die1 = new Die_1.Die(this.diceRollGenerator.generateDiceRoll());
             var die2 = new Die_1.Die(this.diceRollGenerator.generateDiceRoll());
-            this.diceUIs[Enums_3.PlayerId.BLACK].setStartingDiceRoll(die1);
-            this.diceUIs[Enums_3.PlayerId.RED].setStartingDiceRoll(die2);
+            if (this.onSetStartingDiceRoll) {
+                this.onSetStartingDiceRoll(Enums_2.PlayerId.BLACK, die1);
+                this.onSetStartingDiceRoll(Enums_2.PlayerId.RED, die2);
+            }
             statusLogger.logInfo("BLACK rolls " + die1.value);
             statusLogger.logInfo("RED rolls " + die2.value);
             if (die1.value === die2.value) {
@@ -196,18 +130,22 @@ define("Dice", ["require", "exports", "Die", "Enums"], function (require, export
                 setTimeout(function () { _this.rollToStart(statusLogger, onSuccess); }, 1000);
             }
             else {
-                var successfulPlayer_1 = die1.value > die2.value ? Enums_3.PlayerId.BLACK : Enums_3.PlayerId.RED;
-                statusLogger.logInfo(Enums_3.PlayerId[successfulPlayer_1] + " wins the starting roll");
+                var successfulPlayerId_1 = die1.value > die2.value ? Enums_2.PlayerId.BLACK : Enums_2.PlayerId.RED;
+                statusLogger.logInfo(Enums_2.PlayerId[successfulPlayerId_1] + " wins the starting roll");
                 setTimeout(function () {
                     _this.die1 = die1;
                     _this.die2 = die2;
-                    _this.diceUIs[successfulPlayer_1].setDiceRolls(die1, die2);
-                    _this.diceUIs[successfulPlayer_1].setActive(true);
-                    onSuccess(successfulPlayer_1);
+                    if (_this.onSetDiceRolls) {
+                        _this.onSetDiceRolls(successfulPlayerId_1, die1, die2);
+                    }
+                    if (_this.onSetActive) {
+                        _this.onSetActive(successfulPlayerId_1, true);
+                    }
+                    onSuccess(successfulPlayerId_1);
                 }, 1000);
             }
         };
-        Dice.prototype.roll = function (player) {
+        Dice.prototype.roll = function (playerId) {
             this.die1 = new Die_1.Die(this.diceRollGenerator.generateDiceRoll());
             this.die2 = new Die_1.Die(this.diceRollGenerator.generateDiceRoll());
             var isDouble = (this.die1.value === this.die2.value);
@@ -215,16 +153,20 @@ define("Dice", ["require", "exports", "Die", "Enums"], function (require, export
                 this.die1.remainingUses = 2;
                 this.die2.remainingUses = 2;
             }
-            this.diceUIs[player].setDiceRolls(this.die1, this.die2);
-            this.diceUIs[player].setActive(true);
-            var otherPlayer = player === Enums_3.PlayerId.BLACK ? Enums_3.PlayerId.RED : Enums_3.PlayerId.BLACK;
-            this.diceUIs[otherPlayer].setActive(false);
+            if (this.onSetDiceRolls) {
+                this.onSetDiceRolls(playerId, this.die1, this.die2);
+            }
+            if (this.onSetActive) {
+                this.onSetActive(playerId, true);
+                var otherPlayerId = playerId === Enums_2.PlayerId.BLACK ? Enums_2.PlayerId.RED : Enums_2.PlayerId.BLACK;
+                this.onSetActive(otherPlayerId, false);
+            }
         };
         return Dice;
     }());
     exports.Dice = Dice;
 });
-define("Move", ["require", "exports", "Enums"], function (require, exports, Enums_4) {
+define("Move", ["require", "exports", "Enums"], function (require, exports, Enums_3) {
     "use strict";
     var Move = (function () {
         function Move(playerId, sourcePointId, numberOfPointsToMove) {
@@ -234,25 +176,25 @@ define("Move", ["require", "exports", "Enums"], function (require, exports, Enum
         }
         Move.prototype.getDestinationPointId = function () {
             switch (this.playerId) {
-                case Enums_4.PlayerId.BLACK: {
-                    if (this.sourcePointId === Enums_4.PointId.BAR) {
+                case Enums_3.PlayerId.BLACK: {
+                    if (this.sourcePointId === Enums_3.PointId.BAR) {
                         return this.numberOfPointsToMove;
                     }
                     var destinationPointId = this.sourcePointId + this.numberOfPointsToMove;
                     if (destinationPointId > 24) {
                         // bearing off
-                        return Enums_4.PointId.HOME;
+                        return Enums_3.PointId.HOME;
                     }
                     return destinationPointId;
                 }
-                case Enums_4.PlayerId.RED: {
-                    if (this.sourcePointId === Enums_4.PointId.BAR) {
-                        return Enums_4.PointId.BAR - this.numberOfPointsToMove;
+                case Enums_3.PlayerId.RED: {
+                    if (this.sourcePointId === Enums_3.PointId.BAR) {
+                        return Enums_3.PointId.BAR - this.numberOfPointsToMove;
                     }
                     var destinationPointId = this.sourcePointId - this.numberOfPointsToMove;
                     if (destinationPointId < 1) {
                         // bearing off
-                        return Enums_4.PointId.HOME;
+                        return Enums_3.PointId.HOME;
                     }
                     return destinationPointId;
                 }
@@ -274,7 +216,7 @@ define("Analysis/PossibleGo", ["require", "exports"], function (require, exports
     }());
     exports.PossibleGo = PossibleGo;
 });
-define("Analysis/BoardEvaluator", ["require", "exports", "BoardComponents/Board", "Enums", "Move", "Analysis/PossibleGo"], function (require, exports, Board_1, Enums_5, Move_1, PossibleGo_1) {
+define("Analysis/BoardEvaluator", ["require", "exports", "BoardComponents/Board", "Enums", "Move", "Analysis/PossibleGo"], function (require, exports, Board_1, Enums_4, Move_1, PossibleGo_1) {
     "use strict";
     var BoardEvaluator = (function () {
         function BoardEvaluator() {
@@ -364,7 +306,7 @@ define("Analysis/BoardEvaluator", ["require", "exports", "BoardComponents/Board"
             var clone = new Board_1.Board();
             var layout = new Array();
             for (var pointId = 0; pointId < 26; pointId++) {
-                layout[pointId] = [source.checkerContainers[pointId].checkers[Enums_5.PlayerId.BLACK], source.checkerContainers[pointId].checkers[Enums_5.PlayerId.RED]];
+                layout[pointId] = [source.checkerContainers[pointId].checkers[Enums_4.PlayerId.BLACK], source.checkerContainers[pointId].checkers[Enums_4.PlayerId.RED]];
             }
             clone.initialise(layout);
             return clone;
@@ -408,7 +350,7 @@ define("Players/Player", ["require", "exports"], function (require, exports) {
     }());
     exports.Player = Player;
 });
-define("Players/ComputerPlayer", ["require", "exports", "Analysis/BoardEvaluator", "Enums", "Players/Player"], function (require, exports, BoardEvaluator_1, Enums_6, Player_1) {
+define("Players/ComputerPlayer", ["require", "exports", "Analysis/BoardEvaluator", "Enums", "Players/Player"], function (require, exports, BoardEvaluator_1, Enums_5, Player_1) {
     "use strict";
     var ComputerPlayer = (function (_super) {
         __extends(ComputerPlayer, _super);
@@ -451,8 +393,8 @@ define("Players/ComputerPlayer", ["require", "exports", "Analysis/BoardEvaluator
                 return 0;
             }
             var score = 100;
-            var direction = (this.playerId === Enums_6.PlayerId.BLACK) ? 1 : -1;
-            var homePointId = (this.playerId === Enums_6.PlayerId.BLACK) ? 25 : 0;
+            var direction = (this.playerId === Enums_5.PlayerId.BLACK) ? 1 : -1;
+            var homePointId = (this.playerId === Enums_5.PlayerId.BLACK) ? 25 : 0;
             for (var pointId = 1; pointId <= 24; pointId++) {
                 if (b.checkerContainers[pointId].checkers[this.playerId] === 1) {
                     // TODO: factor safety on prob of opp hitting this piece
@@ -477,7 +419,7 @@ define("Players/ComputerPlayer", ["require", "exports", "Analysis/BoardEvaluator
          */
         ComputerPlayer.prototype.evaluateOffensive = function (b) {
             var otherPlayerId = (this.playerId + 1) % 2;
-            switch (b.checkerContainers[Enums_6.PointId.BAR].checkers[otherPlayerId]) {
+            switch (b.checkerContainers[Enums_5.PointId.BAR].checkers[otherPlayerId]) {
                 case 0: return 0;
                 case 1: return 65;
                 default: return 100;
@@ -525,12 +467,12 @@ define("BoardComponents/Point", ["require", "exports", "BoardComponents/CheckerC
     }(CheckerContainer_2.CheckerContainer));
     exports.Point = Point;
 });
-define("BoardComponents/Home", ["require", "exports", "BoardComponents/CheckerContainer", "Enums"], function (require, exports, CheckerContainer_3, Enums_7) {
+define("BoardComponents/Home", ["require", "exports", "BoardComponents/CheckerContainer", "Enums"], function (require, exports, CheckerContainer_3, Enums_6) {
     "use strict";
     var Home = (function (_super) {
         __extends(Home, _super);
         function Home() {
-            _super.call(this, Enums_7.PointId.HOME);
+            _super.call(this, Enums_6.PointId.HOME);
         }
         Home.prototype.increment = function (playerId) {
             _super.prototype.increment.call(this, playerId, 1);
@@ -558,7 +500,7 @@ define("Players/HumanPlayer", ["require", "exports", "Players/Player"], function
     }(Player_2.Player));
     exports.HumanPlayer = HumanPlayer;
 });
-define("Game", ["require", "exports", "BoardComponents/Bar", "Players/ComputerPlayer", "Move", "BoardComponents/Point", "Enums", "BoardComponents/Home", "Players/HumanPlayer"], function (require, exports, Bar_1, ComputerPlayer_1, Move_2, Point_1, Enums_8, Home_1, HumanPlayer_1) {
+define("Game", ["require", "exports", "BoardComponents/Bar", "Players/ComputerPlayer", "Move", "BoardComponents/Point", "Enums", "BoardComponents/Home", "Players/HumanPlayer"], function (require, exports, Bar_1, ComputerPlayer_1, Move_2, Point_1, Enums_7, Home_1, HumanPlayer_1) {
     "use strict";
     var Game = (function () {
         function Game(board, dice, statusLogger, isComputerPlayer) {
@@ -568,7 +510,7 @@ define("Game", ["require", "exports", "BoardComponents/Bar", "Players/ComputerPl
             this.dice = dice;
             this.statusLogger = statusLogger;
             this.players = new Array(2);
-            for (var _i = 0, _a = [Enums_8.PlayerId.BLACK, Enums_8.PlayerId.RED]; _i < _a.length; _i++) {
+            for (var _i = 0, _a = [Enums_7.PlayerId.BLACK, Enums_7.PlayerId.RED]; _i < _a.length; _i++) {
                 var playerId = _a[_i];
                 this.players[playerId] = (isComputerPlayer[playerId]) ? new ComputerPlayer_1.ComputerPlayer(playerId, this.board) : new HumanPlayer_1.HumanPlayer(playerId, this.board);
             }
@@ -605,7 +547,7 @@ define("Game", ["require", "exports", "BoardComponents/Bar", "Players/ComputerPl
                     var canBearOff = function (die) {
                         var move = new Move_2.Move(_this.currentPlayerId, checkerContainer.pointId, die.value);
                         return (die.remainingUses > 0 &&
-                            move.getDestinationPointId() === Enums_8.PointId.HOME &&
+                            move.getDestinationPointId() === Enums_7.PointId.HOME &&
                             _this.board.isLegalMove(move));
                     };
                     var canUseDie1 = canUseDie(_this.dice.die1);
@@ -700,8 +642,8 @@ define("Game", ["require", "exports", "BoardComponents/Bar", "Players/ComputerPl
         };
         Game.prototype.switchPlayerIfNoValidMovesRemain = function () {
             var _this = this;
-            if (this.board.checkerContainers[Enums_8.PointId.HOME].checkers[this.currentPlayerId] === 15) {
-                this.statusLogger.logInfo(Enums_8.PlayerId[this.currentPlayerId] + " WINS!");
+            if (this.board.checkerContainers[Enums_7.PointId.HOME].checkers[this.currentPlayerId] === 15) {
+                this.statusLogger.logInfo(Enums_7.PlayerId[this.currentPlayerId] + " WINS!");
                 return;
             }
             if (!this.checkIfValidMovesRemain()) {
@@ -731,7 +673,7 @@ define("Game", ["require", "exports", "BoardComponents/Bar", "Players/ComputerPl
             }
         };
         Game.getOtherPlayerId = function (player) {
-            return player === Enums_8.PlayerId.BLACK ? Enums_8.PlayerId.RED : Enums_8.PlayerId.BLACK;
+            return player === Enums_7.PlayerId.BLACK ? Enums_7.PlayerId.RED : Enums_7.PlayerId.BLACK;
         };
         Game.prototype.switchPlayer = function () {
             this.currentPlayerId = (this.currentPlayerId + 1) % 2;
@@ -759,19 +701,19 @@ define("Game", ["require", "exports", "BoardComponents/Bar", "Players/ComputerPl
                 }
                 return false;
             };
-            this.board.checkerContainers[Enums_8.PointId.BAR].setValidSource(this.currentPlayerId, isValidSource(Enums_8.PointId.BAR));
+            this.board.checkerContainers[Enums_7.PointId.BAR].setValidSource(this.currentPlayerId, isValidSource(Enums_7.PointId.BAR));
             for (var i = 1; i <= 24; i++) {
                 this.board.checkerContainers[i].setValidSource(isValidSource(i));
             }
         };
         Game.prototype.logCurrentPlayer = function () {
-            this.statusLogger.logInfo(Enums_8.PlayerId[this.currentPlayerId] + " to move");
+            this.statusLogger.logInfo(Enums_7.PlayerId[this.currentPlayerId] + " to move");
         };
         return Game;
     }());
     exports.Game = Game;
 });
-define("BoardComponents/Board", ["require", "exports", "BoardComponents/Bar", "Enums", "Game", "BoardComponents/Home", "BoardComponents/Point"], function (require, exports, Bar_2, Enums_9, Game_1, Home_2, Point_2) {
+define("BoardComponents/Board", ["require", "exports", "BoardComponents/Bar", "Enums", "Game", "BoardComponents/Home", "BoardComponents/Point"], function (require, exports, Bar_2, Enums_8, Game_1, Home_2, Point_2) {
     "use strict";
     var Board = (function () {
         function Board() {
@@ -780,7 +722,7 @@ define("BoardComponents/Board", ["require", "exports", "BoardComponents/Bar", "E
             var home = new Home_2.Home();
             home.onIncrement = function (playerId, count) {
                 if (_this.onCheckerCountChanged) {
-                    _this.onCheckerCountChanged(Enums_9.PointId.HOME, playerId, count);
+                    _this.onCheckerCountChanged(Enums_8.PointId.HOME, playerId, count);
                 }
             };
             home.onSetValidDestination = function (playerId, on) {
@@ -788,7 +730,7 @@ define("BoardComponents/Board", ["require", "exports", "BoardComponents/Bar", "E
                     _this.onSetHomeAsValidDestination(playerId, on);
                 }
             };
-            this.checkerContainers[Enums_9.PointId.HOME] = home;
+            this.checkerContainers[Enums_8.PointId.HOME] = home;
             var createPoint = function (pointId) {
                 var point = new Point_2.Point(pointId);
                 point.onCheckerCountChanged = function (playerId, count) {
@@ -819,7 +761,7 @@ define("BoardComponents/Board", ["require", "exports", "BoardComponents/Bar", "E
             var bar = new Bar_2.Bar();
             bar.onCheckerCountChanged = function (playerId, count) {
                 if (_this.onCheckerCountChanged) {
-                    _this.onCheckerCountChanged(Enums_9.PointId.BAR, playerId, count);
+                    _this.onCheckerCountChanged(Enums_8.PointId.BAR, playerId, count);
                 }
             };
             bar.onSetSelected = function (playerId, on) {
@@ -832,7 +774,7 @@ define("BoardComponents/Board", ["require", "exports", "BoardComponents/Bar", "E
                     _this.onSetBarAsValidSource(playerId, on);
                 }
             };
-            this.checkerContainers[Enums_9.PointId.BAR] = bar;
+            this.checkerContainers[Enums_8.PointId.BAR] = bar;
         }
         Board.prototype.initialise = function (layout) {
             if (layout === undefined) {
@@ -844,7 +786,7 @@ define("BoardComponents/Board", ["require", "exports", "BoardComponents/Bar", "E
                     [0, 0]];
             }
             for (var pointId = 0; pointId < 26; pointId++) {
-                for (var _i = 0, _a = [Enums_9.PlayerId.BLACK, Enums_9.PlayerId.RED]; _i < _a.length; _i++) {
+                for (var _i = 0, _a = [Enums_8.PlayerId.BLACK, Enums_8.PlayerId.RED]; _i < _a.length; _i++) {
                     var playerId = _a[_i];
                     var checkerCount = layout[pointId][playerId];
                     if (checkerCount > 0) {
@@ -866,17 +808,17 @@ define("BoardComponents/Board", ["require", "exports", "BoardComponents/Bar", "E
                 return false;
             }
             // case: there is a counter on the bar, and this is not it
-            if ((move.sourcePointId != Enums_9.PointId.BAR) && (this.checkerContainers[Enums_9.PointId.BAR].checkers[move.playerId] > 0)) {
+            if ((move.sourcePointId != Enums_8.PointId.BAR) && (this.checkerContainers[Enums_8.PointId.BAR].checkers[move.playerId] > 0)) {
                 // console.info('must move counter off bar first');
                 return false;
             }
             // case: bearing off
             var destinationPointId = move.getDestinationPointId();
-            if (destinationPointId === Enums_9.PointId.HOME) {
+            if (destinationPointId === Enums_8.PointId.HOME) {
                 // check that there are no checkers outside of home board. (BAR has already been checked above)
-                var startingPointOfOuterBoard = (move.playerId === Enums_9.PlayerId.BLACK) ? 1 : 24;
+                var startingPointOfOuterBoard = (move.playerId === Enums_8.PlayerId.BLACK) ? 1 : 24;
                 var totalPointsOfOuterBoard = 18;
-                var direction = (move.playerId === Enums_9.PlayerId.BLACK) ? 1 : -1;
+                var direction = (move.playerId === Enums_8.PlayerId.BLACK) ? 1 : -1;
                 for (var offset = 0; offset < totalPointsOfOuterBoard; offset++) {
                     if (this.checkerContainers[startingPointOfOuterBoard + (direction * offset)].checkers[move.playerId] > 0) {
                         return false;
@@ -888,7 +830,7 @@ define("BoardComponents/Board", ["require", "exports", "BoardComponents/Bar", "E
                 if (actualDestinationPointId === 0 || actualDestinationPointId === 25) {
                     return true;
                 }
-                var startingPointOfHomeBoard = (move.playerId === Enums_9.PlayerId.BLACK) ? 18 : 6;
+                var startingPointOfHomeBoard = (move.playerId === Enums_8.PlayerId.BLACK) ? 18 : 6;
                 for (var homeBoardPointId = startingPointOfHomeBoard; homeBoardPointId !== move.sourcePointId; homeBoardPointId += direction) {
                     if (this.checkerContainers[homeBoardPointId].checkers[move.playerId] > 0) {
                         // if we find a checker on a further out point, sourcePointId is not valid
@@ -911,10 +853,10 @@ define("BoardComponents/Board", ["require", "exports", "BoardComponents/Bar", "E
             }
             var destinationPointId = move.getDestinationPointId();
             var otherPlayerId = Game_1.Game.getOtherPlayerId(move.playerId);
-            if (destinationPointId !== Enums_9.PointId.HOME &&
+            if (destinationPointId !== Enums_8.PointId.HOME &&
                 this.checkerContainers[destinationPointId].checkers[otherPlayerId] == 1) {
                 this.decrement(otherPlayerId, destinationPointId);
-                this.increment(otherPlayerId, Enums_9.PointId.BAR);
+                this.increment(otherPlayerId, Enums_8.PointId.BAR);
             }
             this.decrement(move.playerId, move.sourcePointId);
             this.increment(move.playerId, destinationPointId);
@@ -923,8 +865,8 @@ define("BoardComponents/Board", ["require", "exports", "BoardComponents/Bar", "E
         Board.prototype.checkIfValidDestination = function (move) {
             if (this.isLegalMove(move)) {
                 var destinationPointId = move.getDestinationPointId();
-                if (destinationPointId === Enums_9.PointId.HOME) {
-                    this.checkerContainers[Enums_9.PointId.HOME].setValidDestination(move.playerId, true);
+                if (destinationPointId === Enums_8.PointId.HOME) {
+                    this.checkerContainers[Enums_8.PointId.HOME].setValidDestination(move.playerId, true);
                 }
                 else {
                     this.checkerContainers[destinationPointId].setValidDestination(true);
@@ -935,14 +877,95 @@ define("BoardComponents/Board", ["require", "exports", "BoardComponents/Bar", "E
             for (var pointId = 1; pointId <= 24; pointId++) {
                 this.checkerContainers[pointId].setValidDestination(false);
             }
-            this.checkerContainers[Enums_9.PointId.HOME].setValidDestination(Enums_9.PlayerId.BLACK, false);
-            this.checkerContainers[Enums_9.PointId.HOME].setValidDestination(Enums_9.PlayerId.RED, false);
+            this.checkerContainers[Enums_8.PointId.HOME].setValidDestination(Enums_8.PlayerId.BLACK, false);
+            this.checkerContainers[Enums_8.PointId.HOME].setValidDestination(Enums_8.PlayerId.RED, false);
         };
         return Board;
     }());
     exports.Board = Board;
 });
-define("UI/CheckerContainerUI", ["require", "exports", "Enums", "UI/Utils"], function (require, exports, Enums_10, Utils_2) {
+define("UI/Utils", ["require", "exports"], function (require, exports) {
+    "use strict";
+    // REVIEW: invoke as extensions/prototype?
+    var Utils = (function () {
+        function Utils() {
+        }
+        Utils.removeAllChildren = function (element) {
+            // fastest way to remove all child nodes: http://stackoverflow.com/a/3955238/487544
+            while (element.lastChild) {
+                element.removeChild(element.lastChild);
+            }
+        };
+        Utils.highlight = function (el) {
+            $(el).addClass('highlight');
+            // timeout purely to allow ui to update
+            setTimeout(function () {
+                $(el).addClass('highlight-end');
+            }, 0);
+        };
+        return Utils;
+    }());
+    exports.Utils = Utils;
+});
+define("UI/DiceUI", ["require", "exports", "Enums", "UI/Utils"], function (require, exports, Enums_9, Utils_1) {
+    "use strict";
+    var DiceUI = (function () {
+        function DiceUI(player) {
+            this.containerDiv = document.createElement('div');
+            this.containerDiv.className = "dice-container dice-container-" + Enums_9.PlayerId[player].toLowerCase();
+        }
+        DiceUI.prototype.setStartingDiceRoll = function (die) {
+            Utils_1.Utils.removeAllChildren(this.containerDiv);
+            this.containerDiv.appendChild(DiceUI.createDie(die));
+        };
+        DiceUI.prototype.setDiceRolls = function (die1, die2) {
+            var _this = this;
+            this.die1 = die1;
+            this.die1.onChange = function () { _this.redraw(); };
+            this.die2 = die2;
+            this.die2.onChange = function () { _this.redraw(); };
+            this.redraw();
+        };
+        DiceUI.prototype.setActive = function (active) {
+            if (active) {
+                $(this.containerDiv).addClass('active');
+            }
+            else {
+                $(this.containerDiv).removeClass('active');
+            }
+        };
+        DiceUI.prototype.redraw = function () {
+            Utils_1.Utils.removeAllChildren(this.containerDiv);
+            this.containerDiv.appendChild(DiceUI.createDie(this.die1));
+            this.containerDiv.appendChild(DiceUI.createDie(this.die2));
+        };
+        DiceUI.createDie = function (die) {
+            var div = document.createElement('div');
+            div.className = 'die die-uses-' + die.remainingUses;
+            div.innerText = die.value.toString();
+            return div;
+        };
+        return DiceUI;
+    }());
+    exports.DiceUI = DiceUI;
+});
+define("UI/EventBinders/DiceUIEventBinder", ["require", "exports", "Enums"], function (require, exports, Enums_10) {
+    "use strict";
+    var DiceUIEventBinder = (function () {
+        function DiceUIEventBinder(dice, blackDiceUI, redDiceUI) {
+            var _this = this;
+            this.diceUIs = new Array();
+            this.diceUIs[Enums_10.PlayerId.BLACK] = blackDiceUI;
+            this.diceUIs[Enums_10.PlayerId.RED] = redDiceUI;
+            dice.onSetStartingDiceRoll = function (playerId, die) { _this.diceUIs[playerId].setStartingDiceRoll(die); };
+            dice.onSetDiceRolls = function (playerId, die1, die2) { _this.diceUIs[playerId].setDiceRolls(die1, die2); };
+            dice.onSetActive = function (playerId, active) { _this.diceUIs[playerId].setActive(active); };
+        }
+        return DiceUIEventBinder;
+    }());
+    exports.DiceUIEventBinder = DiceUIEventBinder;
+});
+define("UI/CheckerContainerUI", ["require", "exports", "Enums", "UI/Utils"], function (require, exports, Enums_11, Utils_2) {
     "use strict";
     var CheckerContainerUI = (function () {
         function CheckerContainerUI(containerType, isTopSide) {
@@ -955,7 +978,7 @@ define("UI/CheckerContainerUI", ["require", "exports", "Enums", "UI/Utils"], fun
         CheckerContainerUI.prototype.setCheckers = function (player, count) {
             Utils_2.Utils.removeAllChildren(this.containerDiv);
             var $containerDiv = $(this.containerDiv);
-            var className = Enums_10.PlayerId[player].toLowerCase();
+            var className = Enums_11.PlayerId[player].toLowerCase();
             for (var i = 1; i <= count; i++) {
                 if (i > 5) {
                     $('.checker-total', $containerDiv).text(count);
@@ -981,13 +1004,13 @@ define("UI/CheckerContainerUI", ["require", "exports", "Enums", "UI/Utils"], fun
     }());
     exports.CheckerContainerUI = CheckerContainerUI;
 });
-define("UI/BarUI", ["require", "exports", "Enums", "UI/CheckerContainerUI"], function (require, exports, Enums_11, CheckerContainerUI_1) {
+define("UI/BarUI", ["require", "exports", "Enums", "UI/CheckerContainerUI"], function (require, exports, Enums_12, CheckerContainerUI_1) {
     "use strict";
     var BarUI = (function (_super) {
         __extends(BarUI, _super);
         function BarUI(player) {
             var _this = this;
-            _super.call(this, 'bar', player === Enums_11.PlayerId.RED);
+            _super.call(this, 'bar', player === Enums_12.PlayerId.RED);
             this.containerDiv.onmouseover = function () { _this.onInspected(true); };
             this.containerDiv.onmouseout = function () { _this.onInspected(false); };
         }
@@ -995,12 +1018,12 @@ define("UI/BarUI", ["require", "exports", "Enums", "UI/CheckerContainerUI"], fun
     }(CheckerContainerUI_1.CheckerContainerUI));
     exports.BarUI = BarUI;
 });
-define("UI/HomeUI", ["require", "exports", "Enums", "UI/CheckerContainerUI"], function (require, exports, Enums_12, CheckerContainerUI_2) {
+define("UI/HomeUI", ["require", "exports", "Enums", "UI/CheckerContainerUI"], function (require, exports, Enums_13, CheckerContainerUI_2) {
     "use strict";
     var HomeUI = (function (_super) {
         __extends(HomeUI, _super);
         function HomeUI(player) {
-            _super.call(this, 'home', player === Enums_12.PlayerId.BLACK);
+            _super.call(this, 'home', player === Enums_13.PlayerId.BLACK);
         }
         return HomeUI;
     }(CheckerContainerUI_2.CheckerContainerUI));
@@ -1020,16 +1043,16 @@ define("UI/PointUI", ["require", "exports", "UI/CheckerContainerUI"], function (
     }(CheckerContainerUI_3.CheckerContainerUI));
     exports.PointUI = PointUI;
 });
-define("UI/BoardUI", ["require", "exports", "UI/BarUI", "UI/HomeUI", "UI/PointUI", "Enums", "UI/Utils"], function (require, exports, BarUI_1, HomeUI_1, PointUI_1, Enums_13, Utils_3) {
+define("UI/BoardUI", ["require", "exports", "UI/BarUI", "UI/HomeUI", "UI/PointUI", "Enums", "UI/Utils"], function (require, exports, BarUI_1, HomeUI_1, PointUI_1, Enums_14, Utils_3) {
     "use strict";
     var BoardUI = (function () {
         function BoardUI(gameContainerId, board) {
             this.containerDiv = document.createElement('div');
             Utils_3.Utils.removeAllChildren(this.containerDiv);
             this.containerDiv.className = 'board';
-            this.blackHomeUI = new HomeUI_1.HomeUI(Enums_13.PlayerId.BLACK);
+            this.blackHomeUI = new HomeUI_1.HomeUI(Enums_14.PlayerId.BLACK);
             this.blackHomeUI.containerDiv.id = gameContainerId + "_blackhome";
-            this.redHomeUI = new HomeUI_1.HomeUI(Enums_13.PlayerId.RED);
+            this.redHomeUI = new HomeUI_1.HomeUI(Enums_14.PlayerId.RED);
             this.redHomeUI.containerDiv.id = gameContainerId + "_redhome";
             this.pointUIs = new Array(24);
             for (var i = 0; i < this.pointUIs.length; i++) {
@@ -1038,8 +1061,8 @@ define("UI/BoardUI", ["require", "exports", "UI/BarUI", "UI/HomeUI", "UI/PointUI
                 this.pointUIs[i] = new PointUI_1.PointUI(colour, isTopSide);
                 this.pointUIs[i].containerDiv.id = gameContainerId + "_point" + (i + 1);
             }
-            this.blackBarUI = new BarUI_1.BarUI(Enums_13.PlayerId.BLACK);
-            this.redBarUI = new BarUI_1.BarUI(Enums_13.PlayerId.RED);
+            this.blackBarUI = new BarUI_1.BarUI(Enums_14.PlayerId.BLACK);
+            this.redBarUI = new BarUI_1.BarUI(Enums_14.PlayerId.RED);
             // append all elements in the correct order
             this.containerDiv.appendChild(this.pointUIs[12].containerDiv);
             this.containerDiv.appendChild(this.pointUIs[13].containerDiv);
@@ -1084,18 +1107,18 @@ define("UI/BoardUI", ["require", "exports", "UI/BarUI", "UI/HomeUI", "UI/PointUI
             var _this = this;
             // helpers
             var getBarUI = function (playerId) {
-                return (playerId === Enums_13.PlayerId.BLACK) ? _this.blackBarUI : _this.redBarUI;
+                return (playerId === Enums_14.PlayerId.BLACK) ? _this.blackBarUI : _this.redBarUI;
             };
             var getHomeUI = function (playerId) {
-                return (playerId === Enums_13.PlayerId.BLACK) ? _this.blackHomeUI : _this.redHomeUI;
+                return (playerId === Enums_14.PlayerId.BLACK) ? _this.blackHomeUI : _this.redHomeUI;
             };
             // wire up UI events
-            this.blackHomeUI.onSelected = function () { return board.onPointSelected(Enums_13.PointId.HOME); };
-            this.redHomeUI.onSelected = function () { return board.onPointSelected(Enums_13.PointId.HOME); };
-            this.blackBarUI.onInspected = function (on) { return board.onPointInspected(Enums_13.PointId.BAR, on); };
-            this.blackBarUI.onSelected = function () { return board.onPointSelected(Enums_13.PointId.BAR); };
-            this.redBarUI.onInspected = function (on) { return board.onPointInspected(Enums_13.PointId.BAR, on); };
-            this.redBarUI.onSelected = function () { return board.onPointSelected(Enums_13.PointId.BAR); };
+            this.blackHomeUI.onSelected = function () { return board.onPointSelected(Enums_14.PointId.HOME); };
+            this.redHomeUI.onSelected = function () { return board.onPointSelected(Enums_14.PointId.HOME); };
+            this.blackBarUI.onInspected = function (on) { return board.onPointInspected(Enums_14.PointId.BAR, on); };
+            this.blackBarUI.onSelected = function () { return board.onPointSelected(Enums_14.PointId.BAR); };
+            this.redBarUI.onInspected = function (on) { return board.onPointInspected(Enums_14.PointId.BAR, on); };
+            this.redBarUI.onSelected = function () { return board.onPointSelected(Enums_14.PointId.BAR); };
             var bindPointUIEvents = function (pointId) {
                 var pointUI = _this.pointUIs[pointId - 1];
                 pointUI.onInspected = function (on) { board.onPointInspected(pointId, on); };
@@ -1106,11 +1129,11 @@ define("UI/BoardUI", ["require", "exports", "UI/BarUI", "UI/HomeUI", "UI/PointUI
             }
             board.onCheckerCountChanged = function (pointId, playerId, count) {
                 switch (pointId) {
-                    case Enums_13.PointId.HOME: {
+                    case Enums_14.PointId.HOME: {
                         getHomeUI(playerId).setCheckers(playerId, count);
                         break;
                     }
-                    case Enums_13.PointId.BAR: {
+                    case Enums_14.PointId.BAR: {
                         getBarUI(playerId).setCheckers(playerId, count);
                         break;
                     }
@@ -1160,7 +1183,7 @@ define("UI/StatusUI", ["require", "exports", "UI/Utils"], function (require, exp
     }());
     exports.StatusUI = StatusUI;
 });
-define("UI/GameUI", ["require", "exports", "UI/BoardUI", "DiceUI", "Enums", "UI/StatusUI", "UI/Utils"], function (require, exports, BoardUI_1, DiceUI_1, Enums_14, StatusUI_1, Utils_5) {
+define("UI/GameUI", ["require", "exports", "UI/BoardUI", "UI/DiceUI", "Enums", "UI/StatusUI", "UI/Utils"], function (require, exports, BoardUI_1, DiceUI_1, Enums_15, StatusUI_1, Utils_5) {
     "use strict";
     var GameUI = (function () {
         function GameUI(containerElementId, board) {
@@ -1168,8 +1191,8 @@ define("UI/GameUI", ["require", "exports", "UI/BoardUI", "DiceUI", "Enums", "UI/
             container.className = 'game-container';
             Utils_5.Utils.removeAllChildren(container);
             this.boardUI = new BoardUI_1.BoardUI(containerElementId, board);
-            this.blackDiceUI = new DiceUI_1.DiceUI(Enums_14.PlayerId.BLACK);
-            this.redDiceUI = new DiceUI_1.DiceUI(Enums_14.PlayerId.RED);
+            this.blackDiceUI = new DiceUI_1.DiceUI(Enums_15.PlayerId.BLACK);
+            this.redDiceUI = new DiceUI_1.DiceUI(Enums_15.PlayerId.RED);
             this.statusUI = new StatusUI_1.StatusUI();
             container.appendChild(this.boardUI.containerDiv);
             var sideContainer = document.createElement('div');
@@ -1195,7 +1218,7 @@ define("UI/EventBinders/StatusUIEventBinder", ["require", "exports"], function (
     }());
     exports.StatusUIEventBinder = StatusUIEventBinder;
 });
-define("Backgammon", ["require", "exports", "BoardComponents/Board", "Dice", "DiceRollGenerator", "Game", "UI/GameUI", "StatusLogger", "UI/EventBinders/StatusUIEventBinder"], function (require, exports, Board_2, Dice_1, DiceRollGenerator_1, Game_2, GameUI_1, StatusLogger_1, StatusUIEventBinder_1) {
+define("Backgammon", ["require", "exports", "BoardComponents/Board", "Dice", "DiceRollGenerator", "UI/EventBinders/DiceUIEventBinder", "Game", "UI/GameUI", "StatusLogger", "UI/EventBinders/StatusUIEventBinder"], function (require, exports, Board_2, Dice_1, DiceRollGenerator_1, DiceUIEventBinder_1, Game_2, GameUI_1, StatusLogger_1, StatusUIEventBinder_1) {
     "use strict";
     var Backgammon = (function () {
         function Backgammon(containerId, blackIsComputer, redIsComputer) {
@@ -1204,7 +1227,8 @@ define("Backgammon", ["require", "exports", "BoardComponents/Board", "Dice", "Di
             var board = new Board_2.Board();
             var ui = new GameUI_1.GameUI(containerId, board);
             board.initialise();
-            var dice = new Dice_1.Dice(new DiceRollGenerator_1.DiceRollGenerator(), ui.blackDiceUI, ui.redDiceUI);
+            var dice = new Dice_1.Dice(new DiceRollGenerator_1.DiceRollGenerator());
+            new DiceUIEventBinder_1.DiceUIEventBinder(dice, ui.blackDiceUI, ui.redDiceUI);
             var statusLogger = new StatusLogger_1.StatusLogger();
             new StatusUIEventBinder_1.StatusUIEventBinder(statusLogger, ui.statusUI);
             var game = new Game_2.Game(board, dice, statusLogger, [blackIsComputer, redIsComputer]);
