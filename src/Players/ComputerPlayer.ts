@@ -33,7 +33,7 @@ export class ComputerPlayer extends Player {
         let maxScore = 0;
         let maxScoreIndex = 0;
         for (let i = 0; i < possibleGoes.length; i++) {
-            let score = this.evaluateBoard(possibleGoes[i].resultantBoard);
+            let score = this.evaluateBoard(possibleGoes[i].resultingBoard);
             // greater than or equal: bias towards further on moves
             if (score >= maxScore) {
                 maxScore = score;

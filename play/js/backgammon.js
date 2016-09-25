@@ -268,9 +268,9 @@ define("Move", ["require", "exports", "Enums"], function (require, exports, Enum
 define("Analysis/PossibleGo", ["require", "exports"], function (require, exports) {
     "use strict";
     var PossibleGo = (function () {
-        function PossibleGo(moves, resultantBoard) {
+        function PossibleGo(moves, resultingBoard) {
             this.moves = moves;
-            this.resultantBoard = resultantBoard;
+            this.resultingBoard = resultingBoard;
         }
         return PossibleGo;
     }());
@@ -430,7 +430,7 @@ define("Players/ComputerPlayer", ["require", "exports", "Analysis/BoardAnalyser"
             var maxScore = 0;
             var maxScoreIndex = 0;
             for (var i = 0; i < possibleGoes.length; i++) {
-                var score = this.evaluateBoard(possibleGoes[i].resultantBoard);
+                var score = this.evaluateBoard(possibleGoes[i].resultingBoard);
                 // greater than or equal: bias towards further on moves
                 if (score >= maxScore) {
                     maxScore = score;
