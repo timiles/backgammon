@@ -4,7 +4,7 @@ define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'Enums', 'Game', '
     function (Board, Dice, DiceRollGenerator, Enums, Game, GameUI, StatusLogger, Move) {
 
         let PlayerId = Enums.PlayerId;
-        let PointId = Board.PointId;
+        let PointId = Enums.PointId;
 
         describe('Backgammon', function () {
 

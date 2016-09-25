@@ -4,7 +4,7 @@ define(['BoardComponents/Board', 'Analysis/BoardEvaluator', 'Players/ComputerPla
     function (Board, BoardEvaluator, ComputerPlayer, Enums) {
 
         let PlayerId = Enums.PlayerId;
-        let PointId = Board.PointId;
+        let PointId = Enums.PointId;
 
         describe('AI: BoardEvaluator', function () {
 

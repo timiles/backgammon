@@ -1,10 +1,10 @@
 'use strict';
 
-define(['BoardComponents/Board', 'Enums', 'Move'],
-    function (Board, Enums, Move) {
+define(['Move', 'Enums'],
+    function (Move, Enums) {
 
         let PlayerId = Enums.PlayerId;
-        let PointId = Board.PointId;
+        let PointId = Enums.PointId;
 
         describe('Move', function () {
 

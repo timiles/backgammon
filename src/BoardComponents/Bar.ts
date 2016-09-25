@@ -1,6 +1,5 @@
 import { CheckerContainer } from './CheckerContainer'
-import { PlayerId } from './Enums'
-import { PointId } from './Board'
+import { PlayerId, PointId } from './Enums'
 
 export class Bar extends CheckerContainer {
     

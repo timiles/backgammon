@@ -1,12 +1,10 @@
 import { Bar } from './Bar'
 import { CheckerContainer } from './CheckerContainer'
-import { PlayerId } from './Enums'
+import { PlayerId, PointId } from './Enums'
 import { Game } from './Game'
 import { Home } from './Home'
 import { Point } from './Point'
 import { Move } from '../Move'
-
-export enum PointId { HOME = 0, BAR = 25 }
 
 export class Board {
 

@@ -1,5 +1,4 @@
-import { PointId } from 'BoardComponents/Board'
-import { PlayerId } from './Enums'
+import { PlayerId, PointId } from './Enums'
 
 export class Move {
 
