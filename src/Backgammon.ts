@@ -5,6 +5,7 @@ import { PlayerId } from './Enums'
 import { Game } from './Game'
 import { GameUI } from './UI/GameUI'
 import { StatusLogger } from './StatusLogger'
+import { StatusUIEventBinder } from './UI/EventBinders/StatusUIEventBinder'
 
 export class Backgammon {
     
@@ -15,7 +16,9 @@ export class Backgammon {
         board.initialise();
 
         let dice = new Dice(new DiceRollGenerator(), ui.blackDiceUI, ui.redDiceUI);
-        let statusLogger = new StatusLogger(ui.statusUI);
+        
+        let statusLogger = new StatusLogger();
+        new StatusUIEventBinder(statusLogger, ui.statusUI);
         let game = new Game(board, dice, statusLogger, [blackIsComputer, redIsComputer]);
 
         // TODO: UI trigger game to begin

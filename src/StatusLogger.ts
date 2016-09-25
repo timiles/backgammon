@@ -1,13 +1,10 @@
-import { StatusUI } from './StatusUI'
-
 export class StatusLogger {
     
-    statusUI: StatusUI;
-    constructor(statusUI: StatusUI) {
-        this.statusUI = statusUI;
-    }
+    onLogInfo: (info: string) => void;
     
-    logInfo(s: string) { 
-        this.statusUI.setStatus(s);
+    logInfo(info: string) {
+        if (this.onLogInfo) {
+            this.onLogInfo(info);
+        } 
     }
 }

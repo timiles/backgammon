@@ -160,32 +160,15 @@ define("DiceUI", ["require", "exports", "Enums", "UI/Utils"], function (require,
     }());
     exports.DiceUI = DiceUI;
 });
-define("StatusUI", ["require", "exports", "UI/Utils"], function (require, exports, Utils_2) {
-    "use strict";
-    var StatusUI = (function () {
-        function StatusUI() {
-            this.containerDiv = document.createElement('div');
-            this.containerDiv.className = 'status-container';
-        }
-        StatusUI.prototype.setStatus = function (s) {
-            var statusP = document.createElement('p');
-            statusP.innerText = s;
-            this.containerDiv.appendChild(statusP);
-            this.containerDiv.scrollTop = this.containerDiv.scrollHeight;
-            Utils_2.Utils.highlight(statusP);
-        };
-        return StatusUI;
-    }());
-    exports.StatusUI = StatusUI;
-});
 define("StatusLogger", ["require", "exports"], function (require, exports) {
     "use strict";
     var StatusLogger = (function () {
-        function StatusLogger(statusUI) {
-            this.statusUI = statusUI;
+        function StatusLogger() {
         }
-        StatusLogger.prototype.logInfo = function (s) {
-            this.statusUI.setStatus(s);
+        StatusLogger.prototype.logInfo = function (info) {
+            if (this.onLogInfo) {
+                this.onLogInfo(info);
+            }
         };
         return StatusLogger;
     }());
@@ -959,7 +942,7 @@ define("BoardComponents/Board", ["require", "exports", "BoardComponents/Bar", "E
     }());
     exports.Board = Board;
 });
-define("UI/CheckerContainerUI", ["require", "exports", "Enums", "UI/Utils"], function (require, exports, Enums_10, Utils_3) {
+define("UI/CheckerContainerUI", ["require", "exports", "Enums", "UI/Utils"], function (require, exports, Enums_10, Utils_2) {
     "use strict";
     var CheckerContainerUI = (function () {
         function CheckerContainerUI(containerType, isTopSide) {
@@ -970,7 +953,7 @@ define("UI/CheckerContainerUI", ["require", "exports", "Enums", "UI/Utils"], fun
             this.containerDiv.onclick = function () { _this.onSelected(); };
         }
         CheckerContainerUI.prototype.setCheckers = function (player, count) {
-            Utils_3.Utils.removeAllChildren(this.containerDiv);
+            Utils_2.Utils.removeAllChildren(this.containerDiv);
             var $containerDiv = $(this.containerDiv);
             var className = Enums_10.PlayerId[player].toLowerCase();
             for (var i = 1; i <= count; i++) {
@@ -1037,12 +1020,12 @@ define("UI/PointUI", ["require", "exports", "UI/CheckerContainerUI"], function (
     }(CheckerContainerUI_3.CheckerContainerUI));
     exports.PointUI = PointUI;
 });
-define("UI/BoardUI", ["require", "exports", "UI/BarUI", "UI/HomeUI", "UI/PointUI", "Enums", "UI/Utils"], function (require, exports, BarUI_1, HomeUI_1, PointUI_1, Enums_13, Utils_4) {
+define("UI/BoardUI", ["require", "exports", "UI/BarUI", "UI/HomeUI", "UI/PointUI", "Enums", "UI/Utils"], function (require, exports, BarUI_1, HomeUI_1, PointUI_1, Enums_13, Utils_3) {
     "use strict";
     var BoardUI = (function () {
         function BoardUI(gameContainerId, board) {
             this.containerDiv = document.createElement('div');
-            Utils_4.Utils.removeAllChildren(this.containerDiv);
+            Utils_3.Utils.removeAllChildren(this.containerDiv);
             this.containerDiv.className = 'board';
             this.blackHomeUI = new HomeUI_1.HomeUI(Enums_13.PlayerId.BLACK);
             this.blackHomeUI.containerDiv.id = gameContainerId + "_blackhome";
@@ -1159,7 +1142,25 @@ define("UI/BoardUI", ["require", "exports", "UI/BarUI", "UI/HomeUI", "UI/PointUI
     }());
     exports.BoardUI = BoardUI;
 });
-define("UI/GameUI", ["require", "exports", "UI/BoardUI", "DiceUI", "Enums", "StatusUI", "UI/Utils"], function (require, exports, BoardUI_1, DiceUI_1, Enums_14, StatusUI_1, Utils_5) {
+define("UI/StatusUI", ["require", "exports", "UI/Utils"], function (require, exports, Utils_4) {
+    "use strict";
+    var StatusUI = (function () {
+        function StatusUI() {
+            this.containerDiv = document.createElement('div');
+            this.containerDiv.className = 'status-container';
+        }
+        StatusUI.prototype.setStatus = function (s) {
+            var statusP = document.createElement('p');
+            statusP.innerText = s;
+            this.containerDiv.appendChild(statusP);
+            this.containerDiv.scrollTop = this.containerDiv.scrollHeight;
+            Utils_4.Utils.highlight(statusP);
+        };
+        return StatusUI;
+    }());
+    exports.StatusUI = StatusUI;
+});
+define("UI/GameUI", ["require", "exports", "UI/BoardUI", "DiceUI", "Enums", "UI/StatusUI", "UI/Utils"], function (require, exports, BoardUI_1, DiceUI_1, Enums_14, StatusUI_1, Utils_5) {
     "use strict";
     var GameUI = (function () {
         function GameUI(containerElementId, board) {
@@ -1182,7 +1183,19 @@ define("UI/GameUI", ["require", "exports", "UI/BoardUI", "DiceUI", "Enums", "Sta
     }());
     exports.GameUI = GameUI;
 });
-define("Backgammon", ["require", "exports", "BoardComponents/Board", "Dice", "DiceRollGenerator", "Game", "UI/GameUI", "StatusLogger"], function (require, exports, Board_2, Dice_1, DiceRollGenerator_1, Game_2, GameUI_1, StatusLogger_1) {
+define("UI/EventBinders/StatusUIEventBinder", ["require", "exports"], function (require, exports) {
+    "use strict";
+    var StatusUIEventBinder = (function () {
+        function StatusUIEventBinder(statusLogger, ui) {
+            statusLogger.onLogInfo = function (info) {
+                ui.setStatus(info);
+            };
+        }
+        return StatusUIEventBinder;
+    }());
+    exports.StatusUIEventBinder = StatusUIEventBinder;
+});
+define("Backgammon", ["require", "exports", "BoardComponents/Board", "Dice", "DiceRollGenerator", "Game", "UI/GameUI", "StatusLogger", "UI/EventBinders/StatusUIEventBinder"], function (require, exports, Board_2, Dice_1, DiceRollGenerator_1, Game_2, GameUI_1, StatusLogger_1, StatusUIEventBinder_1) {
     "use strict";
     var Backgammon = (function () {
         function Backgammon(containerId, blackIsComputer, redIsComputer) {
@@ -1192,7 +1205,8 @@ define("Backgammon", ["require", "exports", "BoardComponents/Board", "Dice", "Di
             var ui = new GameUI_1.GameUI(containerId, board);
             board.initialise();
             var dice = new Dice_1.Dice(new DiceRollGenerator_1.DiceRollGenerator(), ui.blackDiceUI, ui.redDiceUI);
-            var statusLogger = new StatusLogger_1.StatusLogger(ui.statusUI);
+            var statusLogger = new StatusLogger_1.StatusLogger();
+            new StatusUIEventBinder_1.StatusUIEventBinder(statusLogger, ui.statusUI);
             var game = new Game_2.Game(board, dice, statusLogger, [blackIsComputer, redIsComputer]);
             // TODO: UI trigger game to begin
             dice.rollToStart(statusLogger, function (successfulPlayer) {

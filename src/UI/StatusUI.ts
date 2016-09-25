@@ -1,4 +1,4 @@
-import { Utils } from './UI/Utils'
+import { Utils } from './Utils'
 
 export class StatusUI {
     
