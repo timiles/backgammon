@@ -1,7 +1,7 @@
 'use strict';
 
-define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'UI/EventBinders/DiceUIEventBinder', 'Enums', 'Game', 'UI/GameUI', 'StatusLogger', 'UI/EventBinders/StatusUIEventBinder', 'Move'],
-    function (Board, Dice, DiceRollGenerator, DiceUIEventBinder, Enums, Game, GameUI, StatusLogger, StatusUIEventBinder, Move) {
+define(['BoardComponents/Board', 'Dice', 'Enums', 'Game', 'UI/GameUI', 'StatusLogger', 'Move'],
+    function (Board, Dice, Enums, Game, GameUI, StatusLogger, Move) {
 
         let PlayerId = Enums.PlayerId;
         let PointId = Enums.PointId;
@@ -23,21 +23,15 @@ define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'UI/EventBinders/D
         describe('UI: starting board', function () {
 
             beforeEach(function () {
-
                 let board = new Board.Board();
-                let ui = new GameUI.GameUI('backgammon', board);
-                board.initialise();
-
                 let fakeDiceRollGenerator = new FakeDiceRollGenerator([5, 5]);
-
                 let dice = new Dice.Dice(fakeDiceRollGenerator);
-                new DiceUIEventBinder.DiceUIEventBinder(dice, ui.blackDiceUI, ui.redDiceUI);
-                dice.roll(PlayerId.BLACK);
-
                 let statusLogger = new StatusLogger.StatusLogger();
-                new StatusUIEventBinder.StatusUIEventBinder(statusLogger, ui.statusUI);
-
+                
                 let game = new Game.Game(board, dice, statusLogger);
+                let ui = new GameUI.GameUI('backgammon', game);
+                board.initialise();
+                dice.roll(PlayerId.BLACK);
                 game.begin(PlayerId.BLACK);
             });
 
@@ -91,21 +85,15 @@ define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'UI/EventBinders/D
         describe('UI: game play', function () {
 
             beforeEach(function () {
-
                 let board = new Board.Board();
-                let ui = new GameUI.GameUI('backgammon', board);
-                board.initialise();
-
                 let fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
-
                 let dice = new Dice.Dice(fakeDiceRollGenerator);
-                new DiceUIEventBinder.DiceUIEventBinder(dice, ui.blackDiceUI, ui.redDiceUI);
-                dice.roll(PlayerId.BLACK);
-
                 let statusLogger = new StatusLogger.StatusLogger();
-                new StatusUIEventBinder.StatusUIEventBinder(statusLogger, ui.statusUI);
-
+                
                 let game = new Game.Game(board, dice, statusLogger);
+                let ui = new GameUI.GameUI('backgammon', game);
+                board.initialise();
+                dice.roll(PlayerId.BLACK);
                 game.begin(PlayerId.BLACK);
             });
 
@@ -129,21 +117,15 @@ define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'UI/EventBinders/D
         describe('UI: the bar', function () {
 
             beforeEach(function () {
-
                 let board = new Board.Board();
-                let ui = new GameUI.GameUI('backgammon', board);
-                board.initialise();
-
                 let fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
-
                 let dice = new Dice.Dice(fakeDiceRollGenerator);
-                new DiceUIEventBinder.DiceUIEventBinder(dice, ui.blackDiceUI, ui.redDiceUI);
-                dice.roll(PlayerId.BLACK);
-
                 let statusLogger = new StatusLogger.StatusLogger();
-                new StatusUIEventBinder.StatusUIEventBinder(statusLogger, ui.statusUI);
 
-                let game = new Game.Game(board, dice, statusLogger, PlayerId.BLACK);
+                let game = new Game.Game(board, dice, statusLogger);
+                let ui = new GameUI.GameUI('backgammon', game);
+                board.initialise();
+                dice.roll(PlayerId.BLACK);
                 game.begin(PlayerId.BLACK);
             });
 
@@ -199,26 +181,20 @@ define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'UI/EventBinders/D
             var game;
 
             beforeEach(function () {
+                let board = new Board.Board();
+                let fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
+                let dice = new Dice.Dice(fakeDiceRollGenerator);
+                let statusLogger = new StatusLogger.StatusLogger();
 
-                let blackAllInHomeBoard = new Board.Board();
-                let ui = new GameUI.GameUI('backgammon', blackAllInHomeBoard);
-                blackAllInHomeBoard.initialise([[0, 0],
+                game = new Game.Game(board, dice, statusLogger);
+                let ui = new GameUI.GameUI('backgammon', game);
+                board.initialise([[0, 0],
                     [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 5],
                     [0, 0], [0, 3], [0, 0], [0, 0], [0, 0], [0, 0],
                     [0, 5], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
                     [5, 0], [0, 0], [5, 0], [3, 0], [2, 0], [0, 2],
                     [0, 0]]);
-
-                let fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
-
-                let dice = new Dice.Dice(fakeDiceRollGenerator);
-                new DiceUIEventBinder.DiceUIEventBinder(dice, ui.blackDiceUI, ui.redDiceUI);
                 dice.roll(PlayerId.BLACK);
-
-                let statusLogger = new StatusLogger.StatusLogger();
-                new StatusUIEventBinder.StatusUIEventBinder(statusLogger, ui.statusUI);
-
-                game = new Game.Game(blackAllInHomeBoard, dice, statusLogger);
                 game.begin(PlayerId.BLACK);
             });
 

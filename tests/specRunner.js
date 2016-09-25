@@ -13,14 +13,11 @@
             'Analysis/BoardEvaluator': 'play/js/backgammon',
             'Players/ComputerPlayer': 'play/js/backgammon',
             'Dice': 'play/js/backgammon',
-            'DiceRollGenerator': 'play/js/backgammon',
             'Enums': 'play/js/backgammon',
             'Game': 'play/js/backgammon',
             'UI/GameUI': 'play/js/backgammon',
             'Move': 'play/js/backgammon',
             'StatusLogger': 'play/js/backgammon',
-            'UI/EventBinders/DiceUIEventBinder': 'play/js/backgammon',
-            'UI/EventBinders/StatusUIEventBinder': 'play/js/backgammon',
         },
         shim: {
             'jasmine': {
