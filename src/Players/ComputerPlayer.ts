@@ -43,18 +43,16 @@ export class ComputerPlayer extends Player {
         return possibleGoes[maxScoreIndex];
     }
 
-    private evaluateBoard(b: Board): number {
-        return this.evaluateSafety(b) * this.safetyFactor +
-            this.evaluateClustering(b) * this.clusteringFactor +
-            this.evaluateOffensive(b) * this.offensiveFactor;
+    private evaluateBoard(board: Board): number {
+        return this.evaluateSafety(board) * this.safetyFactor +
+            this.evaluateClustering(board) * this.clusteringFactor +
+            this.evaluateOffensive(board) * this.offensiveFactor;
     }
 
-    /**
-     * return score of how safe the stones are.
-     */
-    private evaluateSafety(b: Board): number {
+    // return score of how safe the checkers are.
+    private evaluateSafety(board: Board): number {
         // if the game is a race, safety is irrelevant
-        if (BoardEvaluator.isRace(b)) {
+        if (BoardEvaluator.isRace(board)) {
             return 0;
         }
 
@@ -63,7 +61,7 @@ export class ComputerPlayer extends Player {
         let homePointId = (this.playerId === PlayerId.BLACK) ? 25 : 0;
 
         for (let pointId = 1; pointId <= 24; pointId++) {
-            if (b.checkerContainers[pointId].checkers[this.playerId] === 1) {
+            if (board.checkerContainers[pointId].checkers[this.playerId] === 1) {
                 // TODO: factor safety on prob of opp hitting this piece
                 let distanceOfBlotToHome = (homePointId - pointId) * direction;
                 let relativePenaltyOfLosingThisBlot = distanceOfBlotToHome / 24; 
@@ -74,10 +72,8 @@ export class ComputerPlayer extends Player {
         return score;
     }
 
-    /**
-     * return score of how clustered the towers are.
-     */
-    private evaluateClustering(b: Board): number {
+    // return score of how clustered the towers are.
+    private evaluateClustering(board: Board): number {
         let score = 0;
         // number of towers
         // proximity of towers
@@ -85,13 +81,11 @@ export class ComputerPlayer extends Player {
         return score;
     }
 
-    /**
-     * offensive: putting opponent onto bar
-     */
-    private evaluateOffensive(b: Board): number {
+    // offensive: putting opponent onto bar
+    private evaluateOffensive(board: Board): number {
         let otherPlayerId = (this.playerId + 1) % 2;
 
-        switch (b.checkerContainers[PointId.BAR].checkers[otherPlayerId]) {
+        switch (board.checkerContainers[PointId.BAR].checkers[otherPlayerId]) {
             case 0: return 0;
             case 1: return 65;
             default: return 100;
