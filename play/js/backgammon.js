@@ -428,16 +428,16 @@ define("Players/ComputerPlayer", ["require", "exports", "Analysis/BoardAnalyser"
                 return null;
             }
             var maxScore = 0;
-            var maxScoreIndex = 0;
+            var bestPossibleGo;
             for (var i = 0; i < possibleGoes.length; i++) {
                 var score = this.evaluateBoard(possibleGoes[i].resultingBoard);
                 // greater than or equal: bias towards further on moves
                 if (score >= maxScore) {
                     maxScore = score;
-                    maxScoreIndex = i;
+                    bestPossibleGo = possibleGoes[i];
                 }
             }
-            return possibleGoes[maxScoreIndex];
+            return bestPossibleGo;
         };
         ComputerPlayer.prototype.evaluateBoard = function (board) {
             return this.evaluateSafety(board) * this.safetyFactor +
