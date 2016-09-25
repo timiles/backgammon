@@ -4,7 +4,7 @@ import { PlayerId } from 'Enums'
 import { Move } from 'Move'
 import { PossibleGo } from './PossibleGo'
 
-export class BoardEvaluator {
+export class BoardAnalyser {
 
     static isRace(board: Board): boolean {
         let playerId = 0;
@@ -36,7 +36,7 @@ export class BoardEvaluator {
 
             // 25: include bar
             for (let i1 = 1; i1 <= 25; i1++) {
-                testBoard[0] = BoardEvaluator.clone(board);
+                testBoard[0] = BoardAnalyser.clone(board);
 
                 let move1 = new Move(playerId, i1, points);
                 if (!testBoard[0].move(move1)) {
@@ -46,7 +46,7 @@ export class BoardEvaluator {
                 possibleGoes.push(new PossibleGo([move1], testBoard[0]));
 
                 for (let i2 = 1; i2 <= 25; i2++) {
-                    testBoard[1] = BoardEvaluator.clone(testBoard[0]);
+                    testBoard[1] = BoardAnalyser.clone(testBoard[0]);
 
                     let move2 = new Move(playerId, i2, points);
                     if (!testBoard[1].move(move2)) {
@@ -56,7 +56,7 @@ export class BoardEvaluator {
                     possibleGoes.push(new PossibleGo([move1, move2], testBoard[1]));
 
                     for (let i3 = 1; i3 <= 25; i3++) {
-                        testBoard[2] = BoardEvaluator.clone(testBoard[1]);
+                        testBoard[2] = BoardAnalyser.clone(testBoard[1]);
 
                         let move3 = new Move(playerId, i3, points);
                         if (!testBoard[2].move(move3)) {
@@ -66,7 +66,7 @@ export class BoardEvaluator {
                         possibleGoes.push(new PossibleGo([move1, move2, move3], testBoard[2]));
 
                         for (let i4 = 1; i4 <= 25; i4++) {
-                            testBoard[3] = BoardEvaluator.clone(testBoard[2]);
+                            testBoard[3] = BoardAnalyser.clone(testBoard[2]);
 
                             let move4 = new Move(playerId, i4, points);
                             if (testBoard[3].move(move4)) {
@@ -76,7 +76,7 @@ export class BoardEvaluator {
                     }
                 }
             }
-            return BoardEvaluator.getPossibleGoesThatUseMostDice(possibleGoes);
+            return BoardAnalyser.getPossibleGoesThatUseMostDice(possibleGoes);
         }
 
         // 2. non-double thrown.
@@ -84,28 +84,28 @@ export class BoardEvaluator {
 
         for (let startPoint1 = 1; startPoint1 <= 25; startPoint1++) {
             for (let die = 0; die < 2; die++) {
-                let testBoard1 = BoardEvaluator.clone(board);
+                let testBoard1 = BoardAnalyser.clone(board);
 
                 let move1 = new Move(playerId, startPoint1, points[die]);
                 if (testBoard1.move(move1)) {
-                    if (!BoardEvaluator.canMove(testBoard1, playerId, points[(die + 1) % 2])) {
-                        possibleGoes.push(new PossibleGo([move1], BoardEvaluator.clone(testBoard1)));
+                    if (!BoardAnalyser.canMove(testBoard1, playerId, points[(die + 1) % 2])) {
+                        possibleGoes.push(new PossibleGo([move1], BoardAnalyser.clone(testBoard1)));
                         continue;
                     }
                     // else 
                     for (let startPoint2 = 1; startPoint2 <= 25; startPoint2++) {
-                        let testBoard2 = BoardEvaluator.clone(testBoard1);
+                        let testBoard2 = BoardAnalyser.clone(testBoard1);
 
                         let move2 = new Move(playerId, startPoint2, points[(die + 1) % 2]);
                         if (testBoard2.move(move2)) {
-                            possibleGoes.push(new PossibleGo([move1, move2], BoardEvaluator.clone(testBoard2)));
+                            possibleGoes.push(new PossibleGo([move1, move2], BoardAnalyser.clone(testBoard2)));
                             continue;
                         }
                     }
                 }
             }
         }
-        return BoardEvaluator.getPossibleGoesThatUseMostDice(possibleGoes);
+        return BoardAnalyser.getPossibleGoesThatUseMostDice(possibleGoes);
     }
 
     private static clone(source: Board): Board {

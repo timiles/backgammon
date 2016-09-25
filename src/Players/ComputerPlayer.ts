@@ -1,4 +1,4 @@
-import { BoardEvaluator } from 'Analysis/BoardEvaluator'
+import { BoardAnalyser } from 'Analysis/BoardAnalyser'
 import { PossibleGo } from 'Analysis/PossibleGo'
 import { Board } from 'BoardComponents/Board'
 import { Dice } from 'DiceComponents/Dice'
@@ -23,7 +23,7 @@ export class ComputerPlayer extends Player {
     }
 
     public getBestPossibleGo(die1Value: number, die2Value: number): PossibleGo {
-        let possibleGoes = BoardEvaluator.getPossibleGoes(this.board, this.playerId, die1Value, die2Value);
+        let possibleGoes = BoardAnalyser.getPossibleGoes(this.board, this.playerId, die1Value, die2Value);
 
         if (possibleGoes.length === 0) {
             console.info('No possible go');
@@ -52,7 +52,7 @@ export class ComputerPlayer extends Player {
     // return score of how safe the checkers are.
     private evaluateSafety(board: Board): number {
         // if the game is a race, safety is irrelevant
-        if (BoardEvaluator.isRace(board)) {
+        if (BoardAnalyser.isRace(board)) {
             return 0;
         }
 

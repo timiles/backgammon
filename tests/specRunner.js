@@ -10,7 +10,7 @@
             'boot': 'tests/lib/jasmine-2.0.0/boot',
 
             'BoardComponents/Board': 'play/js/backgammon',
-            'Analysis/BoardEvaluator': 'play/js/backgammon',
+            'Analysis/BoardAnalyser': 'play/js/backgammon',
             'Players/ComputerPlayer': 'play/js/backgammon',
             'DiceComponents/Dice': 'play/js/backgammon',
             'UI/GameUI': 'play/js/backgammon',

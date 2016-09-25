@@ -276,12 +276,12 @@ define("Analysis/PossibleGo", ["require", "exports"], function (require, exports
     }());
     exports.PossibleGo = PossibleGo;
 });
-define("Analysis/BoardEvaluator", ["require", "exports", "BoardComponents/Board", "Enums", "Move", "Analysis/PossibleGo"], function (require, exports, Board_1, Enums_5, Move_1, PossibleGo_1) {
+define("Analysis/BoardAnalyser", ["require", "exports", "BoardComponents/Board", "Enums", "Move", "Analysis/PossibleGo"], function (require, exports, Board_1, Enums_5, Move_1, PossibleGo_1) {
     "use strict";
-    var BoardEvaluator = (function () {
-        function BoardEvaluator() {
+    var BoardAnalyser = (function () {
+        function BoardAnalyser() {
         }
-        BoardEvaluator.isRace = function (board) {
+        BoardAnalyser.isRace = function (board) {
             var playerId = 0;
             for (var pointId = 1; pointId <= 24; pointId++) {
                 if (board.checkerContainers[pointId].checkers[playerId] > 0) {
@@ -296,7 +296,7 @@ define("Analysis/BoardEvaluator", ["require", "exports", "BoardComponents/Board"
             }
             return true;
         };
-        BoardEvaluator.getPossibleGoes = function (board, playerId, die1Value, die2Value) {
+        BoardAnalyser.getPossibleGoes = function (board, playerId, die1Value, die2Value) {
             var possibleGoes = new Array();
             // 1. double number thrown.
             if (die1Value === die2Value) {
@@ -305,28 +305,28 @@ define("Analysis/BoardEvaluator", ["require", "exports", "BoardComponents/Board"
                 var numOfMoves = 0;
                 // 25: include bar
                 for (var i1 = 1; i1 <= 25; i1++) {
-                    testBoard[0] = BoardEvaluator.clone(board);
+                    testBoard[0] = BoardAnalyser.clone(board);
                     var move1 = new Move_1.Move(playerId, i1, points_1);
                     if (!testBoard[0].move(move1)) {
                         continue;
                     }
                     possibleGoes.push(new PossibleGo_1.PossibleGo([move1], testBoard[0]));
                     for (var i2 = 1; i2 <= 25; i2++) {
-                        testBoard[1] = BoardEvaluator.clone(testBoard[0]);
+                        testBoard[1] = BoardAnalyser.clone(testBoard[0]);
                         var move2 = new Move_1.Move(playerId, i2, points_1);
                         if (!testBoard[1].move(move2)) {
                             continue;
                         }
                         possibleGoes.push(new PossibleGo_1.PossibleGo([move1, move2], testBoard[1]));
                         for (var i3 = 1; i3 <= 25; i3++) {
-                            testBoard[2] = BoardEvaluator.clone(testBoard[1]);
+                            testBoard[2] = BoardAnalyser.clone(testBoard[1]);
                             var move3 = new Move_1.Move(playerId, i3, points_1);
                             if (!testBoard[2].move(move3)) {
                                 continue;
                             }
                             possibleGoes.push(new PossibleGo_1.PossibleGo([move1, move2, move3], testBoard[2]));
                             for (var i4 = 1; i4 <= 25; i4++) {
-                                testBoard[3] = BoardEvaluator.clone(testBoard[2]);
+                                testBoard[3] = BoardAnalyser.clone(testBoard[2]);
                                 var move4 = new Move_1.Move(playerId, i4, points_1);
                                 if (testBoard[3].move(move4)) {
                                     possibleGoes.push(new PossibleGo_1.PossibleGo([move1, move2, move3, move4], testBoard[3]));
@@ -335,34 +335,34 @@ define("Analysis/BoardEvaluator", ["require", "exports", "BoardComponents/Board"
                         }
                     }
                 }
-                return BoardEvaluator.getPossibleGoesThatUseMostDice(possibleGoes);
+                return BoardAnalyser.getPossibleGoesThatUseMostDice(possibleGoes);
             }
             // 2. non-double thrown.
             var points = [die1Value, die2Value];
             for (var startPoint1 = 1; startPoint1 <= 25; startPoint1++) {
                 for (var die = 0; die < 2; die++) {
-                    var testBoard1 = BoardEvaluator.clone(board);
+                    var testBoard1 = BoardAnalyser.clone(board);
                     var move1 = new Move_1.Move(playerId, startPoint1, points[die]);
                     if (testBoard1.move(move1)) {
-                        if (!BoardEvaluator.canMove(testBoard1, playerId, points[(die + 1) % 2])) {
-                            possibleGoes.push(new PossibleGo_1.PossibleGo([move1], BoardEvaluator.clone(testBoard1)));
+                        if (!BoardAnalyser.canMove(testBoard1, playerId, points[(die + 1) % 2])) {
+                            possibleGoes.push(new PossibleGo_1.PossibleGo([move1], BoardAnalyser.clone(testBoard1)));
                             continue;
                         }
                         // else 
                         for (var startPoint2 = 1; startPoint2 <= 25; startPoint2++) {
-                            var testBoard2 = BoardEvaluator.clone(testBoard1);
+                            var testBoard2 = BoardAnalyser.clone(testBoard1);
                             var move2 = new Move_1.Move(playerId, startPoint2, points[(die + 1) % 2]);
                             if (testBoard2.move(move2)) {
-                                possibleGoes.push(new PossibleGo_1.PossibleGo([move1, move2], BoardEvaluator.clone(testBoard2)));
+                                possibleGoes.push(new PossibleGo_1.PossibleGo([move1, move2], BoardAnalyser.clone(testBoard2)));
                                 continue;
                             }
                         }
                     }
                 }
             }
-            return BoardEvaluator.getPossibleGoesThatUseMostDice(possibleGoes);
+            return BoardAnalyser.getPossibleGoesThatUseMostDice(possibleGoes);
         };
-        BoardEvaluator.clone = function (source) {
+        BoardAnalyser.clone = function (source) {
             var clone = new Board_1.Board();
             var layout = new Array();
             for (var pointId = 0; pointId < 26; pointId++) {
@@ -371,7 +371,7 @@ define("Analysis/BoardEvaluator", ["require", "exports", "BoardComponents/Board"
             clone.initialise(layout);
             return clone;
         };
-        BoardEvaluator.canMove = function (board, playerId, points) {
+        BoardAnalyser.canMove = function (board, playerId, points) {
             // 25: include bar
             for (var startingPoint = 1; startingPoint <= 25; startingPoint++) {
                 if (board.isLegalMove(new Move_1.Move(playerId, startingPoint, points))) {
@@ -380,7 +380,7 @@ define("Analysis/BoardEvaluator", ["require", "exports", "BoardComponents/Board"
             }
             return false;
         };
-        BoardEvaluator.getPossibleGoesThatUseMostDice = function (possibleGoes) {
+        BoardAnalyser.getPossibleGoesThatUseMostDice = function (possibleGoes) {
             var max = 0;
             // 1. find move with most amount of dice used
             for (var i = 0; i < possibleGoes.length; i++) {
@@ -395,9 +395,9 @@ define("Analysis/BoardEvaluator", ["require", "exports", "BoardComponents/Board"
             }
             return goesThatUseMostDice;
         };
-        return BoardEvaluator;
+        return BoardAnalyser;
     }());
-    exports.BoardEvaluator = BoardEvaluator;
+    exports.BoardAnalyser = BoardAnalyser;
 });
 define("Players/Player", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -410,7 +410,7 @@ define("Players/Player", ["require", "exports"], function (require, exports) {
     }());
     exports.Player = Player;
 });
-define("Players/ComputerPlayer", ["require", "exports", "Analysis/BoardEvaluator", "Enums", "Players/Player"], function (require, exports, BoardEvaluator_1, Enums_6, Player_1) {
+define("Players/ComputerPlayer", ["require", "exports", "Analysis/BoardAnalyser", "Enums", "Players/Player"], function (require, exports, BoardAnalyser_1, Enums_6, Player_1) {
     "use strict";
     var ComputerPlayer = (function (_super) {
         __extends(ComputerPlayer, _super);
@@ -422,7 +422,7 @@ define("Players/ComputerPlayer", ["require", "exports", "Analysis/BoardEvaluator
             this.reentryFactor = 1;
         }
         ComputerPlayer.prototype.getBestPossibleGo = function (die1Value, die2Value) {
-            var possibleGoes = BoardEvaluator_1.BoardEvaluator.getPossibleGoes(this.board, this.playerId, die1Value, die2Value);
+            var possibleGoes = BoardAnalyser_1.BoardAnalyser.getPossibleGoes(this.board, this.playerId, die1Value, die2Value);
             if (possibleGoes.length === 0) {
                 console.info('No possible go');
                 return null;
@@ -447,7 +447,7 @@ define("Players/ComputerPlayer", ["require", "exports", "Analysis/BoardEvaluator
         // return score of how safe the checkers are.
         ComputerPlayer.prototype.evaluateSafety = function (board) {
             // if the game is a race, safety is irrelevant
-            if (BoardEvaluator_1.BoardEvaluator.isRace(board)) {
+            if (BoardAnalyser_1.BoardAnalyser.isRace(board)) {
                 return 0;
             }
             var score = 100;
