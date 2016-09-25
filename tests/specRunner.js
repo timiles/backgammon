@@ -35,10 +35,11 @@
     });
 
     var specs = [
-        'tests/specs/boardSpec',
-        'tests/specs/uiSpec',
-        'tests/specs/aiSpec',
-        'tests/specs/moveSpec',
+        'tests/specs/Analysis',
+        'tests/specs/Board',
+        'tests/specs/BoardUI',
+        'tests/specs/ComputerPlayer',
+        'tests/specs/Move',
     ];
 
     // Because we are using RequireJS `window.onload()` has already been triggered so we have to manually call it again.
