@@ -1,28 +1,19 @@
 'use strict';
 
-define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'Enums', 'Game', 'UI/GameUI', 'StatusLogger', 'Move'],
-    function (Board, Dice, DiceRollGenerator, Enums, Game, GameUI, StatusLogger, Move) {
+define(['BoardComponents/Board', 'Enums', 'Move'],
+    function (Board, Enums, Move) {
 
         let PlayerId = Enums.PlayerId;
         let PointId = Enums.PointId;
 
         describe('Backgammon', function () {
 
-            var game;
             var board;
 
             beforeEach(function () {
 
                 board = new Board.Board();
-                let ui = new GameUI.GameUI('backgammon', board);
                 board.initialise();
-
-                let dice = new Dice.Dice(new DiceRollGenerator.DiceRollGenerator(), ui.blackDiceUI, ui.redDiceUI);
-                dice.roll(PlayerId.BLACK);
-
-                let statusLogger = new StatusLogger.StatusLogger(ui.statusUI);
-
-                game = new Game.Game(board, dice, statusLogger);
             });
 
             it('should initialise a standard starting board', function () {
