@@ -1,6 +1,6 @@
-import { Die } from './Die'
-import { PlayerId } from './Enums'
-import { Utils } from './UI/Utils'
+import { Die } from 'DiceComponents/Die'
+import { Utils } from 'UI/Utils'
+import { PlayerId } from 'Enums'
 
 declare var $;
 

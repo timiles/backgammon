@@ -11,7 +11,7 @@ Click here to play:
 # TODO
 - [x] board layout in HTML/CSS
 - [x] game logic: roll dice to start; play by turns; detect winner
-- [ ] game logic: major refactor
+- [x] game logic: major refactor
 - [ ] mobile UX: alternative to hover for inspect
 - [ ] undo
 - [ ] autoplay mode on/off toggle

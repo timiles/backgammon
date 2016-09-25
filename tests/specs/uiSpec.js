@@ -1,6 +1,6 @@
 'use strict';
 
-define(['BoardComponents/Board', 'Dice', 'Enums', 'Game', 'UI/GameUI', 'StatusLogger'],
+define(['BoardComponents/Board', 'DiceComponents/Dice', 'Enums', 'Game', 'UI/GameUI', 'StatusLogger'],
     function (Board, Dice, Enums, Game, GameUI, StatusLogger) {
 
         let PlayerId = Enums.PlayerId;

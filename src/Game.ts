@@ -1,15 +1,18 @@
-import { Bar } from './BoardComponents/Bar'
-import { Board } from './BoardComponents/Board'
-import { CheckerContainer } from './BoardComponents/CheckerContainer'
-import { ComputerPlayer } from './Players/ComputerPlayer'
-import { Dice } from './Dice'
-import { Die } from './Die'
+import { Bar } from 'BoardComponents/Bar'
+import { Board } from 'BoardComponents/Board'
+import { CheckerContainer } from 'BoardComponents/CheckerContainer'
+import { Home } from 'BoardComponents/Home'
+import { Point } from 'BoardComponents/Point'
+
+import { Dice } from 'DiceComponents/Dice'
+import { Die } from 'DiceComponents/Die'
+
+import { ComputerPlayer } from 'Players/ComputerPlayer'
+import { HumanPlayer } from 'Players/HumanPlayer'
+import { Player } from 'Players/Player'
+
 import { Move } from './Move'
-import { Point } from './BoardComponents/Point'
 import { PlayerId, PointId } from './Enums'
-import { Home } from './BoardComponents/Home'
-import { HumanPlayer } from './Players/HumanPlayer'
-import { Player } from './Players/Player'
 import { StatusLogger } from './StatusLogger'
 
 export class Game {

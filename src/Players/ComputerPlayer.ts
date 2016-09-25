@@ -1,10 +1,10 @@
-import { Board } from '../BoardComponents/Board'
-import { BoardEvaluator } from '../Analysis/BoardEvaluator'
-import { Dice } from './Dice'
-import { PlayerId, PointId } from './Enums'
+import { BoardEvaluator } from 'Analysis/BoardEvaluator'
+import { PossibleGo } from 'Analysis/PossibleGo'
+import { Board } from 'BoardComponents/Board'
+import { Dice } from 'DiceComponents/Dice'
+import { PlayerId, PointId } from 'Enums'
+import { StatusLogger } from 'StatusLogger'
 import { Player } from './Player'
-import { PossibleGo } from '../Analysis/PossibleGo'
-import { StatusLogger } from './StatusLogger'
 
 export class ComputerPlayer extends Player {
 

@@ -1,7 +1,7 @@
 import { Board } from 'BoardComponents/Board'
-import { Dice } from './Dice'
-import { PlayerId } from './Enums'
-import { Move } from '../Move'
+import { Dice } from 'DiceComponents/Dice'
+import { PlayerId } from 'Enums'
+import { Move } from 'Move'
 import { PossibleGo } from './PossibleGo'
 
 export class BoardEvaluator {

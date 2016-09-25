@@ -1,4 +1,4 @@
-import { PlayerId } from '../Enums'
+import { PlayerId } from 'Enums'
 import { Utils } from './Utils'
 
 declare var $;

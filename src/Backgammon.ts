@@ -1,9 +1,9 @@
 import { Board } from 'BoardComponents/Board'
-import { Dice } from './Dice'
-import { DiceRollGenerator } from './DiceRollGenerator'
+import { Dice } from 'DiceComponents/Dice'
+import { DiceRollGenerator } from 'DiceComponents/DiceRollGenerator'
+import { GameUI } from 'UI/GameUI'
 import { PlayerId } from './Enums'
 import { Game } from './Game'
-import { GameUI } from './UI/GameUI'
 import { StatusLogger } from './StatusLogger'
 
 export class Backgammon {

@@ -1,5 +1,5 @@
-import { PlayerId, PointId } from '../Enums'
-import { Game } from '../Game'
+import { PlayerId, PointId } from 'Enums'
+import { Game } from 'Game'
 import { GameUI } from './GameUI'
 
 import { Board } from 'BoardComponents/Board'
@@ -7,10 +7,10 @@ import { BoardUI } from './BoardUI'
 import { BarUI } from './BarUI'
 import { HomeUI } from './HomeUI'
 
-import { Dice } from '../Dice'
+import { Dice } from 'DiceComponents/Dice'
 import { DiceUI } from './DiceUI'
 
-import { StatusLogger } from '../StatusLogger'
+import { StatusLogger } from 'StatusLogger'
 import { StatusUI } from './StatusUI'
 
 export class EventBinders {

@@ -1,4 +1,4 @@
-import { PlayerId } from '../Enums'
+import { PlayerId } from 'Enums'
 import { CheckerContainerUI } from './CheckerContainerUI'
 
 export class BarUI extends CheckerContainerUI {
