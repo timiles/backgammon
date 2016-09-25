@@ -6,7 +6,7 @@ define(['BoardComponents/Board', 'Enums', 'Move'],
         let PlayerId = Enums.PlayerId;
         let PointId = Enums.PointId;
 
-        describe('Backgammon', function () {
+        describe('Board', function () {
 
             var board;
 
@@ -39,9 +39,9 @@ define(['BoardComponents/Board', 'Enums', 'Move'],
                 expect(board.checkerContainers[1].checkers[PlayerId.BLACK]).toBe(2);
                 expect(board.isLegalMove(new Move.Move(PlayerId.BLACK, 1, 6))).toBe(true);
                 // end pip is blocked
-                expect(board.isLegalMove(new Move.Move(PlayerId.BLACK, 1, 5))).toBe(false); 
+                expect(board.isLegalMove(new Move.Move(PlayerId.BLACK, 1, 5))).toBe(false);
                 // start pip contains no counter
-                expect(board.isLegalMove(new Move.Move(PlayerId.BLACK, 2, 1))).toBe(false); 
+                expect(board.isLegalMove(new Move.Move(PlayerId.BLACK, 2, 1))).toBe(false);
 
             });
 
@@ -117,32 +117,21 @@ define(['BoardComponents/Board', 'Enums', 'Move'],
             });
 
 
-            it('should not allow to bear off until all in home board', function () {
+            it('should not allow to bear off if not all in home board', function () {
 
                 expect(board.isLegalMove(new Move.Move(PlayerId.BLACK, 19, 6))).toBe(false);
+            });
 
-                // move pieces into home board
-                board.move(new Move.Move(PlayerId.BLACK, 1, 6));
-                board.move(new Move.Move(PlayerId.BLACK, 1, 6));
-                board.move(new Move.Move(PlayerId.BLACK, 7, 5));
-                board.move(new Move.Move(PlayerId.BLACK, 7, 5));
-                board.move(new Move.Move(PlayerId.BLACK, 12, 6));
-                board.move(new Move.Move(PlayerId.BLACK, 12, 6));
-                board.move(new Move.Move(PlayerId.BLACK, 12, 6));
-                board.move(new Move.Move(PlayerId.BLACK, 12, 6));
-                board.move(new Move.Move(PlayerId.BLACK, 12, 6));
-                board.move(new Move.Move(PlayerId.BLACK, 12, 6));
-                board.move(new Move.Move(PlayerId.BLACK, 12, 6));
-                board.move(new Move.Move(PlayerId.BLACK, 17, 6));
-                board.move(new Move.Move(PlayerId.BLACK, 17, 6));
-                board.move(new Move.Move(PlayerId.BLACK, 17, 6));
-                board.move(new Move.Move(PlayerId.BLACK, 18, 5));
-                board.move(new Move.Move(PlayerId.BLACK, 18, 5));
-                board.move(new Move.Move(PlayerId.BLACK, 18, 5));
-                board.move(new Move.Move(PlayerId.BLACK, 18, 5));
-                board.move(new Move.Move(PlayerId.BLACK, 18, 5));
-                board.move(new Move.Move(PlayerId.BLACK, 18, 5));
-                board.move(new Move.Move(PlayerId.BLACK, 18, 5));
+            it('should allow to bear off if all in home board', function () {
+
+                // re-initialise board with BLACK all in home board
+                board = new Board.Board();
+                board.initialise([[0, 0],
+                    [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 5],
+                    [0, 0], [0, 3], [0, 0], [0, 0], [0, 0], [0, 0],
+                    [0, 5], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+                    [5, 0], [0, 0], [0, 0], [0, 0], [10, 0], [0, 2],
+                    [0, 0]]);
 
                 // now should be home dry
                 expect(board.isLegalMove(new Move.Move(PlayerId.BLACK, 19, 6))).toBe(true);

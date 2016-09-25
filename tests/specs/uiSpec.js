@@ -188,15 +188,20 @@ define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'Enums', 'Game', '
 
         });
 
-        describe('UI: home board', function () {
+        describe('UI: board where BLACK is all home', function () {
 
             var game;
 
             beforeEach(function () {
 
-                let board = new Board.Board();
-                let ui = new GameUI.GameUI('backgammon', board);
-                board.initialise();
+                let blackAllInHomeBoard = new Board.Board();
+                let ui = new GameUI.GameUI('backgammon', blackAllInHomeBoard);
+                blackAllInHomeBoard.initialise([[0, 0],
+                    [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 5],
+                    [0, 0], [0, 3], [0, 0], [0, 0], [0, 0], [0, 0],
+                    [0, 5], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0],
+                    [5, 0], [0, 0], [5, 0], [3, 0], [2, 0], [0, 2],
+                    [0, 0]]);
 
                 let fakeDiceRollGenerator = new FakeDiceRollGenerator([6, 4]);
 
@@ -205,20 +210,8 @@ define(['BoardComponents/Board', 'Dice', 'DiceRollGenerator', 'Enums', 'Game', '
 
                 let statusLogger = new StatusLogger.StatusLogger(ui.statusUI);
 
-                game = new Game.Game(board, dice, statusLogger);
+                game = new Game.Game(blackAllInHomeBoard, dice, statusLogger);
                 game.begin(PlayerId.BLACK);
-
-                board.move(new Move.Move(PlayerId.BLACK, 1, 22));
-                board.move(new Move.Move(PlayerId.BLACK, 1, 22));
-                board.move(new Move.Move(PlayerId.BLACK, 12, 9));
-                board.move(new Move.Move(PlayerId.BLACK, 12, 9));
-                board.move(new Move.Move(PlayerId.BLACK, 12, 9));
-                board.move(new Move.Move(PlayerId.BLACK, 12, 9));
-                board.move(new Move.Move(PlayerId.BLACK, 12, 9));
-                board.move(new Move.Move(PlayerId.BLACK, 17, 5));
-                board.move(new Move.Move(PlayerId.BLACK, 17, 5));
-                board.move(new Move.Move(PlayerId.BLACK, 17, 5));
-                game.evaluateBoard();
             });
 
             it('should enforce maximum possible dice use when bearing off', function () {
