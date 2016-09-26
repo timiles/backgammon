@@ -656,7 +656,6 @@ define("Game", ["require", "exports", "BoardComponents/Bar", "BoardComponents/Ho
                         var move = bestPossibleGo.moves[moveNumber];
                         this.board.move(move);
                     }
-                    console.log(bestPossibleGo);
                 }
                 setTimeout(function () {
                     _this.switchPlayer();
