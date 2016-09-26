@@ -439,22 +439,22 @@ define("Players/ComputerPlayer", ["require", "exports", "Analysis/BoardAnalyser"
             }
             return bestPossibleGo;
         };
-        ComputerPlayer.prototype.evaluateBoard = function (board) {
-            return this.evaluateSafety(board) * this.safetyFactor +
-                this.evaluateClustering(board) * this.clusteringFactor +
-                this.evaluateOffensive(board) * this.offensiveFactor;
+        ComputerPlayer.prototype.evaluateBoard = function (resultingBoard) {
+            return this.evaluateSafety(resultingBoard) * this.safetyFactor +
+                this.evaluateClustering(resultingBoard) * this.clusteringFactor +
+                this.evaluateOffensive(resultingBoard) * this.offensiveFactor;
         };
         // return score of how safe the checkers are.
-        ComputerPlayer.prototype.evaluateSafety = function (board) {
+        ComputerPlayer.prototype.evaluateSafety = function (resultingBoard) {
             // if the game is a race, safety is irrelevant
-            if (BoardAnalyser_1.BoardAnalyser.isRace(board)) {
+            if (BoardAnalyser_1.BoardAnalyser.isRace(this.board)) {
                 return 0;
             }
             var score = 100;
             var direction = (this.playerId === Enums_6.PlayerId.BLACK) ? 1 : -1;
             var homePointId = (this.playerId === Enums_6.PlayerId.BLACK) ? 25 : 0;
             for (var pointId = 1; pointId <= 24; pointId++) {
-                if (board.checkerContainers[pointId].checkers[this.playerId] === 1) {
+                if (resultingBoard.checkerContainers[pointId].checkers[this.playerId] === 1) {
                     // TODO: factor safety on prob of opp hitting this piece
                     var distanceOfBlotToHome = (homePointId - pointId) * direction;
                     var relativePenaltyOfLosingThisBlot = distanceOfBlotToHome / 24;
@@ -464,16 +464,16 @@ define("Players/ComputerPlayer", ["require", "exports", "Analysis/BoardAnalyser"
             return score;
         };
         // return score of how clustered the towers are.
-        ComputerPlayer.prototype.evaluateClustering = function (board) {
+        ComputerPlayer.prototype.evaluateClustering = function (resultingBoard) {
             var score = 0;
             // number of towers
             // proximity of towers
             return score;
         };
         // offensive: putting opponent onto bar
-        ComputerPlayer.prototype.evaluateOffensive = function (board) {
+        ComputerPlayer.prototype.evaluateOffensive = function (resultingBoard) {
             var otherPlayerId = (this.playerId + 1) % 2;
-            switch (board.checkerContainers[Enums_6.PointId.BAR].checkers[otherPlayerId]) {
+            switch (resultingBoard.checkerContainers[Enums_6.PointId.BAR].checkers[otherPlayerId]) {
                 case 0: return 0;
                 case 1: return 65;
                 default: return 100;

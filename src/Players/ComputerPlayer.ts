@@ -31,7 +31,7 @@ export class ComputerPlayer extends Player {
         }
 
         let maxScore = 0;
-        let bestPossibleGo;
+        let bestPossibleGo: PossibleGo;
         for (let i = 0; i < possibleGoes.length; i++) {
             let score = this.evaluateBoard(possibleGoes[i].resultingBoard);
             // greater than or equal: bias towards further on moves
@@ -43,16 +43,16 @@ export class ComputerPlayer extends Player {
         return bestPossibleGo;
     }
 
-    private evaluateBoard(board: Board): number {
-        return this.evaluateSafety(board) * this.safetyFactor +
-            this.evaluateClustering(board) * this.clusteringFactor +
-            this.evaluateOffensive(board) * this.offensiveFactor;
+    private evaluateBoard(resultingBoard: Board): number {
+        return this.evaluateSafety(resultingBoard) * this.safetyFactor +
+            this.evaluateClustering(resultingBoard) * this.clusteringFactor +
+            this.evaluateOffensive(resultingBoard) * this.offensiveFactor;
     }
 
     // return score of how safe the checkers are.
-    private evaluateSafety(board: Board): number {
+    private evaluateSafety(resultingBoard: Board): number {
         // if the game is a race, safety is irrelevant
-        if (BoardAnalyser.isRace(board)) {
+        if (BoardAnalyser.isRace(this.board)) {
             return 0;
         }
 
@@ -61,7 +61,7 @@ export class ComputerPlayer extends Player {
         let homePointId = (this.playerId === PlayerId.BLACK) ? 25 : 0;
 
         for (let pointId = 1; pointId <= 24; pointId++) {
-            if (board.checkerContainers[pointId].checkers[this.playerId] === 1) {
+            if (resultingBoard.checkerContainers[pointId].checkers[this.playerId] === 1) {
                 // TODO: factor safety on prob of opp hitting this piece
                 let distanceOfBlotToHome = (homePointId - pointId) * direction;
                 let relativePenaltyOfLosingThisBlot = distanceOfBlotToHome / 24; 
@@ -73,7 +73,7 @@ export class ComputerPlayer extends Player {
     }
 
     // return score of how clustered the towers are.
-    private evaluateClustering(board: Board): number {
+    private evaluateClustering(resultingBoard: Board): number {
         let score = 0;
         // number of towers
         // proximity of towers
@@ -82,10 +82,10 @@ export class ComputerPlayer extends Player {
     }
 
     // offensive: putting opponent onto bar
-    private evaluateOffensive(board: Board): number {
+    private evaluateOffensive(resultingBoard: Board): number {
         let otherPlayerId = (this.playerId + 1) % 2;
 
-        switch (board.checkerContainers[PointId.BAR].checkers[otherPlayerId]) {
+        switch (resultingBoard.checkerContainers[PointId.BAR].checkers[otherPlayerId]) {
             case 0: return 0;
             case 1: return 65;
             default: return 100;
