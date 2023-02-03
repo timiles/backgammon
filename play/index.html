@@ -24,9 +24,9 @@
     <script>
         var queryStringParams = new URLSearchParams(window.location.search);
         var blackIsComputer = queryStringParams.get('black') === 'computer';
-        var redIsComputer = queryStringParams.get('red') === 'computer';
+        var whiteIsComputer = queryStringParams.get('white') === 'computer';
         require(['Backgammon'], function(b) {
-            new b.Backgammon('backgammon', blackIsComputer, redIsComputer);
+            new b.Backgammon('backgammon', blackIsComputer, whiteIsComputer);
         });
     </script>
 
