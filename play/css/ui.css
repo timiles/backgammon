@@ -15,15 +15,15 @@ DIV.game-container::after {
 }
 
 DIV.board {
-    width: 675px;
-    border: 4px solid #140d07c4;
+    width: 616px;
+    border: 3px solid #140d07c4;
     background-image: url('../img/wood.jpg');
 }
 
 DIV.checker {
     float: left;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     -moz-border-radius: 20px;
     -webkit-border-radius: 20px;
     border-radius: 20px;
@@ -33,7 +33,7 @@ DIV.checker {
 }
 
 DIV.white {
-    background: linear-gradient(-30deg, #ddd, #fff);
+    background: linear-gradient(-30deg, #777, #fff);
     text-align: center;
     color: black;
     font-weight: bold;
@@ -48,7 +48,7 @@ DIV.black {
 
 DIV.checker-container {
     float: left;
-    width: 40px;
+    width: 36px;
     height: 220px;
     padding: 4px;
 }
@@ -129,7 +129,7 @@ DIV.side-container {
 }
 
 DIV.dice-container.active>DIV.die {
-    box-shadow: 0 0 50px rgb(0, 255, 0);
+    box-shadow: 0 0 10px rgb(0, 255, 0);
 }
 
 DIV.dice-container.dice-container-black>DIV.die {
@@ -146,9 +146,8 @@ DIV.dice-container DIV.die {
     width: 15px;
     height: 15px;
     border-radius: 15px;
-    padding: 12px;
+    padding: 10px;
     margin: 10px;
-    float: left;
 }
 
 DIV.dice-container DIV.die.die-uses-0 {
@@ -166,10 +165,10 @@ DIV.dice-container DIV.die.die-uses-2::after {
 }
 
 DIV.status-container {
-    height: 330;
+    height: 250;
     overflow-y: scroll;
     margin: 16px 4px;
-    width: 100px;
+    width: 70px;
 }
 
 DIV.status-container::-webkit-scrollbar {
