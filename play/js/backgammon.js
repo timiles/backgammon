@@ -910,7 +910,7 @@ define("UI/CheckerContainerUI", ["require", "exports", "Enums", "UI/Utils"], fun
             var _this = this;
             this.containerDiv = document.createElement('div');
             var side = (isTopSide ? 'top' : 'bottom');
-            containerType == 'bar' && (side = null);
+           // containerType == 'bar' && (side = null);
             containerType == 'home' && (side = null);
             this.containerDiv.className = "checker-container checker-container-" + side + " " + containerType;
             this.containerDiv.onclick = function () { _this.onSelected(); };
@@ -992,8 +992,8 @@ define("UI/BoardUI", ["require", "exports", "Enums", "UI/BarUI", "UI/HomeUI", "U
             this.containerDiv.className = 'board';
             this.blackHomeUI = new HomeUI_1.HomeUI(Enums_12.PlayerId.BLACK);
             this.blackHomeUI.containerDiv.id = gameContainerId + "_blackhome";
-            this.redHomeUI = new HomeUI_1.HomeUI(Enums_12.PlayerId.WHITE);
-            this.redHomeUI.containerDiv.id = gameContainerId + "_redhome";
+            this.whiteHomeUI = new HomeUI_1.HomeUI(Enums_12.PlayerId.WHITE);
+            this.whiteHomeUI.containerDiv.id = gameContainerId + "_whitehome";
             this.pointUIs = new Array(24);
             for (var i = 0; i < this.pointUIs.length; i++) {
                 var colour = (i % 2 == 0) ? 'black' : 'white';
@@ -1002,7 +1002,7 @@ define("UI/BoardUI", ["require", "exports", "Enums", "UI/BarUI", "UI/HomeUI", "U
                 this.pointUIs[i].containerDiv.id = gameContainerId + "_point" + (i + 1);
             }
             this.blackBarUI = new BarUI_1.BarUI(Enums_12.PlayerId.BLACK);
-            this.redBarUI = new BarUI_1.BarUI(Enums_12.PlayerId.WHITE);
+            this.whiteBarUI = new BarUI_1.BarUI(Enums_12.PlayerId.WHITE);
             // append all elements in the correct order
             this.containerDiv.appendChild(this.pointUIs[12].containerDiv);
             this.containerDiv.appendChild(this.pointUIs[13].containerDiv);
@@ -1010,7 +1010,7 @@ define("UI/BoardUI", ["require", "exports", "Enums", "UI/BarUI", "UI/HomeUI", "U
             this.containerDiv.appendChild(this.pointUIs[15].containerDiv);
             this.containerDiv.appendChild(this.pointUIs[16].containerDiv);
             this.containerDiv.appendChild(this.pointUIs[17].containerDiv);
-            this.containerDiv.appendChild(this.redBarUI.containerDiv);
+            this.containerDiv.appendChild(this.whiteBarUI.containerDiv);
             this.containerDiv.appendChild(this.pointUIs[18].containerDiv);
             this.containerDiv.appendChild(this.pointUIs[19].containerDiv);
             this.containerDiv.appendChild(this.pointUIs[20].containerDiv);
@@ -1032,7 +1032,7 @@ define("UI/BoardUI", ["require", "exports", "Enums", "UI/BarUI", "UI/HomeUI", "U
             this.containerDiv.appendChild(this.pointUIs[2].containerDiv);
             this.containerDiv.appendChild(this.pointUIs[1].containerDiv);
             this.containerDiv.appendChild(this.pointUIs[0].containerDiv);
-            this.containerDiv.appendChild(this.redHomeUI.containerDiv);
+            this.containerDiv.appendChild(this.whiteHomeUI.containerDiv);
             this.containerDiv.appendChild(BoardUI.createClearBreak());
         }
         BoardUI.createClearBreak = function () {
@@ -1078,7 +1078,7 @@ define("UI/DiceUI", ["require", "exports", "UI/Utils", "Enums"], function (requi
         };
         DiceUI.createDie = function (die) {
             var div = document.createElement('div');
-            div.className = 'die die-uses-' + die.remainingUses;
+            div.className = 'die dice die-uses-' + die.remainingUses +'  dice-'+die.value.toString();
             div.innerText = die.value.toString();
             return div;
         };
@@ -1111,24 +1111,24 @@ define("UI/EventBinders", ["require", "exports", "Enums"], function (require, ex
         }
         EventBinders.bindGame = function (game, gameUI) {
             EventBinders.bindBoardEvents(game.board, gameUI.boardUI);
-            EventBinders.bindDiceEvents(game.dice, gameUI.blackDiceUI, gameUI.redDiceUI);
+            EventBinders.bindDiceEvents(game.dice, gameUI.blackDiceUI, gameUI.whiteDiceUI);
             EventBinders.bindStatusLoggerEvents(game.statusLogger, gameUI.statusUI);
         };
         EventBinders.bindBoardEvents = function (board, boardUI) {
             // helpers
             var getBarUI = function (playerId) {
-                return (playerId === Enums_14.PlayerId.BLACK) ? boardUI.blackBarUI : boardUI.redBarUI;
+                return (playerId === Enums_14.PlayerId.BLACK) ? boardUI.blackBarUI : boardUI.whiteBarUI;
             };
             var getHomeUI = function (playerId) {
-                return (playerId === Enums_14.PlayerId.BLACK) ? boardUI.blackHomeUI : boardUI.redHomeUI;
+                return (playerId === Enums_14.PlayerId.BLACK) ? boardUI.blackHomeUI : boardUI.whiteHomeUI;
             };
             // wire up UI events
             boardUI.blackHomeUI.onSelected = function () { return board.onPointSelected(Enums_14.PointId.HOME); };
-            boardUI.redHomeUI.onSelected = function () { return board.onPointSelected(Enums_14.PointId.HOME); };
+            boardUI.whiteHomeUI.onSelected = function () { return board.onPointSelected(Enums_14.PointId.HOME); };
             boardUI.blackBarUI.onInspected = function (on) { return board.onPointInspected(Enums_14.PointId.BAR, on); };
             boardUI.blackBarUI.onSelected = function () { return board.onPointSelected(Enums_14.PointId.BAR); };
-            boardUI.redBarUI.onInspected = function (on) { return board.onPointInspected(Enums_14.PointId.BAR, on); };
-            boardUI.redBarUI.onSelected = function () { return board.onPointSelected(Enums_14.PointId.BAR); };
+            boardUI.whiteBarUI.onInspected = function (on) { return board.onPointInspected(Enums_14.PointId.BAR, on); };
+            boardUI.whiteBarUI.onSelected = function () { return board.onPointSelected(Enums_14.PointId.BAR); };
             var bindPointUIEvents = function (pointId) {
                 var pointUI = boardUI.pointUIs[pointId - 1];
                 pointUI.onInspected = function (on) { board.onPointInspected(pointId, on); };
@@ -1171,11 +1171,11 @@ define("UI/EventBinders", ["require", "exports", "Enums"], function (require, ex
                 boardUI.pointUIs[pointId - 1].setValidSource(on);
             };
         };
-        EventBinders.bindDiceEvents = function (dice, blackDiceUI, redDiceUI) {
+        EventBinders.bindDiceEvents = function (dice, blackDiceUI, whiteDiceUI) {
             var getDiceUI = function (playerId) {
                 switch (playerId) {
                     case Enums_14.PlayerId.BLACK: return blackDiceUI;
-                    case Enums_14.PlayerId.WHITE: return redDiceUI;
+                    case Enums_14.PlayerId.WHITE: return whiteDiceUI;
                     default: throw "Unknown PlayerId: " + playerId;
                 }
             };
@@ -1199,14 +1199,14 @@ define("UI/GameUI", ["require", "exports", "UI/BoardUI", "UI/DiceUI", "Enums", "
             Utils_5.Utils.removeAllChildren(container);
             this.boardUI = new BoardUI_1.BoardUI(containerElementId);
             this.blackDiceUI = new DiceUI_1.DiceUI(Enums_15.PlayerId.BLACK);
-            this.redDiceUI = new DiceUI_1.DiceUI(Enums_15.PlayerId.WHITE);
+            this.whiteDiceUI = new DiceUI_1.DiceUI(Enums_15.PlayerId.WHITE);
             this.statusUI = new StatusUI_1.StatusUI();
             container.appendChild(this.boardUI.containerDiv);
             var sideContainer = document.createElement('div');
             sideContainer.className = 'side-container';
             sideContainer.appendChild(this.blackDiceUI.containerDiv);
             sideContainer.appendChild(this.statusUI.containerDiv);
-            sideContainer.appendChild(this.redDiceUI.containerDiv);
+            sideContainer.appendChild(this.whiteDiceUI.containerDiv);
             container.appendChild(sideContainer);
             EventBinders_1.EventBinders.bindGame(game, this);
         }
@@ -1217,13 +1217,13 @@ define("UI/GameUI", ["require", "exports", "UI/BoardUI", "UI/DiceUI", "Enums", "
 define("Backgammon", ["require", "exports", "BoardComponents/Board", "DiceComponents/Dice", "DiceComponents/DiceRollGenerator", "UI/GameUI", "Game", "StatusLogger"], function (require, exports, Board_2, Dice_1, DiceRollGenerator_1, GameUI_1, Game_2, StatusLogger_1) {
     "use strict";
     var Backgammon = (function () {
-        function Backgammon(containerId, blackIsComputer, redIsComputer) {
+        function Backgammon(containerId, blackIsComputer, whiteIsComputer) {
             if (blackIsComputer === void 0) { blackIsComputer = false; }
-            if (redIsComputer === void 0) { redIsComputer = false; }
+            if (whiteIsComputer === void 0) { whiteIsComputer = false; }
             var board = new Board_2.Board();
             var dice = new Dice_1.Dice(new DiceRollGenerator_1.DiceRollGenerator());
             var statusLogger = new StatusLogger_1.StatusLogger();
-            var game = new Game_2.Game(board, dice, statusLogger, [blackIsComputer, redIsComputer]);
+            var game = new Game_2.Game(board, dice, statusLogger, [blackIsComputer, whiteIsComputer]);
             var ui = new GameUI_1.GameUI(containerId, game);
             board.initialise();
             // TODO: UI trigger game to begin
