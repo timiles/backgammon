@@ -1,27 +1,21 @@
-DIV.game-container {
+.game-container {
     font-family: Arial;
     background-image: url('../img/wood.jpg');
     width: 100%;
     
 }
 
-DIV.game-container>DIV {
-   /* float: left;*/
-}
 
-DIV.game-container::after {
+
+.game-container::after {
     content: " ";
     display: block;
     height: 0;
     clear: both;
 }
 
-DIV.board {
- 
- height: 95%;
-}
 
-DIV.checker {
+.checker {
     float: left;
     width: 100%;
     -moz-border-radius: 20px;
@@ -32,13 +26,13 @@ DIV.checker {
     justify-content: center;
 }
 
-DIV.checker::after{
+.checker::after{
     content: "";
     display: block;
     padding-bottom: 100%;
 }
 
-DIV.white {
+.white {
     background-image: url('data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22base%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ccc%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23fff%22%2F%3E%3C%2FlinearGradient%3E%3CradialGradient%20id%3D%22center%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23eee%22%2F%3E%3C%2FradialGradient%3E%3ClinearGradient%20id%3D%22ring%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ccc%22%2F%3E%3C%2FlinearGradient%3E%3Cstyle%3E%3C%21%5BCDATA%5B%23base%20%7B%20fill%3A%20url%28%23base%29%3B%20%7D%23ring%20%7B%20fill%3A%20url%28%23ring%29%3B%20%7D%23center%20%7B%20fill%3A%20url%28%23center%29%3B%20%7D%20%5D%5D%3E%3C%2Fstyle%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20id%3D%22base%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2230%22%20id%3D%22ring%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2225%22%20id%3D%22center%22%2F%3E%3C%2Fsvg%3E');
     text-align: center;
     color: black;
@@ -49,7 +43,7 @@ DIV.white {
 	background-size: cover;
 }
 
-DIV.black {
+.black {
     background-image: url('data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22base%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23444%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23000%22%2F%3E%3C%2FlinearGradient%3E%3CradialGradient%20id%3D%22center%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23333%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23222%22%2F%3E%3C%2FradialGradient%3E%3ClinearGradient%20id%3D%22ring%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23222%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23444%22%2F%3E%3C%2FlinearGradient%3E%3Cstyle%3E%3C%21%5BCDATA%5B%23base%20%7B%20fill%3A%20url%28%23base%29%3B%20%7D%23ring%20%7B%20fill%3A%20url%28%23ring%29%3B%20%7D%23center%20%7B%20fill%3A%20url%28%23center%29%3B%20%7D%20%5D%5D%3E%3C%2Fstyle%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20id%3D%22base%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2230%22%20id%3D%22ring%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2225%22%20id%3D%22center%22%2F%3E%3C%2Fsvg%3E');
     text-align: center;
     color: white;
@@ -60,66 +54,67 @@ DIV.black {
 	background-size: cover;
 }
 
-DIV.checker-container {
+.checker-container {
     float: left;
     width: 7.142%;
-    height: 50%;
+    height: 45%;
     padding: 0px;
 }
 
-DIV.checker-container.valid-source:hover {
+.checker-container.valid-source:hover {
     background-color: rgb(0, 128, 0,0.5);
     cursor: pointer;
 }
 
-DIV.checker-container.valid-source:active,
-DIV.checker-container.valid-source.selected {
+.checker-container.valid-source:active,
+.checker-container.valid-source.selected {
     background-color: rgb(0, 100, 0,0.5);
 }
 
-DIV.checker-container.valid-destination {
+.checker-container.valid-destination {
     background-color: rgba(255, 255, 0, 0.5);
     cursor: pointer;
 }
 
-DIV.checker-container.valid-destination:hover {
+.checker-container.valid-destination:hover {
     background-color: rgba(255, 183, 0, 0.5);
 }
 
-DIV.checker-container.valid-destination:active {
+.checker-container.valid-destination:active {
     background-color: rgba(255, 183, 0, 0.5);
 }
 
-DIV.bar {
+.bar {
     background-color: #140d07c4;
 }
 
-DIV.home {
+.home {
     box-shadow:inset 0px 0px 0px 4px #140d07c4;
     
 }
 
-DIV.home.checker-container-top {
+.home.checker-container-top {
    /*border-left: 8px solid #140d07c4;*/
    
 }
 
-DIV.home.checker-container-bottom {
+.home.checker-container-bottom {
    /* border-right: 8px solid #140d07c4;*/
 }
 
-DIV.checker-container-bottom,
-DIV.checker-container-bottom>DIV {
+.checker-container-bottom,
+.checker-container-bottom {
     -moz-transform: rotate(180deg);
     -webkit-transform: rotate(180deg);
     -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
     
 }
 
-DIV.checker-container-top {
+.checker-container-top {
     
 }
-DIV.checker-container-bottom {
+.checker-container-bottom {
    
 }
 
@@ -135,49 +130,36 @@ BR.clear {
     clear: both;
 }
 
-DIV.side-container {
-    background: rgba(211, 211, 211, 0.2);
-}
 
-DIV.dice-container.active>DIV.die {
+
+.active .die {
     box-shadow: 0 0 5px rgb(0, 255, 0);
+    background-color:rgba(0, 255, 0, 0.4);
 }
 
-DIV.dice-container.dice-container-black>DIV.die {
-    background: black;
-    color: white;
-;
-}
 
-DIV.dice-container.dice-container-white>DIV.die {
-    background: white;
-    color: black;
-}
 
-DIV.dice-container DIV.die {
-    width: 20px;
-    height: 20px;
-    border-radius: 5px;
-    padding: 1px;
-    margin: 1px;
+.dice-container .die {
+    
+    border-radius: 5%;
     float: left;
 }
 
-DIV.dice-container DIV.die.die-uses-0 {
+.dice-container .die.die-uses-0 {
     opacity: 0.3;
 }
 
-DIV.dice-container DIV.die.die-uses-1,
-DIV.dice-container DIV.die.die-uses-2 {
+.dice-container .die.die-uses-1,
+.dice-container .die.die-uses-2 {
     opacity: 1.0;
 }
 
-DIV.dice-container DIV.die.die-uses-2::after {
+.dice-container .die.die-uses-2::after {
     content: 'x2';
     font-size: x-small;
 }
 
-DIV.status-container {
+.status-container {
     height: 385px;
     overflow-y: scroll;
    /* margin: 16px 4px;*/
@@ -185,15 +167,15 @@ DIV.status-container {
     display: none;
 }
 
-DIV.status-container::-webkit-scrollbar {
+.status-container::-webkit-scrollbar {
     width: 0.5em;
 }
 
-DIV.status-container::-webkit-scrollbar-track {
+.status-container::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.3);
 }
 
-DIV.status-container::-webkit-scrollbar-thumb {
+.status-container::-webkit-scrollbar-thumb {
     background-color: darkgrey;
     outline: 1px solid slategrey;
 }
@@ -206,20 +188,42 @@ DIV.status-container::-webkit-scrollbar-thumb {
     transition: all 1s ease-in-out;
     text-shadow: inherit;
 }
-.dices-container{
-    margin-left: 40%;
+
+.side-container {
+    background-color: rgba(211, 211, 211, 0.2);
+   
 }
+.dices-container{
+   display: flex;
+   flex-direction: row;
+   flex-wrap: wrap;
+   justify-content: center;
+   height:10%;
+  
+   
+}
+
+.dice-container.dice-container-black.die {
+    /*background: black;
+    color: white;*/
+    
+
+}
+
+.dice-container.dice-container-white.die {
+   /* background: white;
+    color: black;*/
+}
+
 /*
  * Dice.css v1.0
  * Code - MIT License - https://github.com/diafygi/dice-css
  * Images - Public Domain - https://openclipart.org/detail/105931/sixsided-dice-faces-lio-01
  */
- .dice{
-    display:inline-block;
-    min-height:1em;
-    padding-left:1em;
-    background-size:1em;
-    background-repeat:no-repeat;
+ .die{
+    height: 100%;
+    
+    
 }
 
  .dice-container-white .dice-1{content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' viewBox='0 0 77 77' height='21.6' width='21.6'%3E%3Cpath d='M1,26Q1,1 26,1h25Q76,1 76,26v25Q76,76 51,76h-25Q1,76 1,51z' style='fill:%23fff;stroke-width:1.5;stroke:%23000'/%3E%3Ccircle cx='38' cy='38' r='7.2' style='fill:%23000;stroke:none'/%3E%3C/svg%3E");}
@@ -235,3 +239,11 @@ DIV.status-container::-webkit-scrollbar-thumb {
  .dice-container-black .dice-4{content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' viewBox='0 0 77 77' height='21.6' width='21.6'%3E%3Cpath d='M1,26Q1,1 26,1h25Q76,1 76,26v25Q76,76 51,76h-25Q1,76 1,51z' style='fill:%23000;stroke-width:1.5;stroke:%23fff'/%3E%3Cg style='fill:%23fff;stroke:none'%3E%3Ccircle cx='20' cy='20' r='7.2'/%3E%3Ccircle cx='57' cy='57' r='7.2'/%3E%3Ccircle cx='57' cy='20' r='7.2'/%3E%3Ccircle cx='20' cy='57' r='7.2'/%3E%3C/g%3E%3C/svg%3E");}
  .dice-container-black .dice-5{content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' viewBox='0 0 77 77' height='21.6' width='21.6'%3E%3Cpath d='M1,26Q1,1 26,1h25Q76,1 76,26v25Q76,76 51,76h-25Q1,76 1,51z' style='fill:%23000;stroke-width:1.5;stroke:%23fff'/%3E%3Cg style='fill:%23fff;stroke:none'%3E%3Ccircle cx='20' cy='20' r='7.2'/%3E%3Ccircle cx='57' cy='57' r='7.2'/%3E%3Ccircle cx='57' cy='20' r='7.2'/%3E%3Ccircle cx='20' cy='57' r='7.2'/%3E%3Ccircle cx='38' cy='38' r='7.2'/%3E%3C/g%3E%3C/svg%3E");}
  .dice-container-black .dice-6{content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' viewBox='0 0 77 77' height='21.6' width='21.6'%3E%3Cpath d='M1,26Q1,1 26,1h25Q76,1 76,26v25Q76,76 51,76h-25Q1,76 1,51z' style='fill:%23000;stroke-width:1.5;stroke:%23fff'/%3E%3Cg style='fill:%23fff;stroke:none'%3E%3Ccircle cx='20' cy='20' r='7.2'/%3E%3Ccircle cx='57' cy='57' r='7.2'/%3E%3Ccircle cx='57' cy='20' r='7.2'/%3E%3Ccircle cx='20' cy='57' r='7.2'/%3E%3Ccircle cx='20' cy='38' r='7.2'/%3E%3Ccircle cx='57' cy='38' r='7.2'/%3E%3C/g%3E%3C/svg%3E");}
+
+ .rotate {
+
+    -moz-transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+ }
