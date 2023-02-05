@@ -17,7 +17,8 @@ DIV.game-container::after {
 }
 
 DIV.board {
- width: 100%;
+ 
+ height: 95%;
 }
 
 DIV.checker {
@@ -62,7 +63,7 @@ DIV.black {
 DIV.checker-container {
     float: left;
     width: 7.142%;
-    height: 45%;
+    height: 50%;
     padding: 0px;
 }
 
