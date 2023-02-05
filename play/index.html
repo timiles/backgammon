@@ -37,7 +37,7 @@
         let statusLogger = new StatusLogger();
         let GAME = new Game(BOARD, DICE, statusLogger, [blackIsComputer, whiteIsComputer]);
         var Backgammon = new Backgammon('backgammon', GAME);
-        if (myId != PlayerId.WHITE) {
+        if (myId == PlayerId.WHITE) {
             $('.board').addClass('rotate');
         }
         
