@@ -177,33 +177,44 @@ define("DiceComponents/Dice", ["require", "exports", "DiceComponents/Die", "Enum
         }
         Dice.prototype.rollToStart = function (statusLogger, onSuccess) {
             var _this = this;
-            var die1 = new Die_1.Die(this.diceRollGenerator.generateDiceRoll());
-            var die2 = new Die_1.Die(this.diceRollGenerator.generateDiceRoll());
+
+            if (window?.server) {
+                var die1 = new Die_1.Die(this.diceRollGenerator.generateDiceRoll());
+                var die2 = new Die_1.Die(this.diceRollGenerator.generateDiceRoll());
+                if (die1.value == die2.value) {
+                    die1.value == 6 ? die2.value = 5 : die2.value = die2.value - 1;
+                }
+                alert('Black' + die1.value);
+                alert('White' + die2.value);
+            } else {
+                var die1 = new Die_1.Die(this.diceRollGenerator.generateDiceRoll());
+                var die2 = new Die_1.Die(this.diceRollGenerator.generateDiceRoll());
+                die1.value = parseInt(window.prompt("Black Start Dice"));
+                die2.value = parseInt(window.prompt("White Start Dice"));
+            }
+
             if (this.onSetStartingDiceRoll) {
                 this.onSetStartingDiceRoll(Enums_3.PlayerId.BLACK, die1);
                 this.onSetStartingDiceRoll(Enums_3.PlayerId.WHITE, die2);
             }
             statusLogger.logInfo("BLACK rolls " + die1.value);
             statusLogger.logInfo("WHITE rolls " + die2.value);
-            if (die1.value === die2.value) {
-                statusLogger.logInfo('DRAW! Roll again');
-                setTimeout(function () { _this.rollToStart(statusLogger, onSuccess); }, 1000);
-            }
-            else {
-                var successfulPlayerId_1 = die1.value > die2.value ? Enums_3.PlayerId.BLACK : Enums_3.PlayerId.WHITE;
-                statusLogger.logInfo(Enums_3.PlayerId[successfulPlayerId_1] + " wins the starting roll");
-                setTimeout(function () {
-                    _this.die1 = die1;
-                    _this.die2 = die2;
-                    if (_this.onSetDiceRolls) {
-                        _this.onSetDiceRolls(successfulPlayerId_1, die1, die2);
-                    }
-                    if (_this.onSetActive) {
-                        _this.onSetActive(successfulPlayerId_1, true);
-                    }
-                    onSuccess(successfulPlayerId_1);
-                }, 1000);
-            }
+            
+
+            var successfulPlayerId_1 = die1.value > die2.value ? Enums_3.PlayerId.BLACK : Enums_3.PlayerId.WHITE;
+            statusLogger.logInfo(Enums_3.PlayerId[successfulPlayerId_1] + " wins the starting roll");
+            setTimeout(function () {
+                _this.die1 = die1;
+                _this.die2 = die2;
+                if (_this.onSetDiceRolls) {
+                    _this.onSetDiceRolls(successfulPlayerId_1, die1, die2);
+                }
+                if (_this.onSetActive) {
+                    _this.onSetActive(successfulPlayerId_1, true);
+                }
+                onSuccess(successfulPlayerId_1);
+            }, 1000);
+
         };
         Dice.prototype.roll = function (playerId) {
             this.die1 = new Die_1.Die(this.diceRollGenerator.generateDiceRoll());
@@ -531,7 +542,7 @@ define("Game", ["require", "exports", "BoardComponents/Bar", "BoardComponents/Ho
                 console.log(pointId);
                 console.log(_this.currentPlayerId);
                 var checkerContainer = _this.board.checkerContainers[pointId];
-                
+
                 if (_this.currentSelectedCheckerContainer == undefined) {
                     if (checkerContainer.checkers[_this.currentPlayerId] == 0) {
                         // if no pieces here, exit
@@ -647,6 +658,7 @@ define("Game", ["require", "exports", "BoardComponents/Bar", "BoardComponents/Ho
                 // if we're still here, 
                 this.switchPlayer();
                 this.dice.roll(this.currentPlayerId);
+                console.warn(this.dice);
                 this.evaluateBoard();
                 this.switchPlayerIfNoValidMovesRemain();
                 return;
@@ -775,11 +787,11 @@ define("BoardComponents/Board", ["require", "exports", "Enums", "Game", "BoardCo
         Board.prototype.initialise = function (layout) {
             if (layout === undefined) {
                 layout = [[0, 0],
-                    [2, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 5],
-                    [0, 0], [0, 3], [0, 0], [0, 0], [0, 0], [5, 0],
-                    [0, 5], [0, 0], [0, 0], [0, 0], [3, 0], [0, 0],
-                    [5, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 2],
-                    [0, 0]];
+                [2, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 5],
+                [0, 0], [0, 3], [0, 0], [0, 0], [0, 0], [5, 0],
+                [0, 5], [0, 0], [0, 0], [0, 0], [3, 0], [0, 0],
+                [5, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 2],
+                [0, 0]];
             }
             for (var pointId = 0; pointId < 26; pointId++) {
                 for (var _i = 0, _a = [Enums_8.PlayerId.BLACK, Enums_8.PlayerId.WHITE]; _i < _a.length; _i++) {
@@ -910,7 +922,7 @@ define("UI/CheckerContainerUI", ["require", "exports", "Enums", "UI/Utils"], fun
             var _this = this;
             this.containerDiv = document.createElement('div');
             var side = (isTopSide ? 'top' : 'bottom');
-           // containerType == 'bar' && (side = null);
+            // containerType == 'bar' && (side = null);
             containerType == 'home' && (side = null);
             this.containerDiv.className = "checker-container checker-container-" + side + " " + containerType;
             this.containerDiv.onclick = function () { _this.onSelected(); };
@@ -1078,7 +1090,7 @@ define("UI/DiceUI", ["require", "exports", "UI/Utils", "Enums"], function (requi
         };
         DiceUI.createDie = function (die) {
             var div = document.createElement('div');
-            div.className = 'die dice die-uses-' + die.remainingUses +'  dice-'+die.value.toString();
+            div.className = 'die dice die-uses-' + die.remainingUses + '  dice-' + die.value.toString();
             div.innerText = die.value.toString();
             return div;
         };

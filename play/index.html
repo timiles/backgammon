@@ -4,10 +4,11 @@
 <head>
     <title>Backgammon</title>
     <link rel="stylesheet" type="text/css" href="css/ui.css" />
+    <script>var exports = {};</script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script src="js/url-search-params.js"></script>
     <script src="js/require.js"></script>
-    <script src="js/backgammon.js"></script>
+    <script src="srx/Backgammon.js"></script>
     <style>
         BODY {
             font-family: Arial;
@@ -16,21 +17,29 @@
 </head>
 
 <body>
-    <h1>
-        Backgammon</h1>
+    <!-- <h1> Backgammon</h1> -->
 
     <div id="backgammon"></div>
-
+    <script>var exports = {};</script>
     <script>
         var queryStringParams = new URLSearchParams(window.location.search);
         var blackIsComputer = queryStringParams.get('black') === 'computer';
         var whiteIsComputer = queryStringParams.get('white') === 'computer';
-        require(['Backgammon'], function(b) {
-            new b.Backgammon('backgammon', blackIsComputer, whiteIsComputer);
-        });
+        window.server = queryStringParams.get('server');
+
+            //GAME.board.onPointSelected(7);
+            
+            var myId = PlayerId.BLACK;
+            var remote = {is:true, whitestart:5, blackstart:6, id:myId };
+            var BOARD = new Board();
+            var DICE = new Dice(new DiceRollGenerator(),remote);
+            let statusLogger = new StatusLogger();
+            let GAME = new Game(BOARD, DICE, statusLogger, [blackIsComputer, whiteIsComputer]);
+            var Backgammon = new Backgammon('backgammon', GAME);
+        
     </script>
 
-    <p><a href="../tests/SpecRunner.html">run tests</a></p>
+   <!-- <p><a href="../tests/SpecRunner.html">run tests</a></p> -->
 </body>
 
 </html>
