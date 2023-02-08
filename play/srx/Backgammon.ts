@@ -1,10 +1,5 @@
 
  declare var $;
- declare var server;
-
- function send(data){
-    alert('SEND '+data);
- }
 
  class Backgammon {
     

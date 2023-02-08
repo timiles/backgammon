@@ -1,5 +1,7 @@
 <!DOCTYPE html5>
 <html xmlns="http://www.w3.org/1999/xhtml">
+<meta name="viewport"
+    content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
 
 <head>
     <title>Backgammon</title>
@@ -22,6 +24,15 @@
     <div id="backgammon"></div>
     <script>var exports = {};</script>
     <script>
+
+        const sendData = async () => {
+            window.ReactNativeWebView.postMessage('Data from WebView / Website');
+        };
+        window.addEventListener("message", message => {
+            alert(message.data)
+
+        });
+
         var queryStringParams = new URLSearchParams(window.location.search);
         var blackIsComputer = queryStringParams.get('black') === 'computer';
         var whiteIsComputer = queryStringParams.get('white') === 'computer';
@@ -30,7 +41,7 @@
         //GAME.board.onPointSelected(7);
 
         var myId = PlayerId.BLACK;
-       
+
         var remote = { is: true, whitestart: 5, blackstart: 6, id: myId };
         var BOARD = new Board();
         var DICE = new Dice(new DiceRollGenerator(), remote);
@@ -40,7 +51,7 @@
         if (myId == PlayerId.WHITE) {
             $('.board').addClass('rotate');
         }
-        
+
 
     </script>
 
