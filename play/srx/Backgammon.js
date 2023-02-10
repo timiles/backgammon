@@ -16,9 +16,18 @@ var __extends = (this && this.__extends) || (function () {
 })();
 exports.__esModule = true;
 exports.PossibleGo = void 0;
-function send(data) {
-    alert('SEND ' + data);
-}
+var PlayerId;
+(function (PlayerId) {
+    PlayerId[PlayerId["BLACK"] = 0] = "BLACK";
+    PlayerId[PlayerId["WHITE"] = 1] = "WHITE";
+})(PlayerId || (PlayerId = {}));
+;
+var PointId;
+(function (PointId) {
+    PointId[PointId["HOME"] = 0] = "HOME";
+    PointId[PointId["BAR"] = 25] = "BAR";
+})(PointId || (PointId = {}));
+;
 var Backgammon = /** @class */ (function () {
     function Backgammon(containerId, game) {
         var ui = new GameUI(containerId, game);
@@ -198,11 +207,13 @@ var Board = /** @class */ (function () {
     return Board;
 }());
 var Game = /** @class */ (function () {
-    function Game(board, dice, statusLogger, isComputerPlayer) {
+    function Game(board, dice, statusLogger, isComputerPlayer, remote, sendData) {
         if (isComputerPlayer === void 0) { isComputerPlayer = [false, false]; }
         var _this = this;
         this.board = board;
         this.dice = dice;
+        this.remote = remote;
+        this.sendData = sendData;
         this.statusLogger = statusLogger;
         console.warn(this.board);
         this.players = new Array(2);
@@ -229,8 +240,15 @@ var Game = /** @class */ (function () {
                 }
             }
         };
-        this.board.onPointSelected = function (pointId) {
-            //alert(pointId);
+        this.board.onPointSelected = function (pointId, remoteClick) {
+            if (_this.remote.is) {
+                if ((_this.remote.id != _this.currentPlayerId) && !remoteClick) {
+                    return;
+                }
+                else if (!remoteClick) {
+                    _this.sendData({ type: "pointId", value: pointId });
+                }
+            }
             var checkerContainer = _this.board.checkerContainers[pointId];
             if (_this.currentSelectedCheckerContainer == undefined) {
                 if (checkerContainer.checkers[_this.currentPlayerId] == 0) {
@@ -342,6 +360,12 @@ var Game = /** @class */ (function () {
         var _this = this;
         if (this.board.checkerContainers[PointId.HOME].checkers[this.currentPlayerId] === 15) {
             this.statusLogger.logInfo("".concat(PlayerId[this.currentPlayerId], " WINS!"));
+            console.warn("".concat(PlayerId[this.currentPlayerId], " WINS!"));
+            setTimeout(function () {
+                window.location = 'index.html?again=var remote = { is: true, nonce:' +
+                    _this.remote.nonce + 9 + ', id: ' +
+                    _this.remote.id + ', starter:' + _this.currentPlayerId + ' };';
+            }, 3000);
             return;
         }
         if (!this.checkIfValidMovesRemain()) {
@@ -542,24 +566,32 @@ var Dice = /** @class */ (function () {
         this.diceRollGenerator = diceRollGenerator;
         this.remote = remote;
     }
-    Dice.prototype.nextDices = function (d1, d2) {
-        this.dieNext1 = new Die(d1);
-        this.dieNext2 = new Die(d2);
+    Dice.prototype.nextDices = function () {
+        this.pseudo = this.pseudo * 16807 % 2147483647;
+        return (this.pseudo % 6) + 1;
     };
     Dice.prototype.rollToStart = function (statusLogger, onSuccess) {
         var _this = this;
         var die1 = new Die(this.diceRollGenerator.generateDiceRoll());
         var die2 = new Die(this.diceRollGenerator.generateDiceRoll());
         if (this.remote.is) {
-            die1.value = this.remote.blackstart;
-            die2.value = this.remote.whitestart;
+            this.pseudo = this.remote.nonce;
+            die1.value = this.nextDices();
+            die2.value = this.nextDices();
         }
         if (die1.value == die2.value) {
             die1.value == 6 ? die2.value = 1 : die2.value = die1.value + 1;
         }
         if (this.onSetStartingDiceRoll) {
-            this.onSetStartingDiceRoll(PlayerId.BLACK, die1);
-            this.onSetStartingDiceRoll(PlayerId.WHITE, die2);
+            if (this.remote.starter != undefined) {
+                var successfulPlayerId = !this.remote.starter ? PlayerId.BLACK : PlayerId.WHITE;
+                this.onSetStartingDiceRoll(successfulPlayerId, die1);
+                this.onSetStartingDiceRoll(successfulPlayerId, die2);
+            }
+            else {
+                this.onSetStartingDiceRoll(PlayerId.BLACK, die1);
+                this.onSetStartingDiceRoll(PlayerId.WHITE, die2);
+            }
         }
         statusLogger.logInfo("BLACK rolls ".concat(die1.value));
         statusLogger.logInfo("WHITE rolls ".concat(die2.value));
@@ -569,6 +601,9 @@ var Dice = /** @class */ (function () {
         }
         else {
             var successfulPlayerId_1 = die1.value > die2.value ? PlayerId.BLACK : PlayerId.WHITE;
+            if (this.remote.starter != undefined) {
+                successfulPlayerId_1 = !this.remote.starter ? PlayerId.BLACK : PlayerId.WHITE;
+            }
             statusLogger.logInfo("".concat(PlayerId[successfulPlayerId_1], " wins the starting roll"));
             setTimeout(function () {
                 _this.die1 = die1;
@@ -589,8 +624,8 @@ var Dice = /** @class */ (function () {
             this.die2 = new Die(this.diceRollGenerator.generateDiceRoll());
         }
         else {
-            this.die1 = this.dieNext1;
-            this.die2 = this.dieNext2;
+            this.die1 = new Die(this.nextDices());
+            this.die2 = new Die(this.nextDices());
         }
         var isDouble = (this.die1.value === this.die2.value);
         // console.log(this.die1.remainingUses);
@@ -631,16 +666,6 @@ var DiceRollGenerator = /** @class */ (function () {
     };
     return DiceRollGenerator;
 }());
-var PlayerId;
-(function (PlayerId) {
-    PlayerId[PlayerId["BLACK"] = 0] = "BLACK";
-    PlayerId[PlayerId["WHITE"] = 1] = "WHITE";
-})(PlayerId || (PlayerId = {}));
-var PointId;
-(function (PointId) {
-    PointId[PointId["HOME"] = 0] = "HOME";
-    PointId[PointId["BAR"] = 25] = "BAR";
-})(PointId || (PointId = {}));
 var StatusLogger = /** @class */ (function () {
     function StatusLogger() {
     }
@@ -808,16 +833,16 @@ var EventBinders = /** @class */ (function () {
             return (playerId === PlayerId.BLACK) ? boardUI.blackHomeUI : boardUI.whiteHomeUI;
         };
         // wire up UI events
-        boardUI.blackHomeUI.onSelected = function () { return board.onPointSelected(PointId.HOME); };
-        boardUI.whiteHomeUI.onSelected = function () { return board.onPointSelected(PointId.HOME); };
+        boardUI.blackHomeUI.onSelected = function () { return board.onPointSelected(PointId.HOME, false); };
+        boardUI.whiteHomeUI.onSelected = function () { return board.onPointSelected(PointId.HOME, false); };
         boardUI.blackBarUI.onInspected = function (on) { return board.onPointInspected(PointId.BAR, on); };
-        boardUI.blackBarUI.onSelected = function () { return board.onPointSelected(PointId.BAR); };
+        boardUI.blackBarUI.onSelected = function () { return board.onPointSelected(PointId.BAR, false); };
         boardUI.whiteBarUI.onInspected = function (on) { return board.onPointInspected(PointId.BAR, on); };
-        boardUI.whiteBarUI.onSelected = function () { return board.onPointSelected(PointId.BAR); };
+        boardUI.whiteBarUI.onSelected = function () { return board.onPointSelected(PointId.BAR, false); };
         var bindPointUIEvents = function (pointId) {
             var pointUI = boardUI.pointUIs[pointId - 1];
             pointUI.onInspected = function (on) { board.onPointInspected(pointId, on); };
-            pointUI.onSelected = function () { board.onPointSelected(pointId); };
+            pointUI.onSelected = function () { board.onPointSelected(pointId, false); };
         };
         for (var i = 1; i < 25; i++) {
             bindPointUIEvents(i);

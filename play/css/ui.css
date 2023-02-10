@@ -248,9 +248,38 @@ BR.clear {
  .dice-container-black .dice-6{content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' viewBox='0 0 77 77' height='21.6' width='21.6'%3E%3Cpath d='M1,26Q1,1 26,1h25Q76,1 76,26v25Q76,76 51,76h-25Q1,76 1,51z' style='fill:%23000;stroke-width:1.5;stroke:%23fff'/%3E%3Cg style='fill:%23fff;stroke:none'%3E%3Ccircle cx='20' cy='20' r='7.2'/%3E%3Ccircle cx='57' cy='57' r='7.2'/%3E%3Ccircle cx='57' cy='20' r='7.2'/%3E%3Ccircle cx='20' cy='57' r='7.2'/%3E%3Ccircle cx='20' cy='38' r='7.2'/%3E%3Ccircle cx='57' cy='38' r='7.2'/%3E%3C/g%3E%3C/svg%3E");}
 
  .rotate {
+    -moz-transform: scaleY(-1);
+    -webkit-transform: scaleY(-1);
+    -ms-transform: scaleY(-1);
+    transform: scaleY(-1);
+ }
 
+ .rotate .checker {
+    -moz-transform: scaleY(-1);
+    -webkit-transform: scaleY(-1);
+    -ms-transform: scaleY(-1);
+    transform: scaleY(-1);
+ }
+
+.checker-container-bottom .checker{
     -moz-transform: rotate(180deg);
     -webkit-transform: rotate(180deg);
     -ms-transform: rotate(180deg);
     transform: rotate(180deg);
- }
+}
+
+
+.rotate .checker-container-bottom .checker{
+    -moz-transform: rotate(0)!important;
+    -webkit-transform: rotate(0)!important;
+    -ms-transform: rotate(0)!important;
+    transform: rotate(0)!important;
+}
+.rotate .checker-container-bottom {
+    -moz-transform: inherit!important;
+    -webkit-transform: inherit!important;
+    -ms-transform: inherit!important;
+    transform: inherit!important;
+
+}
+

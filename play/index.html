@@ -25,8 +25,9 @@
     <script>var exports = {};</script>
     <script>
 
-        const sendData = async () => {
-            window.ReactNativeWebView.postMessage('Data from WebView / Website');
+        const sendData = async (message) => {
+            window.ReactNativeWebView.postMessage(JSON.stringify(message));
+            console.warn(JSON.stringify(message));
         };
         window.addEventListener("message", message => {
             alert(message.data)
@@ -36,23 +37,22 @@
         var queryStringParams = new URLSearchParams(window.location.search);
         var blackIsComputer = queryStringParams.get('black') === 'computer';
         var whiteIsComputer = queryStringParams.get('white') === 'computer';
-        window.server = queryStringParams.get('server');
-
+        var again = queryStringParams.get('again');
         //GAME.board.onPointSelected(7);
 
-        var myId = PlayerId.BLACK;
+        // var myId = PlayerId.WHITE;
+        // var remote = { is: true, nonce:128, id: PlayerId.WHITE };
 
-        var remote = { is: true, whitestart: 5, blackstart: 6, id: myId };
-        var BOARD = new Board();
-        var DICE = new Dice(new DiceRollGenerator(), remote);
-        let statusLogger = new StatusLogger();
-        let GAME = new Game(BOARD, DICE, statusLogger, [blackIsComputer, whiteIsComputer]);
-        var Backgammon = new Backgammon('backgammon', GAME);
-        if (myId == PlayerId.WHITE) {
-            $('.board').addClass('rotate');
+        var init = "var BOARD = new Board();"+
+        "var DICE = new Dice(new DiceRollGenerator(), remote);"+
+        "var statusLogger = new StatusLogger();"+
+        "var GAME = new Game(BOARD, DICE, statusLogger, [blackIsComputer, whiteIsComputer], remote, sendData);"+
+        "var Backgammon = new Backgammon('backgammon', GAME);"+
+        "if (remote.id == PlayerId.BLACK) {$('.board').addClass('rotate');}"
+
+        if (again){
+            eval(again+init)
         }
-
-
     </script>
 
     <!-- <p><a href="../tests/SpecRunner.html">run tests</a></p> -->

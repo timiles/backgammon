@@ -1,10 +1,15 @@
 
- declare var $;
+declare var $;
 
- class Backgammon {
-    
-    constructor(containerId: string, game: Game ) {
-                
+enum PlayerId { BLACK, WHITE };
+enum PointId { HOME = 0, BAR = 25 };
+
+
+
+class Backgammon {
+
+    constructor(containerId: string, game: Game) {
+
         let ui = new GameUI(containerId, game);
         game.board.initialise();
 
@@ -15,12 +20,12 @@
     }
 }
 
- class Board {
+class Board {
 
     checkerContainers: Array<CheckerContainer>;
 
     onPointInspected: (pointId: number, on: boolean) => void;
-    onPointSelected: (pointId: number) => void;
+    onPointSelected: (pointId: number, remoteClick: boolean) => void;
 
     onCheckerCountChanged: (pointId: number, playerId: PlayerId, count: number) => void;
     onSetBarAsSelected: (playerId: PlayerId, on: boolean) => void;
@@ -98,11 +103,11 @@
     initialise(layout?: number[][]): void {
         if (layout === undefined) {
             layout = [[0, 0],
-                [2, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 5],
-                [0, 0], [0, 3], [0, 0], [0, 0], [0, 0], [5, 0],
-                [0, 5], [0, 0], [0, 0], [0, 0], [3, 0], [0, 0],
-                [5, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 2],
-                [0, 0]];
+            [2, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 5],
+            [0, 0], [0, 3], [0, 0], [0, 0], [0, 0], [5, 0],
+            [0, 5], [0, 0], [0, 0], [0, 0], [3, 0], [0, 0],
+            [5, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 2],
+            [0, 0]];
         }
 
         for (let pointId = 0; pointId < 26; pointId++) {
@@ -214,20 +219,24 @@
         (<Home>this.checkerContainers[PointId.HOME]).setValidDestination(PlayerId.WHITE, false);
     }
 }
- class Game {
+class Game {
 
     board: Board;
     dice: Dice;
+    remote: any;
     statusLogger: StatusLogger;
+    sendData: any;
 
     currentPlayerId: PlayerId;
     players: Player[];
     currentSelectedCheckerContainer: CheckerContainer;
 
-    constructor(board: Board, dice: Dice, statusLogger: StatusLogger, isComputerPlayer = [false, false]) {
+    constructor(board: Board, dice: Dice, statusLogger: StatusLogger, isComputerPlayer = [false, false], remote: any, sendData: any) {
 
         this.board = board;
         this.dice = dice;
+        this.remote = remote;
+        this.sendData = sendData;
         this.statusLogger = statusLogger;
         console.warn(this.board);
         this.players = new Array<Player>(2);
@@ -256,8 +265,16 @@
             }
         };
 
-        this.board.onPointSelected = (pointId: number) => {
-            //alert(pointId);
+        this.board.onPointSelected = (pointId: number, remoteClick: boolean) => {
+
+            if (this.remote.is) {
+                if ((this.remote.id != this.currentPlayerId) && !remoteClick) {
+                    return;
+                } else if (!remoteClick) {
+                    this.sendData({ type: "pointId", value: pointId });
+                }
+            }
+
             let checkerContainer = this.board.checkerContainers[pointId];
             if (this.currentSelectedCheckerContainer == undefined) {
                 if (checkerContainer.checkers[this.currentPlayerId] == 0) {
@@ -284,7 +301,7 @@
                 if ((canUseDie1 != canUseDie2) ||
                     (this.dice.die1.value === this.dice.die2.value) ||
                     (canBearOff(this.dice.die1) && canBearOff(this.dice.die2))) {
-                    
+
                     if (canUseDie1) {
                         this.board.move(new Move(this.currentPlayerId, checkerContainer.pointId, this.dice.die1.value));
                         this.dice.die1.decrementRemainingUses();
@@ -384,6 +401,13 @@
     private switchPlayerIfNoValidMovesRemain(): void {
         if (this.board.checkerContainers[PointId.HOME].checkers[this.currentPlayerId] === 15) {
             this.statusLogger.logInfo(`${PlayerId[this.currentPlayerId]} WINS!`);
+            console.warn(`${PlayerId[this.currentPlayerId]} WINS!`);
+            setTimeout(() => {
+
+                window.location = 'index.html?again=var remote = { is: true, nonce:' +
+                    this.remote.nonce + 9 + ', id: ' +
+                    this.remote.id + ', starter:' + this.currentPlayerId + ' };'
+            }, 3000);
             return;
         }
         if (!this.checkIfValidMovesRemain()) {
@@ -454,7 +478,7 @@
         this.statusLogger.logInfo(`${PlayerId[this.currentPlayerId]} to move`);
     }
 }
- class Move {
+class Move {
 
     constructor(public playerId: PlayerId, public sourcePointId: number, public numberOfPointsToMove: number) {
     }
@@ -490,26 +514,26 @@
     }
 }
 
- class CheckerContainer {
-    
+class CheckerContainer {
+
     pointId: number
     checkers: Array<number>;
-    
+
     constructor(pointId: number) {
         this.pointId = pointId;
         this.checkers = [0, 0];
     }
-    
+
     decrement(player: PlayerId): void {
         this.checkers[player]--;
     }
-    
+
     increment(player: PlayerId, count: number): void {
         this.checkers[player] += count;
     }
 }
- class Bar extends CheckerContainer {
-    
+class Bar extends CheckerContainer {
+
     onCheckerCountChanged: (PlayerId, number) => void;
     onDecrement: (PlayerId, number) => void;
     onSetSelected: (PlayerId, boolean) => void;
@@ -518,34 +542,34 @@
     constructor() {
         super(PointId.BAR);
     }
-    
+
     decrement(playerId: PlayerId): void {
         super.decrement(playerId);
         if (this.onCheckerCountChanged) {
             this.onCheckerCountChanged(playerId, this.checkers[playerId]);
         }
     }
-    
+
     increment(playerId: PlayerId, count: number): void {
         super.increment(playerId, count);
         if (this.onCheckerCountChanged) {
             this.onCheckerCountChanged(playerId, this.checkers[playerId]);
         }
     }
-    
+
     setSelected(playerId: PlayerId, on: boolean) {
         if (this.onSetSelected) {
             this.onSetSelected(playerId, on);
         }
     }
-    
+
     setValidSource(playerId: PlayerId, on: boolean) {
         if (this.onSetValidSource) {
             this.onSetValidSource(playerId, on);
         }
     }
 }
- class Home extends CheckerContainer {
+class Home extends CheckerContainer {
 
     onIncrement: (PlayerId, number) => void;
     onSetValidDestination: (PlayerId, boolean) => void;
@@ -567,7 +591,7 @@
         }
     }
 }
- class Point extends CheckerContainer {
+class Point extends CheckerContainer {
 
     onCheckerCountChanged: (PlayerId, number) => void;
     onSetSelected: (boolean) => void;
@@ -611,13 +635,14 @@
     }
 }
 
- class Dice {
+class Dice {
 
     diceRollGenerator: CanGenerateDiceRoll;
     die1: Die;
     die2: Die;
     dieNext1: Die;
     dieNext2: Die;
+    pseudo: number;
     remote: any;
 
     onSetStartingDiceRoll: (playerId: PlayerId, die: Die) => void;
@@ -629,29 +654,36 @@
         this.remote = remote;
     }
 
-    nextDices(d1,d2){
-        this.dieNext1 = new Die(d1);
-        this.dieNext2 = new Die(d2);
+    nextDices() {
+        this.pseudo = this.pseudo * 16807 % 2147483647;
+        return (this.pseudo % 6) + 1;
     }
     rollToStart(statusLogger: StatusLogger, onSuccess: (successfulPlayerId: PlayerId) => void) {
 
         let die1 = new Die(this.diceRollGenerator.generateDiceRoll());
         let die2 = new Die(this.diceRollGenerator.generateDiceRoll());
-        
-        if(this.remote.is){
-        die1.value = this.remote.blackstart;
-        die2.value = this.remote.whitestart;
+
+        if (this.remote.is) {
+            this.pseudo = this.remote.nonce;
+            die1.value = this.nextDices();
+            die2.value = this.nextDices();
 
         }
 
-        if(die1.value == die2.value){
-            die1.value == 6?die2.value=1:die2.value=die1.value+1;
+        if (die1.value == die2.value) {
+            die1.value == 6 ? die2.value = 1 : die2.value = die1.value + 1;
         }
 
-        
         if (this.onSetStartingDiceRoll) {
-            this.onSetStartingDiceRoll(PlayerId.BLACK, die1);
-            this.onSetStartingDiceRoll(PlayerId.WHITE, die2);
+ 
+            if(this.remote.starter != undefined){
+                let successfulPlayerId = !this.remote.starter ? PlayerId.BLACK : PlayerId.WHITE;
+                this.onSetStartingDiceRoll(successfulPlayerId, die1);
+                this.onSetStartingDiceRoll(successfulPlayerId, die2);
+            }else{
+                this.onSetStartingDiceRoll(PlayerId.BLACK, die1);
+                this.onSetStartingDiceRoll(PlayerId.WHITE, die2);
+            }
         }
 
         statusLogger.logInfo(`BLACK rolls ${die1.value}`);
@@ -663,6 +695,9 @@
         }
         else {
             let successfulPlayerId = die1.value > die2.value ? PlayerId.BLACK : PlayerId.WHITE;
+            if(this.remote.starter != undefined){
+                successfulPlayerId = !this.remote.starter ? PlayerId.BLACK : PlayerId.WHITE;
+            }
             statusLogger.logInfo(`${PlayerId[successfulPlayerId]} wins the starting roll`);
             setTimeout(() => {
                 this.die1 = die1;
@@ -679,20 +714,20 @@
     }
 
     roll(playerId: PlayerId): void {
-        
-        if(!this.remote.is){
+
+        if (!this.remote.is) {
             this.die1 = new Die(this.diceRollGenerator.generateDiceRoll());
             this.die2 = new Die(this.diceRollGenerator.generateDiceRoll());
-        }else{
+        } else {
 
-            this.die1 = this.dieNext1;
-            this.die2 = this.dieNext2;
+            this.die1 = new Die(this.nextDices());
+            this.die2 = new Die(this.nextDices());
         }
 
         let isDouble = (this.die1.value === this.die2.value);
 
-       // console.log(this.die1.remainingUses);
-       // console.log(this.die2.remainingUses);
+        // console.log(this.die1.remainingUses);
+        // console.log(this.die2.remainingUses);
 
         if (isDouble) {
             this.die1.remainingUses = 2;
@@ -711,16 +746,16 @@
 
 }
 
- class Die {
+class Die {
     value: number;
     remainingUses: number;
     onChange: (d: Die) => void;
-    
+
     constructor(value: number) {
         this.value = value;
         this.remainingUses = 1;
     }
-    
+
     decrementRemainingUses(): void {
         this.remainingUses--;
         if (this.onChange) {
@@ -728,51 +763,50 @@
         }
     }
 }
- interface CanGenerateDiceRoll {
+interface CanGenerateDiceRoll {
     generateDiceRoll(): number;
 }
 
- class DiceRollGenerator implements CanGenerateDiceRoll {
-    
+class DiceRollGenerator implements CanGenerateDiceRoll {
+
     generateDiceRoll(): number {
-        return Math.floor(Math.random() * 6) + 1;        
+        return Math.floor(Math.random() * 6) + 1;
     }
 }
- enum PlayerId { BLACK, WHITE }
- enum PointId { HOME = 0, BAR = 25 }
 
- class StatusLogger {
-    
+
+class StatusLogger {
+
     onLogInfo: (info: string) => void;
-    
+
     logInfo(info: string) {
         if (this.onLogInfo) {
             this.onLogInfo(info);
-        } 
+        }
     }
 }
 
 
 class BoardUI {
-    
+
     containerDiv: HTMLDivElement;
     blackHomeUI: HomeUI;
     whiteHomeUI: HomeUI;
     pointUIs: Array<PointUI>;
     blackBarUI: BarUI;
     whiteBarUI: BarUI;
-    
+
     constructor(gameContainerId: string) {
-        
+
         this.containerDiv = document.createElement('div');
         Utils.removeAllChildren(this.containerDiv);
         this.containerDiv.className = 'board';
-        
+
         this.blackHomeUI = new HomeUI(PlayerId.BLACK);
         this.blackHomeUI.containerDiv.id = `${gameContainerId}_blackhome`;
         this.whiteHomeUI = new HomeUI(PlayerId.WHITE);
         this.whiteHomeUI.containerDiv.id = `${gameContainerId}_whitehome`;
-        
+
         this.pointUIs = new Array<PointUI>(24);
         for (let i = 0; i < this.pointUIs.length; i++) {
             let colour = (i % 2 == 0) ? 'black' : 'white';
@@ -780,7 +814,7 @@ class BoardUI {
             this.pointUIs[i] = new PointUI(colour, isTopSide);
             this.pointUIs[i].containerDiv.id = `${gameContainerId}_point${i + 1}`;
         }
-        
+
         this.blackBarUI = new BarUI(PlayerId.BLACK);
         this.whiteBarUI = new BarUI(PlayerId.WHITE);
 
@@ -816,7 +850,7 @@ class BoardUI {
         this.containerDiv.appendChild(this.whiteHomeUI.containerDiv);
         this.containerDiv.appendChild(BoardUI.createClearBreak());
     }
-    
+
     private static createClearBreak() {
         let br = document.createElement('br');
         br.className = 'clear';
@@ -864,7 +898,7 @@ class CheckerContainerUI {
         $(this.containerDiv).toggleClass('valid-destination', on);
     }
 }
- class BarUI extends CheckerContainerUI {
+class BarUI extends CheckerContainerUI {
 
     onInspected: (on: boolean) => void;
 
@@ -876,54 +910,54 @@ class CheckerContainerUI {
     }
 }
 
- class DiceUI {
-    
+class DiceUI {
+
     containerDiv: HTMLDivElement;
     die1: Die;
     die2: Die;
-    
-    constructor(player: PlayerId) {        
+
+    constructor(player: PlayerId) {
         this.containerDiv = document.createElement('div');
         this.containerDiv.className = `dice-container dice-container-${PlayerId[player].toLowerCase()}`;
     }
-    
+
     setStartingDiceRoll(die: Die) {
         Utils.removeAllChildren(this.containerDiv);
         this.containerDiv.appendChild(DiceUI.createDie(die));
     }
-    
+
     setDiceRolls(die1: Die, die2: Die) {
         this.die1 = die1;
         this.die1.onChange = () => { this.redraw(); };
         this.die2 = die2;
         this.die2.onChange = () => { this.redraw(); };
-        
+
         this.redraw();
     }
-    
+
     setActive(active: boolean) {
         if (active) {
             $(this.containerDiv).addClass('active');
         }
         else {
-            $(this.containerDiv).removeClass('active');            
+            $(this.containerDiv).removeClass('active');
         }
     }
-    
+
     private redraw(): void {
         Utils.removeAllChildren(this.containerDiv);
         this.containerDiv.appendChild(DiceUI.createDie(this.die1));
         this.containerDiv.appendChild(DiceUI.createDie(this.die2));
     }
-    
+
     private static createDie(die: Die): HTMLDivElement {
         let div = document.createElement('div');
-        div.className = 'die die-uses-' + die.remainingUses + ' dice-'+die.value;
+        div.className = 'die die-uses-' + die.remainingUses + ' dice-' + die.value;
         div.innerText = die.value.toString();
         return div;
     }
 }
- class EventBinders {
+class EventBinders {
     static bindGame(game: Game, gameUI: GameUI): void {
         EventBinders.bindBoardEvents(game.board, gameUI.boardUI);
         EventBinders.bindDiceEvents(game.dice, gameUI.blackDiceUI, gameUI.whiteDiceUI);
@@ -940,17 +974,17 @@ class CheckerContainerUI {
         }
 
         // wire up UI events
-        boardUI.blackHomeUI.onSelected = () => board.onPointSelected(PointId.HOME);
-        boardUI.whiteHomeUI.onSelected = () => board.onPointSelected(PointId.HOME);
+        boardUI.blackHomeUI.onSelected = () => board.onPointSelected(PointId.HOME, false);
+        boardUI.whiteHomeUI.onSelected = () => board.onPointSelected(PointId.HOME, false);
         boardUI.blackBarUI.onInspected = (on: boolean) => board.onPointInspected(PointId.BAR, on);
-        boardUI.blackBarUI.onSelected = () => board.onPointSelected(PointId.BAR);
+        boardUI.blackBarUI.onSelected = () => board.onPointSelected(PointId.BAR, false);
         boardUI.whiteBarUI.onInspected = (on: boolean) => board.onPointInspected(PointId.BAR, on);
-        boardUI.whiteBarUI.onSelected = () => board.onPointSelected(PointId.BAR);
+        boardUI.whiteBarUI.onSelected = () => board.onPointSelected(PointId.BAR, false);
 
         let bindPointUIEvents = (pointId: number): void => {
             let pointUI = boardUI.pointUIs[pointId - 1];
             pointUI.onInspected = (on: boolean) => { board.onPointInspected(pointId, on); };
-            pointUI.onSelected = () => { board.onPointSelected(pointId); };
+            pointUI.onSelected = () => { board.onPointSelected(pointId, false); };
         }
         for (let i = 1; i < 25; i++) {
             bindPointUIEvents(i);
@@ -1009,7 +1043,7 @@ class CheckerContainerUI {
         statusLogger.onLogInfo = (info) => { statusUI.setStatus(info); };
     }
 }
- class GameUI {
+class GameUI {
 
     boardUI: BoardUI;
     blackDiceUI: DiceUI;
@@ -1041,15 +1075,15 @@ class CheckerContainerUI {
     }
 }
 class HomeUI extends CheckerContainerUI {
-    
+
     constructor(player: PlayerId) {
         super('home', player === PlayerId.BLACK);
-    }   
+    }
 }
 class PointUI extends CheckerContainerUI {
-    
+
     onInspected: (on: boolean) => void;
-    
+
     constructor(colour: string, isTopSide: boolean) {
         super(`point-${colour}`, isTopSide);
 
@@ -1058,13 +1092,13 @@ class PointUI extends CheckerContainerUI {
     }
 }
 class StatusUI {
-    
+
     containerDiv: HTMLDivElement;
     constructor() {
         this.containerDiv = document.createElement('div');
         this.containerDiv.className = 'status-container';
     }
-    
+
     setStatus(s: string) {
         let statusP = document.createElement('p');
         statusP.innerText = s;
@@ -1080,11 +1114,11 @@ class Utils {
             element.removeChild(element.lastChild);
         }
     }
-        
+
     static highlight(el: HTMLElement) {
         $(el).addClass('highlight');
         // timeout purely to allow ui to update
-        setTimeout(function() {
+        setTimeout(function () {
             $(el).addClass('highlight-end');
         }, 0);
     }
@@ -1094,7 +1128,7 @@ class Player {
     constructor(public playerId: PlayerId, public board: Board) {
     }
 }
- class ComputerPlayer extends Player {
+class ComputerPlayer extends Player {
 
     private safetyFactor: number;
     private clusteringFactor: number;
@@ -1152,7 +1186,7 @@ class Player {
             if (resultingBoard.checkerContainers[pointId].checkers[this.playerId] === 1) {
                 // TODO: factor safety on prob of opp hitting this piece
                 let distanceOfBlotToHome = (homePointId - pointId) * direction;
-                let relativePenaltyOfLosingThisBlot = distanceOfBlotToHome / 24; 
+                let relativePenaltyOfLosingThisBlot = distanceOfBlotToHome / 24;
                 score *= (.75 * relativePenaltyOfLosingThisBlot);
             }
         }
@@ -1181,10 +1215,10 @@ class Player {
     }
 
 }
- class HumanPlayer extends Player {
+class HumanPlayer extends Player {
 
 }
- class BoardAnalyser {
+class BoardAnalyser {
 
     static isRace(board: Board): boolean {
         let playerId = 0;
@@ -1292,7 +1326,7 @@ class Player {
         var clone = new Board();
         let layout = new Array<number[]>();
         for (let pointId = 0; pointId < 26; pointId++) {
-            layout[pointId] = [source.checkerContainers[pointId].checkers[PlayerId.BLACK], source.checkerContainers[pointId].checkers[PlayerId.WHITE]] 
+            layout[pointId] = [source.checkerContainers[pointId].checkers[PlayerId.BLACK], source.checkerContainers[pointId].checkers[PlayerId.WHITE]]
         }
         clone.initialise(layout);
         return clone;
