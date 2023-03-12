@@ -130,6 +130,12 @@ class Board {
 
     isLegalMove(move: Move): boolean {
 
+        // Home is last point
+        if (move.sourcePointId === PointId.HOME) {
+           // console.info('no way from home');
+            return false;
+        }
+
         // case: there is no counter to move: fail
         if (this.checkerContainers[move.sourcePointId].checkers[move.playerId] == 0) {
             // console.info('no counter at ' + sourcePointId);
@@ -1367,6 +1373,3 @@ export class PossibleGo {
     constructor(public moves: Move[], public resultingBoard: Board) {
     }
 }
-
-
-
