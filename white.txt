@@ -1,0 +1,34 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="base">
+      <stop offset="0" stop-color="#ccc" />
+      <stop offset="1" stop-color="#fff" />
+    </linearGradient>
+    
+    <radialGradient id="center">
+      <stop offset="0" stop-color="#fff" />
+      <stop offset="1" stop-color="#eee" />
+    </radialGradient>
+
+      <linearGradient id="ring">
+      <stop offset="0" stop-color="#fff" />
+      <stop offset="1" stop-color="#ccc" />
+    </linearGradient>
+
+    <style>
+      <![CDATA[
+        #base { fill: url(#base); }
+        #ring { fill: url(#ring); }  
+        #center { fill: url(#center); }  
+              
+       ]]>
+    </style>
+  </defs>
+
+  <circle cx="50" cy="50" r="50" id="base" />
+  <circle cx="50" cy="50" r="30" id="ring" />
+  <circle cx="50" cy="50" r="25" id="center" />
+
+  
+</svg>
+
